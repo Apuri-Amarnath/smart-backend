@@ -26,7 +26,12 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number',read_only=True)
+    role = serializers.CharField(source='user.role',read_only=True)
     class Meta:
         model = UserProfile
-        fields = ['user','registration_number','f_name','l_name','bio','education']
-        read_only_fields = ['user','registration_number']
+        fields = ['role','registration_number','f_name','l_name','bio','education']
+        read_only_fields = ['role','registration_number']
+    def validate(self, attrs):
+        if not attrs:
+            raise serializers.ValidationError("Empty JSON payload is not allowed.")
+        return attrs
