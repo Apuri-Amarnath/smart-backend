@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-ky(6i6p-xw-v!i^fuqr9m&z+y*eug@$zn&&mcwje-s6-jf)!h#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'amarnath013.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost','amarnath013.pythonanywhere.com']
 
 
 # Application definition
@@ -148,6 +148,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://react-project-u4et.vercel.app",
-    '*',
+    "*",
 ]
 AUTH_USER_MODEL = 'api.User'
