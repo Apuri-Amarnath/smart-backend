@@ -22,12 +22,16 @@ def update(request):
         stored on PythonAnywhere in the git.Repo() as parameter.
         Here the name of my directory is "test.pythonanywhere.com"
         '''
-        repo = git.Repo("/home/Amarnath013/smart-backend")
-        origin = repo.remotes.origin
-        origin.pull()
-        return HttpResponse("Updated code on GitHub repo")
+        try:
+            repo = git.Repo("/home/Amarnath013/smart-backend")
+            origin = repo.remotes.origin
+            origin.pull()
+            return HttpResponse("Updated code on python Anywhere")
+        except Exception as e:
+            return HttpResponse(f"Error updating code:{str(e)}")
     else:
-        return HttpResponse("Couldn't Updated code on GitHub repo")
+        return HttpResponse("Couldn't updated code on python Anywhere")
+
 
 # manually generate token
 def get_tokens_for_user(user):
