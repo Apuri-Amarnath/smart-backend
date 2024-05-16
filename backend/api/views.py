@@ -9,6 +9,24 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+import git
+
+@csrf_exempt
+def update(request):
+    if request.method == "POST":
+        '''
+        pass the path of the diectory where your project will be
+        stored on PythonAnywhere in the git.Repo() as parameter.
+        Here the name of my directory is "test.pythonanywhere.com"
+        '''
+        repo = git.Repo("https://github.com/Apuri-Amarnath/smart-backend/")
+        origin = repo.remotes.origin
+        origin.pull()
+        return HttpResponse("Updated code on GitHub repo")
+    else:
+        return HttpResponse("Couldn't Updated code on GitHub repo")
 
 # manually generate token
 def get_tokens_for_user(user):
