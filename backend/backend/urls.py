@@ -16,10 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from ..api.views import update
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/', include('api.urls')),
-    path("update_server/", update, name="update"),
 ]
