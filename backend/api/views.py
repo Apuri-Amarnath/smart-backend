@@ -14,23 +14,24 @@ from django.views.decorators.csrf import csrf_exempt
 import git
 
 
+import logging
+# Set up logging
+logger = logging.getLogger(__name__)
+
 @csrf_exempt
 def update(request):
     if request.method == "POST":
-        '''
-        pass the path of the diectory where your project will be
-        stored on PythonAnywhere in the git.Repo() as parameter.
-        Here the name of my directory is "test.pythonanywhere.com"
-        '''
         try:
             repo = git.Repo("/home/Amarnath013/smart-backend")
             origin = repo.remotes.origin
             origin.pull()
-            return HttpResponse("Updated code on python Anywhere")
+            logger.info("Successfully updated the code on PythonAnywhere.")
+            return HttpResponse("Updated code on PythonAnywhere")
         except Exception as e:
-            return HttpResponse(f"Error updating code:{str(e)}")
+            logger.error(f"Error updating code: {str(e)}")
+            return HttpResponse("An error occurred while updating the code.")
     else:
-        return HttpResponse("Couldn't updated code on python Anywhere")
+        return HttpResponse("This endpoint only supports POST requests.")
 
 
 # manually generate token
