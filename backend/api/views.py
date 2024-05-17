@@ -54,7 +54,7 @@ class UserRegistrationView(APIView):
             user = serializer.save()
             token = get_tokens_for_user(user)
             return Response({'token': token, 'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message':'user already exits',"error":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginView(APIView):

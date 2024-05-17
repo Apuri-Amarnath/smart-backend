@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="min_length(registration) is 11">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="serializers.py is updated">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -115,7 +115,7 @@
       <workItem from="1715862810071" duration="1490000" />
       <workItem from="1715886902880" duration="1766000" />
       <workItem from="1715918697108" duration="2441000" />
-      <workItem from="1715922636417" duration="759000" />
+      <workItem from="1715922636417" duration="1708000" />
     </task>
     <task id="LOCAL-00001" summary="started project">
       <option name="closed" value="true" />
@@ -261,7 +261,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715922667959</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="serializers.py is updated">
+      <option name="closed" value="true" />
+      <created>1715923609078</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1715923609078</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -326,6 +334,7 @@
     <MESSAGE value="initial deploy" />
     <MESSAGE value="allowed all origins" />
     <MESSAGE value="min_length(registration) is 11" />
-    <option name="LAST_COMMIT_MESSAGE" value="min_length(registration) is 11" />
+    <MESSAGE value="serializers.py is updated" />
+    <option name="LAST_COMMIT_MESSAGE" value="serializers.py is updated" />
   </component>
 </project>
