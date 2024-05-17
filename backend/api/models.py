@@ -1,12 +1,12 @@
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save
 
 
-
-#custom user manager
+# custom user manager
 class MyUserManager(BaseUserManager):
-    def create_user(self, registration_number, password=None, password2=None,role =None):
+    def create_user(self, registration_number, password=None, password2=None, role=None):
         """
         Creates and saves a User with the given registration
         number and password.
@@ -23,7 +23,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, registration_number, password=None,):
+    def create_superuser(self, registration_number, password=None, ):
         """
         Creates and saves a superuser with the given registration
         number and password.
@@ -41,17 +41,16 @@ class MyUserManager(BaseUserManager):
     def normalize_registration_number(self, registration_number):
         # Normalization logic here
         return registration_number.strip().upper()
-#custom user model
+
+
+# custom user model
 class User(AbstractBaseUser):
     ROLE_CHOICES = [
         ('student', 'Student'),
         ('teacher', 'Teacher'),
         ('admin', 'Admin'),
     ]
-    registration_number = models.CharField(
-        verbose_name="registration number",
-        max_length=10, unique=True,
-    )
+    registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True, validators=[MinLengthValidator(11)])
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -82,19 +81,26 @@ class User(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.CharField(max_length=225, blank=True, null=True)
-    education = models.CharField(max_length=10,blank=True, null=True)
+    education = models.CharField(max_length=10, blank=True, null=True)
     f_name = models.CharField(max_length=100, blank=True, null=True)
     l_name = models.CharField(max_length=100, blank=True, null=True)
+
     def __str__(self):
         return self.user.registration_number
+
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
+
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
 
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)
