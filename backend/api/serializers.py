@@ -1,3 +1,4 @@
+from django.core.validators import MinLengthValidator
 from rest_framework import serializers, status
 
 from .models import User,UserProfile
@@ -19,7 +20,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
-    registration_number = serializers.CharField(max_length=10)
+    registration_number = serializers.CharField(max_length=20,validators=[MinLengthValidator(11)])
     class Meta:
         model = User
         fields = ['registration_number', 'password']
