@@ -82,7 +82,8 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-
+def upload_path(instance, filename):
+    return '/'.join(['profile-pictures', str(instance.id), filename])
 
 class PersonalInformation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='personal_information')
@@ -91,7 +92,7 @@ class PersonalInformation(models.Model):
     middle_name = models.CharField(verbose_name="middle name", max_length=100, blank=True, null=True)
     date_of_birth = models.DateField(verbose_name="birth", blank=True, null=True)
     gender = models.CharField(verbose_name="gender", max_length=10, blank=True, null=True)
-    profile_picture = models.ImageField(max_length=200, upload_to='profile-pictures', blank=True, null=True)
+    profile_picture = models.ImageField(max_length=200, upload_to=upload_path, blank=True, null=True)
 
 
 class ContactInformation(models.Model):
