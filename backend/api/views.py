@@ -81,8 +81,10 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        return self.request.user.profile
-
+        try:
+            return self.request.user.profile
+        except UserProfile.DoesNotExist:
+            raise ValidationError({'error': 'User profile not found.'}, status=status.HTTP_404_NOT_FOUND)
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
 

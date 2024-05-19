@@ -2,8 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
-from .models import User, UserProfile
-
+from .models import User, UserProfile,PersonalInformation,ContactInformation,AcademicInformation
 class UserCreationForm(forms.ModelForm):
     """
     A form for creating new users. Includes all the required
@@ -72,3 +71,6 @@ class UserModelAdmin(BaseUserAdmin):
 admin.site.register(User, UserModelAdmin)
 # ... and, since we're not using Django's built-in permissions,
 admin.site.register(UserProfile)
+admin.site.register(PersonalInformation)
+admin.site.register(AcademicInformation)
+admin.site.register(ContactInformation)
