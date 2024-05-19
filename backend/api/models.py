@@ -2,6 +2,7 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # custom user manager
@@ -50,7 +51,8 @@ class User(AbstractBaseUser):
         ('teacher', 'Teacher'),
         ('admin', 'Admin'),
     ]
-    registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True, validators=[MinLengthValidator(11)])
+    registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True,
+                                           validators=[MinLengthValidator(11)])
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -82,24 +84,68 @@ class User(AbstractBaseUser):
         return self.is_admin
 
 
+class PersonalInformation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='personal_information')
+    first_name = models.CharField(verbose_name="first name", max_length=100, blank=True, null=True)
+    last_name = models.CharField(verbose_name="last name", max_length=100, blank=True)
+    middle_name = models.CharField(verbose_name="middle name", max_length=100, blank=True, null=True)
+    date_of_birth = models.DateField(verbose_name="birth", blank=True, null=True)
+    gender = models.CharField(verbose_name="gender", max_length=10, blank=True, null=True)
+    profile_picture = models.ImageField(max_length=200, upload_to='profile-pictures', blank=True, null=True)
+
+
+class ContactInformation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='contact_information')
+    email = models.EmailField(verbose_name="email address", max_length=225, blank=True, null=True)
+    phone_number = models.CharField(verbose_name="phone number", max_length=15, blank=True, null=True)
+    alternate_phone_number = models.CharField(verbose_name="alternate phone", max_length=15, blank=True, null=True)
+    address = models.TextField(verbose_name="address", blank=True, null=True, max_length=300)
+    city = models.CharField(verbose_name="city", max_length=100, blank=True, null=True)
+    state = models.CharField(verbose_name="state", max_length=100, blank=True, null=True)
+    postal_code = models.CharField(verbose_name="postal code", max_length=10, null=True, blank=True)
+    country = models.CharField(verbose_name="country", max_length=100, blank=True, null=True)
+
+class AcademicInformation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='academic_information')
+    enrollment_date = models.DateField(verbose_name="enrollment date", blank=True, null=True)
+    program = models.CharField(verbose_name="program", blank=True, null=True, max_length=100,)
+    major = models.CharField(verbose_name="major", blank=True, null=True, max_length=100)
+    current_year = models.IntegerField(verbose_name="current year", blank=True, null=True)
+    gpa = models.DecimalField(verbose_name="GPA", blank=True, null=True, max_digits=4, decimal_places=2)
+    course_enrolled = models.TextField(verbose_name="course enrolled", blank=True, null=True)
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    bio = models.CharField(max_length=225, blank=True, null=True)
-    education = models.CharField(max_length=10, blank=True, null=True)
-    f_name = models.CharField(max_length=100, blank=True, null=True)
-    l_name = models.CharField(max_length=100, blank=True, null=True)
+    personal_information = models.OneToOneField(PersonalInformation, on_delete=models.CASCADE,
+                                                related_name='personal_profile')
+    contact_information = models.OneToOneField(ContactInformation, on_delete=models.CASCADE,
+                                               related_name='contact_profile')
+    academic_information = models.OneToOneField(AcademicInformation, on_delete=models.CASCADE,
+                                                related_name='academic_profile')
 
     def __str__(self):
         return self.user.registration_number
 
 
+@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
+        personal_info = PersonalInformation.objects.create(user=instance)
+        contact_info = ContactInformation.objects.create(user=instance)
+        academic_info = AcademicInformation.objects.create(user=instance)
+        UserProfile.objects.create(
+            user=instance,
+            personal_information=personal_info,
+            contact_information=contact_info,
+            academic_information=academic_info
+        )
 
 
+@receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    instance.personal_information.save()
+    instance.contact_information.save()
+    instance.academic_information.save()
 
 
 post_save.connect(create_user_profile, sender=User)
