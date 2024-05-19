@@ -50,6 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['registration_number', 'role']
+        read_only_fields = ['registration_number', 'role']
 class UserProfileSerializer(serializers.ModelSerializer):
     personal_information = PersonalInfoSerializer()
     contact_information = ContactInformationSerializer()
