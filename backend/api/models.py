@@ -1,3 +1,5 @@
+import uuid
+
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
@@ -81,18 +83,27 @@ class User(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
-        return self.is_admin
-def upload_path(instance, filename):
-    return '/'.join(['profile-pictures', str(instance.id), filename])
+        return self.is_admin or self.role == 'teacher'
+
+
+def upload_path(instance, filename, folder):
+    # Customize this function as per your requirement
+    return f"{folder}/{filename}"
+
+
+def upload_to_profile_pictures(instance, filename):
+    return upload_path(instance, filename, 'profile-pictures')
+
 
 class PersonalInformation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='personal_information')
     first_name = models.CharField(verbose_name="first name", max_length=100, blank=True, null=True)
     last_name = models.CharField(verbose_name="last name", max_length=100, blank=True)
+    father_name = models.CharField(verbose_name="father name", max_length=100, blank=True, null=True)
     middle_name = models.CharField(verbose_name="middle name", max_length=100, blank=True, null=True)
     date_of_birth = models.DateField(verbose_name="birth", blank=True, null=True)
     gender = models.CharField(verbose_name="gender", max_length=10, blank=True, null=True)
-    profile_picture = models.ImageField(max_length=200, upload_to=upload_path, blank=True, null=True)
+    profile_picture = models.ImageField(max_length=200, upload_to=upload_to_profile_pictures, blank=True, null=True)
 
 
 class ContactInformation(models.Model):
@@ -106,14 +117,16 @@ class ContactInformation(models.Model):
     postal_code = models.CharField(verbose_name="postal code", max_length=10, null=True, blank=True)
     country = models.CharField(verbose_name="country", max_length=100, blank=True, null=True)
 
+
 class AcademicInformation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='academic_information')
     enrollment_date = models.DateField(verbose_name="enrollment date", blank=True, null=True)
-    program = models.CharField(verbose_name="program", blank=True, null=True, max_length=100,)
+    program = models.CharField(verbose_name="program", blank=True, null=True, max_length=100)
     major = models.CharField(verbose_name="major", blank=True, null=True, max_length=100)
     current_year = models.IntegerField(verbose_name="current year", blank=True, null=True)
     gpa = models.DecimalField(verbose_name="GPA", blank=True, null=True, max_digits=4, decimal_places=2)
     course_enrolled = models.TextField(verbose_name="course enrolled", blank=True, null=True)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -129,25 +142,79 @@ class UserProfile(models.Model):
 
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_personal_infotmation(sender, instance, created, **kwargs):
     if created:
-        personal_info = PersonalInformation.objects.create(user=instance)
+        PersonalInformation.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def create_contact_information(sender, instance, created, **kwargs):
+    if created:
         contact_info = ContactInformation.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def create_academic_information(sender, instance, created, **kwargs):
+    if created:
         academic_info = AcademicInformation.objects.create(user=instance)
-        UserProfile.objects.create(
-            user=instance,
-            personal_information=personal_info,
-            contact_information=contact_info,
-            academic_information=academic_info
-        )
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.personal_information.save()
+
+
+@receiver(post_save, sender=User)
+def save_contact_information(sender, instance, **kwargs):
     instance.contact_information.save()
+
+
+@receiver(post_save, sender=User)
+def save_academic_information(sender, instance, **kwargs):
     instance.academic_information.save()
 
+post_save.connect(create_contact_information, sender=User)
+post_save.connect(create_academic_information, sender=User)
+post_save.connect(create_personal_infotmation,sender=User)
+def upload_college_logo(instance, filename):
+    return upload_path(instance, filename, 'college-logos')
 
-post_save.connect(create_user_profile, sender=User)
-post_save.connect(save_user_profile, sender=User)
+
+class College(models.Model):
+    college_code = models.CharField(max_length=10, unique=True, null=True, blank=True)
+    college_name = models.CharField(verbose_name="college_name", max_length=255, unique=True, null=True, blank=True)
+    college_address = models.TextField(verbose_name="college_address", max_length=500, null=True, blank=True)
+    established_date = models.DateField(verbose_name="established_date", null=True, blank=True)
+    principal_name = models.CharField(verbose_name="principal_name", null=True, max_length=255, blank=True)
+    phone_number = models.CharField(verbose_name="phone_number", null=True, max_length=15)
+    email = models.EmailField(verbose_name="email", null=True, max_length=225)
+    college_logo = models.ImageField(verbose_name="college_logo", upload_to=upload_college_logo, null=True, blank=True)
+
+    def __str__(self):
+        return self.college_name
+
+
+def generate_bonafide_number():
+    # Generate a unique bonafide number
+    return str(uuid.uuid4().hex[:10])
+
+
+class Bonafide(models.Model):
+    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="bonafide_college")
+    student = models.ForeignKey(PersonalInformation, on_delete=models.CASCADE, related_name="bonafide_student")
+    roll_no = models.OneToOneField(User, related_name="roll_no", on_delete=models.CASCADE)
+    year_semester = models.CharField(verbose_name="year/semester", max_length=10, null=True, blank=True)
+    batch = models.CharField(verbose_name="batch", max_length=10, null=True, blank=True)
+    department = models.CharField(verbose_name="department", max_length=225, null=True, blank=True)
+    course_start_date = models.DateField(verbose_name="course start date", null=True, blank=True)
+    issue_date = models.DateField(verbose_name="issue date", null=True, blank=True)
+    bonafide_number = models.CharField(unique=True, verbose_name="bonafide number", max_length=10, null=True,
+                                       blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.bonafide_number:
+            self.bonafide_number = generate_bonafide_number()
+        super(Bonafide, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.student.first_name} {self.student.last_name} - {self.roll_no} - {self.bonafide_number} - {self.issue_date}"

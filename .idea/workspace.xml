@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="user profile updated">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="configured img upload">
+      <change afterPath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/backend/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,8 +50,8 @@
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
-        <option name="accountId" value="62f1a5ee-3e02-4da8-8617-8971f9050fe0" />
-        <option name="url" value="https://github.com/MdMushfikurTalukdar/ReactProject.git" />
+        <option name="accountId" value="557d3e35-411e-44f7-8210-1b9677bca127" />
+        <option name="url" value="https://github.com/Apuri-Amarnath/smart-backend.git" />
       </UrlAndAccount>
     </option>
   </component>
@@ -121,7 +125,11 @@
       <workItem from="1715918697108" duration="2441000" />
       <workItem from="1715922636417" duration="1708000" />
       <workItem from="1715960566578" duration="1154000" />
-      <workItem from="1716096317864" duration="9192000" />
+      <workItem from="1716096317864" duration="9993000" />
+      <workItem from="1716106553178" duration="614000" />
+      <workItem from="1716126281342" duration="6965000" />
+      <workItem from="1716137419980" duration="2623000" />
+      <workItem from="1716170696244" duration="7455000" />
     </task>
     <task id="LOCAL-00001" summary="started project">
       <option name="closed" value="true" />
@@ -291,7 +299,31 @@
       <option name="project" value="LOCAL" />
       <updated>1716104205080</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="configured img upload">
+      <option name="closed" value="true" />
+      <created>1716105781201</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1716105781201</updated>
+    </task>
+    <task id="LOCAL-00023" summary="configured img upload">
+      <option name="closed" value="true" />
+      <created>1716105787185</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1716105787185</updated>
+    </task>
+    <task id="LOCAL-00024" summary="configured img upload">
+      <option name="closed" value="true" />
+      <created>1716105933767</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1716105933767</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,6 +390,7 @@
     <MESSAGE value="min_length(registration) is 11" />
     <MESSAGE value="serializers.py is updated" />
     <MESSAGE value="user profile updated" />
-    <option name="LAST_COMMIT_MESSAGE" value="user profile updated" />
+    <MESSAGE value="configured img upload" />
+    <option name="LAST_COMMIT_MESSAGE" value="configured img upload" />
   </component>
 </project>
