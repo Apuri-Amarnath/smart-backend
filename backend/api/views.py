@@ -35,7 +35,14 @@ def update(request):
             return HttpResponse("Updated code on PythonAnywhere")
         except Exception as e:
             logger.error(f"Error updating code: {str(e)}")
-            return HttpResponse("An error occurred while updating the code.")
+            try:
+                repo.git.stash()
+                origin.pull()
+                logger.info("Successfully updated the code on PythonAnywhere after stashing changes.")
+                return HttpResponse("Updated code on PythonAnywhere after stashing changes")
+            except Exception as e2:
+                logger.error(f"Error updating code after stashing changes: {str(e2)}")
+                return HttpResponse("An error occurred while updating the code, even after stashing changes.")
     else:
         return HttpResponse("This endpoint only supports POST requests.")
 
