@@ -142,40 +142,23 @@ class UserProfile(models.Model):
 
 
 @receiver(post_save, sender=User)
-def create_personal_infotmation(sender, instance, created, **kwargs):
+def create_related_information(sender, instance, created, **kwargs):
     if created:
-        PersonalInformation.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def create_contact_information(sender, instance, created, **kwargs):
-    if created:
+        personal_info = PersonalInformation.objects.create(user=instance)
         contact_info = ContactInformation.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def create_academic_information(sender, instance, created, **kwargs):
-    if created:
         academic_info = AcademicInformation.objects.create(user=instance)
+        UserProfile.objects.create(user=instance, personal_information=personal_info, contact_information=contact_info,
+                                   academic_information=academic_info)
 
 
 @receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
+def save_related_information(sender, instance, **kwargs):
     instance.personal_information.save()
-
-
-@receiver(post_save, sender=User)
-def save_contact_information(sender, instance, **kwargs):
     instance.contact_information.save()
-
-
-@receiver(post_save, sender=User)
-def save_academic_information(sender, instance, **kwargs):
     instance.academic_information.save()
+    instance.profile.save()
 
-post_save.connect(create_contact_information, sender=User)
-post_save.connect(create_academic_information, sender=User)
-post_save.connect(create_personal_infotmation,sender=User)
+
 def upload_college_logo(instance, filename):
     return upload_path(instance, filename, 'college-logos')
 

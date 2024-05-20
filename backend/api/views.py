@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions, viewsets
 from rest_framework.views import APIView
@@ -89,7 +90,6 @@ class UserLoginView(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class UserProfileView(generics.RetrieveUpdateAPIView):
     queryset = UserProfile.objects.all()
     renderer_classes = [UserRenderer]
@@ -170,7 +170,8 @@ class BonafideViewSet(viewsets.ModelViewSet):
             raise ValidationError({'error': 'Details are not found.'}, status=status.HTTP_404_NOT_FOUND)
 
     def perform_update(self, serializer):
-        serializer.save(user=self.request.user)
+        with transaction.atomic():
+            serializer.save(user=self.request.user)
 
     def update(self, request, *args, **kwargs):
         if not self.request.data:
@@ -184,3 +185,15 @@ class BonafideViewSet(viewsets.ModelViewSet):
                 {'status': 'success', 'message': 'Details uploaded successfully.', 'Bonafide_data': serializer.data},
                 status=status.HTTP_200_OK)
         return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            roll_no = serializer.validated_data.get('roll_no')
+            if Bonafide.objects.filter(roll_no=roll_no).exists():
+                return Response({'error': 'Bonafide with this roll_no already exists.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
