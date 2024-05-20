@@ -98,7 +98,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         personal_info_data = validated_data.pop('personal_information', {})
         contact_info_data = validated_data.pop('contact_information', {})
         academic_info_data = validated_data.pop('academic_information', {})
-        user_data = validated_data.pop('user',{})
+        user_data = validated_data.pop('user', {})
 
         # Update personal information
         personal_info = instance.personal_information
@@ -134,11 +134,16 @@ class CollegeSerializer(serializers.ModelSerializer):
 
 
 class BonafideSerializer(serializers.ModelSerializer):
-    college = CollegeSerializer()
-    student = PersonalInfoSerializer()
-    roll_no = serializers.CharField(source='user.registration_number', read_only=True)
+    college_details = CollegeSerializer(source='college', read_only=True)
+    student_details = PersonalInfoSerializer(source='student', read_only=True)
+    roll_no_details = serializers.CharField(source='user.registration_number', read_only=True)
 
     class Meta:
         model = Bonafide
-        fields = '__all__'
-        read_only_fields = ['roll_no', 'bonafide_number']
+        fields = ['id', 'college', 'student', 'roll_no', 'year_semester', 'batch', 'department', 'course_start_date',
+                  'issue_date', 'bonafide_number', 'college_details', 'student_details', 'roll_no_details']
+
+
+college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True)
+student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True)
+roll_no = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
