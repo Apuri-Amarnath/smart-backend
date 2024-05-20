@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="user profile fixed">
-      <change afterPath="$PROJECT_DIR$/backend/media/college-logos/bullhorn.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/db.sqlite3" beforeDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="req bonafide added" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -133,7 +125,7 @@
       <workItem from="1716106553178" duration="614000" />
       <workItem from="1716126281342" duration="6965000" />
       <workItem from="1716137419980" duration="2623000" />
-      <workItem from="1716170696244" duration="10754000" />
+      <workItem from="1716170696244" duration="11073000" />
     </task>
     <task id="LOCAL-00001" summary="started project">
       <option name="closed" value="true" />
@@ -335,7 +327,15 @@
       <option name="project" value="LOCAL" />
       <updated>1716178744828</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="req bonafide added">
+      <option name="closed" value="true" />
+      <created>1716182330509</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1716182330509</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -404,6 +404,7 @@
     <MESSAGE value="user profile updated" />
     <MESSAGE value="configured img upload" />
     <MESSAGE value="user profile fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="user profile fixed" />
+    <MESSAGE value="req bonafide added" />
+    <option name="LAST_COMMIT_MESSAGE" value="req bonafide added" />
   </component>
 </project>
