@@ -140,8 +140,8 @@ class BonafideSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bonafide
-        fields = ['id', 'college', 'student', 'roll_no', 'year_semester', 'batch', 'department', 'course_start_date',
-                  'issue_date', 'bonafide_number', 'college_details', 'student_details', 'roll_no_details', 'required_for']
+        fields = ['id', 'college', 'student','required_for','roll_no', 'year_semester', 'batch', 'department', 'course_start_date',
+                  'issue_date', 'bonafide_number', 'college_details', 'student_details', 'roll_no_details',]
 
 
 college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True)
