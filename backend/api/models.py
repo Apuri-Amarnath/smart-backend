@@ -191,7 +191,7 @@ class Bonafide(models.Model):
     department = models.CharField(verbose_name="department", max_length=225, null=True, blank=True)
     course_start_date = models.DateField(verbose_name="course start date", null=True, blank=True)
     issue_date = models.DateField(verbose_name="issue date", null=True, blank=True)
-    required_for = models.TextField(verbose_name="required for", null=True, blank=True,max_length=500)
+    required_for = models.CharField(verbose_name="required for", null=True, blank=True, max_length=225)
     bonafide_number = models.CharField(unique=True, verbose_name="bonafide number", max_length=10, null=True,
                                        blank=True)
 
