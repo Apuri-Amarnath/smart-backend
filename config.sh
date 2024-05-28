@@ -8,12 +8,13 @@ echo "deleted existing migrations"
 cd smart-backend/backend
 rm db.sqlite3
 echo "deleted sqllite file"
+
+echo "making virtual environment"
 python -m venv .venv
 echo "virtual environment created"
 source .venv/bin/activate
-
+echo "activated virtual environment"
 pip install -r requirements.txt
-
 echo "installed requirements.txt"
 
 cd smart-backend/backend
@@ -30,7 +31,7 @@ from django.contrib.auth import get_user_model
 import os
 
 # Set up Django environment
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "your_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 import django
 django.setup()
 
