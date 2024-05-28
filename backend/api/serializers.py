@@ -7,6 +7,15 @@ from .models import User, UserProfile, PersonalInformation, AcademicInformation,
 User = get_user_model()
 
 
+class Csv_RegistrationSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+    def validate_file(self, file):
+        if not file.name.endswith('.csv'):
+            return serializers.ValidationError('File must have .csv extension')
+        return file
+
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
@@ -20,7 +29,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         password = attrs.get('password')
         password2 = attrs.get('password2')
         if password != password2:
-            raise serializers.ValidationError(f"password and confirm don't match")
+            raise serializers.ValidationError(f"password and confirm password don't match")
         return attrs
 
     def create(self, validated_data):
@@ -34,6 +43,24 @@ class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['registration_number', 'password']
+
+
+class ChangeUserPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(style={'input_type': 'password'}, max_length=225)
+    password2 = serializers.CharField(style={'input_type': 'password'}, max_length=225)
+
+    class Meta:
+        fields = ['password', 'password2']
+
+    def validate(self, attrs):
+        user = self.context.get('user')
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+        if password != password2:
+            raise serializers.ValidationError(f"password and confirm password don't match")
+        user.set_password(password)
+        user.save()
+        return attrs
 
 
 class PersonalInfoSerializer(serializers.ModelSerializer):
@@ -140,8 +167,9 @@ class BonafideSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bonafide
-        fields = ['id', 'college', 'student','required_for','roll_no', 'year_semester', 'batch', 'department', 'course_start_date',
-                  'issue_date', 'bonafide_number', 'college_details', 'student_details', 'roll_no_details',]
+        fields = ['id', 'college', 'student', 'required_for', 'roll_no', 'year_semester', 'batch', 'department',
+                  'course_start_date',
+                  'issue_date', 'bonafide_number', 'college_details', 'student_details', 'roll_no_details', ]
 
 
 college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True)

@@ -50,8 +50,10 @@ class MyUserManager(BaseUserManager):
 class User(AbstractBaseUser):
     ROLE_CHOICES = [
         ('student', 'Student'),
-        ('teacher', 'Teacher'),
+        ('office', 'Office'),
+        ('faculty', 'Faculty'),
         ('admin', 'Admin'),
+        ('principal','Principal'),
     ]
     registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True,
                                            validators=[MinLengthValidator(11)])
@@ -83,7 +85,7 @@ class User(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
-        return self.is_admin or self.role == 'teacher'
+        return self.is_admin or self.role == 'faculty' or self.role == 'office' or self.role == 'principal'
 
 
 def upload_path(instance, filename, folder):

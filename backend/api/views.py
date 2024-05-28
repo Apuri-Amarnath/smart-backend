@@ -1,13 +1,18 @@
+import os.path
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.db import transaction
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions, viewsets
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
-from .models import UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation
+from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
-    BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer
+    BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
+    ChangeUserPasswordSerializer, Csv_RegistrationSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +20,10 @@ from rest_framework.exceptions import ValidationError
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
+import subprocess
 import git
+import csv
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
 
 import logging
@@ -39,6 +47,7 @@ def update(request):
                 repo.git.stash()
                 origin.pull()
                 logger.info("Successfully updated the code on PythonAnywhere after stashing changes.")
+                subprocess.run(["/bin/bash", "/home/Amarnath013/smart-backend/config.sh"], check=True)
                 return HttpResponse("Updated code on PythonAnywhere after stashing changes")
             except Exception as e2:
                 logger.error(f"Error updating code after stashing changes: {str(e2)}")
@@ -58,6 +67,8 @@ def get_tokens_for_user(user):
 
 
 class TokenRefresh(APIView):
+    renderer_classes = [UserRenderer]
+
     def post(self, request):
         refresh_token = request.data.get('refresh')
         serializer = TokenRefreshView().get_serializer(data={'refresh': refresh_token})
@@ -71,6 +82,13 @@ class UserRegistrationView(APIView):
     renderer_classes = [UserRenderer]
 
     def post(self, request, format=None):
+        file_serializer = Csv_RegistrationSerializer(data=request.data)
+        if file_serializer.is_valid(raise_exception=True):
+            csv_file = file_serializer.validated_data['file']
+            file_path = self.save_uploaded_file(csv_file)
+            response = self.handle_csv_user_creation(file_path)
+            return response
+
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
@@ -78,6 +96,42 @@ class UserRegistrationView(APIView):
             return Response({'token': token, 'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
         return Response({'message': 'user already exits', "error": serializer.errors},
                         status=status.HTTP_400_BAD_REQUEST)
+
+    def save_uploaded_file(self, csv_file):
+        upload_dir = settings.CSV_UPLOADS_DIR
+        if not os.path.exists(upload_dir):
+            os.makedirs(upload_dir)
+
+        file_path = os.path.join(upload_dir, csv_file.name)
+        with default_storage.open(file_path, 'wb+') as destination:
+            for chunk in csv_file.chunks():
+                destination.write(chunk)
+        return file_path
+
+    def handle_csv_user_creation(self, csv_file_path):
+        if not os.path.exists(csv_file_path):
+            return Response({'message': 'csv file not found'}, status=status.HTTP_400_BAD_REQUEST)
+        user_created = []
+        user_existing = []
+        errors = []
+        with open(csv_file_path, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+
+            for row in reader:
+                registration_number = row.get('registration_number')
+                if User.objects.filter(registration_number=registration_number).exists():
+                    user_existing.append(registration_number)
+                else:
+                    serializer = UserRegistrationSerializer(data=row)
+                    if serializer.is_valid():
+                        user = serializer.save()
+                        user_created.append(user.registration_number)
+                    else:
+                        errors.append(serializer.errors)
+
+        return Response({'message': 'user creation process completed', 'users_created': user_created,
+                         'user_existing': user_existing, 'error': errors},
+                        status=status.HTTP_200_OK if not errors else status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginView(APIView):
@@ -91,10 +145,23 @@ class UserLoginView(APIView):
             user = authenticate(registration_number=registration_number, password=password)
             if user is not None:
                 token = get_tokens_for_user(user)
-                return Response({'token': token, 'message': 'Login successful'}, status=status.HTTP_200_OK)
+                return Response({'token': token, 'message': 'Login successful', 'role': user.role},
+                                status=status.HTTP_200_OK)
             else:
-                return Response({'error': {'non_fields_errors': ['registration number or password is Not valid']}},
-                                status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {'error': {'non_fields_errors': ['registration number or password is Not valid']}},
+                    status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        serializer = ChangeUserPasswordSerializer(data=request.data, context={'user': request.user})
+        if serializer.is_valid(raise_exception=True):
+            return Response({'message': 'password change successfully'}, status=status.HTTP_200_OK)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
@@ -115,14 +182,16 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         if not request.data:
-            raise ValidationError({'error': 'Empty JSON payload is not allowed.'}, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError({'error': 'Empty JSON payload is not allowed.'},
+                                  status=status.HTTP_400_BAD_REQUEST)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid(raise_exception=True):
             self.perform_update(serializer)
             return Response(
-                {'status': 'success', 'message': 'User profile updated successfully.', 'user_profile': serializer.data},
+                {'status': 'success', 'message': 'User profile updated successfully.',
+                 'user_profile': serializer.data},
                 status=status.HTTP_200_OK)
         return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -182,14 +251,16 @@ class BonafideViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         if not self.request.data:
-            raise ValidationError({'error': 'Empty JSON payload is not allowed.'}, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError({'error': 'Empty JSON payload is not allowed.'},
+                                  status=status.HTTP_400_BAD_REQUEST)
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid(raise_exception=True):
             self.perform_update(serializer)
             return Response(
-                {'status': 'success', 'message': 'Details uploaded successfully.', 'Bonafide_data': serializer.data},
+                {'status': 'success', 'message': 'Details uploaded successfully.',
+                 'Bonafide_data': serializer.data},
                 status=status.HTTP_200_OK)
         return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
