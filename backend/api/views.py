@@ -82,20 +82,21 @@ class UserRegistrationView(APIView):
     renderer_classes = [UserRenderer]
 
     def post(self, request, format=None):
-        file_serializer = Csv_RegistrationSerializer(data=request.data)
-        if file_serializer.is_valid(raise_exception=True):
-            csv_file = file_serializer.validated_data['file']
-            file_path = self.save_uploaded_file(csv_file)
-            response = self.handle_csv_user_creation(file_path)
-            return response
-
-        serializer = UserRegistrationSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.save()
-            token = get_tokens_for_user(user)
-            return Response({'token': token, 'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
-        return Response({'message': 'user already exits', "error": serializer.errors},
-                        status=status.HTTP_400_BAD_REQUEST)
+        if 'file' in request.data:
+            file_serializer = Csv_RegistrationSerializer(data=request.data)
+            if file_serializer.is_valid(raise_exception=True):
+                csv_file = file_serializer.validated_data['file']
+                file_path = self.save_uploaded_file(csv_file)
+                response = self.handle_csv_user_creation(file_path)
+                return response
+        else:
+            serializer = UserRegistrationSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                token = get_tokens_for_user(user)
+                return Response({'token': token, 'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'user already exits', "error": serializer.errors},
+                            status=status.HTTP_400_BAD_REQUEST)
 
     def save_uploaded_file(self, csv_file):
         upload_dir = settings.CSV_UPLOADS_DIR

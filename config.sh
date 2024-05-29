@@ -1,31 +1,26 @@
 #!/bin/bash
 cd
+cd smart-backend/backend
 pwd
-cd smart-backend/api/migrations
-shopt -s extglob
-rm !(__init__.py)
-echo "deleted existing migrations"
-cd smart-backend/backend
-rm db.sqlite3
-echo "deleted sqllite file"
+cd
+source smart-backend/.venv/bin/activate
 
-echo "making virtual environment"
-python -m venv .venv
-echo "virtual environment created"
-source .venv/bin/activate
-echo "activated virtual environment"
+pwd
+cd smart-backend/backend
 pip install -r requirements.txt
-echo "installed requirements.txt"
-
-cd smart-backend/backend
 
 pwd
 
 python manage.py makemigrations
 python manage.py collectstatic --noinput
-pythom manage.py migrate
+python manage.py migrate
+
 
 export $(grep -v '^#' .env | xargs)
+
+echo "ADMIN_REGISTRATION_NUMBER: $ADMIN_REGISTRATION_NUMBER"
+echo "ADMIN_PASS: $ADMIN_PASS"
+# Python script to create superuser
 python - <<END
 from django.contrib.auth import get_user_model
 import os
@@ -45,3 +40,5 @@ if not User.objects.filter(registration_number='$ADMIN_REGISTRATION_NUMBER').exi
 else:
     print('Superuser already exists.')
 END
+
+
