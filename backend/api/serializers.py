@@ -165,33 +165,29 @@ class CollegeSerializer(serializers.ModelSerializer):
 class BonafideSerializer(serializers.ModelSerializer):
     college_details = CollegeSerializer(source='college', read_only=True)
     student_details = PersonalInfoSerializer(source='student', read_only=True)
-    roll_no_details = serializers.CharField(source='roll_no.registration_number', read_only=True)
+    roll_no_details = serializers.CharField(source='roll_no.registration_number',read_only=True)
+
+    college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True)
+    student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True)
+    roll_no = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Bonafide
         fields = '__all__'
-        read_only_fields = ['student_details', 'college_details']
-
+        read_only_fields = ['student_details', 'college_details', 'bonafide_number', 'status', 'applied_date']
 
     def create(self, validated_data):
         if 'supporting_document' in validated_data:
             validated_data['supporting_document'] = base64.b64decode(validated_data.pop('supporting_document'))
         return super().create(validated_data)
 
-
     def update(self, instance, validated_data):
         if 'supporting_document' in validated_data:
             validated_data['supporting_document'] = base64.b64decode(validated_data.pop('supporting_document'))
         return super().update(instance, validated_data)
-
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         if instance.supporting_document:
             ret['supporting_document'] = base64.b64encode(instance.supporting_document).decode('utf-8')
         return ret
-
-
-college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True)
-student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True)
-roll_no = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
