@@ -6,7 +6,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models import BinaryField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from datetime import date
 
 # custom user manager
 class MyUserManager(BaseUserManager):
@@ -202,18 +202,24 @@ class Bonafide(models.Model):
     roll_no = models.ForeignKey(User, on_delete=models.CASCADE,related_name="roll_no")
     supporting_document = BinaryField(verbose_name="supporting_document",null=True,blank=True)
     issue_date = models.DateField(verbose_name="issue date", null=True, blank=True)
+    applied_date = models.DateField(verbose_name="applied date", null=True, blank=True)
     required_for = models.CharField(verbose_name="required for", null=True, blank=True, max_length=225)
     fee_structure = models.BooleanField(verbose_name="fee_structure",default=False, null=True, blank=True)
     bonafide_number = models.CharField(unique=True, verbose_name="bonafide number", max_length=10, null=True,
                                        blank=True)
     status = models.CharField(verbose_name="status",choices=STATUS_CHOICES,max_length=225,default=STATUS_CHOICES[0])
 
+
     def save(self, *args, **kwargs):
         if not self.bonafide_number:
             self.bonafide_number = generate_bonafide_number()
+        if not self.applied_date:
+            self.applied_date = date.today()
         super(Bonafide, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.student.first_name} - {self.student.last_name} - {self.roll_no}- {self.bonafide_number} - {self.issue_date}"
 
-
+class Subject(models.Model):
+    subject_name = models.CharField(verbose_name="subject", max_length=225, null=True,blank=True)
+    subject_code = models.CharField(verbose_name="subject_id", max_length=30, null=True,blank=True)
