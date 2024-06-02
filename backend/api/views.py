@@ -238,8 +238,8 @@ class CollegeViewSet(viewsets.ModelViewSet):
 class BonafideViewSet(viewsets.ModelViewSet):
     queryset = Bonafide.objects.all()
     serializer_class = BonafideSerializer
-    #permission_classes = [IsAuthenticated]
-    #renderer_classes = [UserRenderer]
+    # permission_classes = [IsAuthenticated]
+    # renderer_classes = [UserRenderer]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['roll_no__registration_number']
 
@@ -257,35 +257,40 @@ class BonafideViewSet(viewsets.ModelViewSet):
         ).order_by('status_order')
 
     def get_object(self):
+        registration_number = self.request.query_params.get('roll_no__registration_number')
+        if not registration_number:
+            raise ValidationError({'error': 'Registration number is required.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            roll_no = self.request.query_params.get('roll_no__registration_number')
-            return self.queryset.get(roll_no__registration_number=User.registration_number)
+            return self.queryset.get(roll_no__registration_number=registration_number)
         except Bonafide.DoesNotExist:
             raise ValidationError({'error': 'Details are not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    def perform_update(self, serializer):
-        with transaction.atomic():
-            serializer.save(user=self.request.user)
 
-    def update(self, request, *args, **kwargs):
-        if not self.request.data:
-            raise ValidationError({'error': 'Empty JSON payload is not allowed.'},
-                                  status=status.HTTP_400_BAD_REQUEST)
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        if serializer.is_valid(raise_exception=True):
-            self.perform_update(serializer)
-            return Response(
-                {'status': 'success', 'message': 'Details uploaded successfully.',
-                 'Bonafide_data': serializer.data},
-                status=status.HTTP_200_OK)
-        return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+def perform_update(self, serializer):
+    with transaction.atomic():
+        serializer.save(user=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def update(self, request, *args, **kwargs):
+    if not self.request.data:
+        raise ValidationError({'error': 'Empty JSON payload is not allowed.'},
+                              status=status.HTTP_400_BAD_REQUEST)
+    partial = kwargs.pop('partial', False)
+    instance = self.get_object()
+    serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    if serializer.is_valid(raise_exception=True):
+        self.perform_update(serializer)
+        return Response(
+            {'status': 'success', 'message': 'Details uploaded successfully.',
+             'Bonafide_data': serializer.data},
+            status=status.HTTP_200_OK)
+    return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def create(self, request, *args, **kwargs):
+    serializer = self.get_serializer(data=request.data)
+    if serializer.is_valid():
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -174,7 +174,7 @@ class BonafideSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bonafide
         fields = '__all__'
-        read_only_fields = ['student_details', 'college_details', 'bonafide_number', 'status', 'applied_date']
+        read_only_fields = ['student_details', 'college_details', 'bonafide_number', 'applied_date']
 
     def create(self, validated_data):
         if 'supporting_document' in validated_data:
