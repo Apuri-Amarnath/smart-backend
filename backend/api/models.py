@@ -223,3 +223,16 @@ class Bonafide(models.Model):
 class Subject(models.Model):
     subject_name = models.CharField(verbose_name="subject", max_length=225, null=True,blank=True)
     subject_code = models.CharField(verbose_name="subject_id", max_length=30, null=True,blank=True)
+    instructor = models.CharField(verbose_name="Instructor", max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.subject_name} - ({self.subject_code})"
+
+class Semester(models.Model):
+    semester_name = models.CharField(verbose_name="semester_name", max_length=225)
+    subjects = models.ManyToManyField(Subject, verbose_name="subjects", related_name="semester_subjects")
+    def __str__(self):
+        return f"{self.semester_name}"
+    def get_subjects_list(self):
+        return list(self.subjects.all())
+    

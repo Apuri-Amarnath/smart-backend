@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="bonafide filtering done">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="applied date added" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -138,7 +135,8 @@
       <workItem from="1716941471400" duration="148000" />
       <workItem from="1716980027990" duration="388000" />
       <workItem from="1716995456634" duration="131000" />
-      <workItem from="1717329678471" duration="9169000" />
+      <workItem from="1717329678471" duration="10301000" />
+      <workItem from="1717350018151" duration="2068000" />
     </task>
     <task id="LOCAL-00001" summary="started project">
       <option name="closed" value="true" />
@@ -460,7 +458,31 @@
       <option name="project" value="LOCAL" />
       <updated>1717337895123</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="applied date added">
+      <option name="closed" value="true" />
+      <created>1717339330006</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1717339330006</updated>
+    </task>
+    <task id="LOCAL-00042" summary="applied date added">
+      <option name="closed" value="true" />
+      <created>1717351060907</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1717351060907</updated>
+    </task>
+    <task id="LOCAL-00043" summary="applied date added">
+      <option name="closed" value="true" />
+      <created>1717352010145</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1717352010145</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -535,6 +557,7 @@
     <MESSAGE value="added changepass" />
     <MESSAGE value="post method fixed" />
     <MESSAGE value="bonafide filtering done" />
-    <option name="LAST_COMMIT_MESSAGE" value="bonafide filtering done" />
+    <MESSAGE value="applied date added" />
+    <option name="LAST_COMMIT_MESSAGE" value="applied date added" />
   </component>
 </project>
