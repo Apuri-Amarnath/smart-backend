@@ -1,3 +1,5 @@
+import base64
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 from rest_framework import serializers, status
@@ -163,15 +165,33 @@ class CollegeSerializer(serializers.ModelSerializer):
 class BonafideSerializer(serializers.ModelSerializer):
     college_details = CollegeSerializer(source='college', read_only=True)
     student_details = PersonalInfoSerializer(source='student', read_only=True)
-    roll_no_details = serializers.CharField(source='user.registration_number', read_only=True)
+    roll_no_details = serializers.CharField(source='roll_no.registration_number', read_only=True)
 
     class Meta:
         model = Bonafide
-        fields = ['id', 'college', 'student', 'required_for', 'roll_no', 'year_semester', 'batch', 'department',
-                  'course_start_date',
-                  'issue_date', 'bonafide_number', 'college_details', 'student_details', 'roll_no_details', ]
+        fields = '__all__'
+        read_only_fields = ['student_details', 'college_details']
+
+
+    def create(self, validated_data):
+        if 'supporting_document' in validated_data:
+            validated_data['supporting_document'] = base64.b64decode(validated_data.pop('supporting_document'))
+        return super().create(validated_data)
+
+
+    def update(self, instance, validated_data):
+        if 'supporting_document' in validated_data:
+            validated_data['supporting_document'] = base64.b64decode(validated_data.pop('supporting_document'))
+        return super().update(instance, validated_data)
+
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        if instance.supporting_document:
+            ret['supporting_document'] = base64.b64encode(instance.supporting_document).decode('utf-8')
+        return ret
 
 
 college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True)
 student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True)
-roll_no = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
+roll_no = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
