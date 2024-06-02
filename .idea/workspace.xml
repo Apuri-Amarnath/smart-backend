@@ -135,7 +135,7 @@
       <workItem from="1716941471400" duration="148000" />
       <workItem from="1716980027990" duration="388000" />
       <workItem from="1716995456634" duration="131000" />
-      <workItem from="1717329678471" duration="6818000" />
+      <workItem from="1717329678471" duration="7352000" />
     </task>
     <task id="LOCAL-00001" summary="started project">
       <option name="closed" value="true" />
@@ -417,7 +417,31 @@
       <option name="project" value="LOCAL" />
       <updated>1717336521236</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="bonafide filtering done">
+      <option name="closed" value="true" />
+      <created>1717336716466</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1717336716466</updated>
+    </task>
+    <task id="LOCAL-00037" summary="bonafide filtering done">
+      <option name="closed" value="true" />
+      <created>1717336953438</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1717336953438</updated>
+    </task>
+    <task id="LOCAL-00038" summary="bonafide filtering done">
+      <option name="closed" value="true" />
+      <created>1717337051905</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1717337051905</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
