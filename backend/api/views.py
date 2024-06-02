@@ -238,8 +238,8 @@ class CollegeViewSet(viewsets.ModelViewSet):
 class BonafideViewSet(viewsets.ModelViewSet):
     queryset = Bonafide.objects.all()
     serializer_class = BonafideSerializer
-    # permission_classes = [IsAuthenticated]
-    # renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['roll_no__registration_number']
 
