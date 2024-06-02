@@ -3,6 +3,7 @@ import uuid
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.db.models import BinaryField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -128,6 +129,10 @@ class AcademicInformation(models.Model):
     current_year = models.IntegerField(verbose_name="current year", blank=True, null=True)
     gpa = models.DecimalField(verbose_name="GPA", blank=True, null=True, max_digits=4, decimal_places=2)
     course_enrolled = models.TextField(verbose_name="course enrolled", blank=True, null=True)
+    year_semester = models.CharField(verbose_name="year/semester", max_length=10, null=True, blank=True)
+    batch = models.CharField(verbose_name="batch", max_length=10, null=True, blank=True)
+    department = models.CharField(verbose_name="department", max_length=225, null=True, blank=True)
+    course_start_date = models.DateField(verbose_name="course start date", null=True, blank=True)
 
 
 class UserProfile(models.Model):
@@ -185,17 +190,23 @@ def generate_bonafide_number():
 
 
 class Bonafide(models.Model):
+    STATUS_CHOICES = [
+        ('not-applied','Not-applied'),
+        ('applied','Applied'),
+        ('pending','Pending'),
+        ('rejected','Rejected'),
+        ('approved','Approved'),
+    ]
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="bonafide_college")
     student = models.ForeignKey(PersonalInformation, on_delete=models.CASCADE, related_name="bonafide_student")
-    roll_no = models.OneToOneField(User, related_name="roll_no", on_delete=models.CASCADE)
-    year_semester = models.CharField(verbose_name="year/semester", max_length=10, null=True, blank=True)
-    batch = models.CharField(verbose_name="batch", max_length=10, null=True, blank=True)
-    department = models.CharField(verbose_name="department", max_length=225, null=True, blank=True)
-    course_start_date = models.DateField(verbose_name="course start date", null=True, blank=True)
+    roll_no = models.ForeignKey(User, on_delete=models.CASCADE,related_name="roll_no")
+    supporting_document = BinaryField(verbose_name="supporting_document",null=True,blank=True)
     issue_date = models.DateField(verbose_name="issue date", null=True, blank=True)
     required_for = models.CharField(verbose_name="required for", null=True, blank=True, max_length=225)
+    fee_structure = models.BooleanField(verbose_name="fee_structure",default=False, null=True, blank=True)
     bonafide_number = models.CharField(unique=True, verbose_name="bonafide number", max_length=10, null=True,
                                        blank=True)
+    status = models.CharField(verbose_name="status",choices=STATUS_CHOICES,max_length=225,default=STATUS_CHOICES[0])
 
     def save(self, *args, **kwargs):
         if not self.bonafide_number:
@@ -203,4 +214,6 @@ class Bonafide(models.Model):
         super(Bonafide, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.student.first_name} {self.student.last_name} - {self.roll_no} - {self.bonafide_number} - {self.issue_date}"
+        return f"{self.student.first_name} - {self.student.last_name} - {self.roll_no}- {self.bonafide_number} - {self.issue_date}"
+
+

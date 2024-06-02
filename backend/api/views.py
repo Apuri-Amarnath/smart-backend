@@ -25,7 +25,8 @@ import git
 import csv
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
-
+from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
+from django.db.models import Case, When, IntegerField
 import logging
 
 # Set up logging
@@ -238,11 +239,26 @@ class BonafideViewSet(viewsets.ModelViewSet):
     queryset = Bonafide.objects.all()
     serializer_class = BonafideSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['roll_no__registration_number']
+
+    def get_queryset(self):
+        status_order = Case(
+            When(status='applied', then=1),
+            When(status='approved', then=2),
+            When(status='rejected', then=3),
+            When(status='pending', then=4),
+            When(status='not-applied', then=5),
+            output_field=IntegerField(),
+        )
+        return super().get_queryset().annotate(
+            status_order=status_order
+        ).order_by('status_order')
 
     def get_object(self):
         try:
-            roll_no = self.request.query_params.get('roll_no')
-            return self.queryset.get(roll_no=roll_no)
+            roll_no = self.request.query_params.get('roll_no__registration_number')
+            return self.queryset.get(roll_no__registration_number=User.registration_number)
         except Bonafide.DoesNotExist:
             raise ValidationError({'error': 'Details are not found.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -268,10 +284,6 @@ class BonafideViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            roll_no = serializer.validated_data.get('roll_no')
-            if Bonafide.objects.filter(roll_no=roll_no).exists():
-                return Response({'error': 'Bonafide with this roll_no already exists.'},
-                                status=status.HTTP_400_BAD_REQUEST)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
