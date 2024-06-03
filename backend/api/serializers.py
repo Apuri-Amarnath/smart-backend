@@ -4,7 +4,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator
 from rest_framework import serializers, status
 
-from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide
+from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
+    Subject, Semester
 
 User = get_user_model()
 
@@ -165,7 +166,7 @@ class CollegeSerializer(serializers.ModelSerializer):
 class BonafideSerializer(serializers.ModelSerializer):
     college_details = CollegeSerializer(source='college', read_only=True)
     student_details = PersonalInfoSerializer(source='student', read_only=True)
-    roll_no_details = serializers.CharField(source='roll_no.registration_number',read_only=True)
+    roll_no_details = serializers.CharField(source='roll_no.registration_number', read_only=True)
 
     college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True)
     student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True)
@@ -191,3 +192,38 @@ class BonafideSerializer(serializers.ModelSerializer):
         if instance.supporting_document:
             ret['supporting_document'] = base64.b64encode(instance.supporting_document).decode('utf-8')
         return ret
+
+
+class SubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = '__all__'
+
+
+class SemesterSerializer(serializers.ModelSerializer):
+    subject_codes = serializers.ListField(child=serializers.CharField(), write_only=True)
+    subjects = SubjectSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Semester
+        fields = ['id', 'semester_name', 'subjects', 'subject_codes', 'branch']
+
+    def create(self, validated_data):
+        subject_codes = validated_data.pop('subject_codes')
+        subjects = Subject.objects.filter(subject_code__in=subject_codes)
+        semester = Semester.objects.create(**validated_data)
+        semester.subjects.add(*subjects)
+
+        return semester
+
+    def update(self, instance, validated_data):
+        subject_codes = validated_data.pop('subject_code', None)
+        instance.branch = validated_data.get('branch', instance.branch)
+        instance.semester_name = validated_data.get('semester_name', instance.semester_name)
+        instance.save()
+
+        if subject_codes is not None:
+            subjects = Subject.objects.filter(subject_code__in=subject_codes)
+            instance.subjects.set(subjects)
+
+        return instance

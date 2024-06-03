@@ -3,11 +3,13 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLogoutView, update, CollegeViewSet, \
-    BonafideViewSet, ChangePasswordView
+    BonafideViewSet, ChangePasswordView, SemesterViewSet, SubjectViewSet
 
 router = DefaultRouter()
 router.register(r'college', CollegeViewSet, basename='college-details')
 router.register(r'bonafide', BonafideViewSet, basename='bonafide-details')
+router.register(r'semester', SemesterViewSet, basename='semester')
+router.register(r'subject', SubjectViewSet, basename='subjects')
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
     path('login/', UserLoginView.as_view(), name='login'),

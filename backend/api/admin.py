@@ -2,7 +2,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
-from .models import User, UserProfile,PersonalInformation,ContactInformation,AcademicInformation, College,Bonafide
+from .models import Semester, Subject, User, UserProfile, PersonalInformation, ContactInformation, AcademicInformation, \
+    College, Bonafide
+
+
 class UserCreationForm(forms.ModelForm):
     """
     A form for creating new users. Includes all the required
@@ -31,6 +34,7 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 
+
 class UserChangeForm(forms.ModelForm):
     """
     A form for updating users. Includes all the fields on
@@ -42,6 +46,7 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('registration_number', 'password', 'is_active', 'is_admin', 'role')
+
 
 class UserModelAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
@@ -67,6 +72,7 @@ class UserModelAdmin(BaseUserAdmin):
     ordering = ('registration_number',)
     filter_horizontal = ()
 
+
 # Now register the new UserModelAdmin...
 admin.site.register(User, UserModelAdmin)
 # ... and, since we're not using Django's built-in permissions,
@@ -76,3 +82,5 @@ admin.site.register(AcademicInformation)
 admin.site.register(ContactInformation)
 admin.site.register(College)
 admin.site.register(Bonafide)
+admin.site.register(Semester)
+admin.site.register(Subject)
