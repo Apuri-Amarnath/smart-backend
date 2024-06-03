@@ -234,5 +234,5 @@ class Semester(models.Model):
     def __str__(self):
         return f"{self.semester_name}"
     def get_subjects_list(self):
-        return list(self.subjects.all())
+        return self.subjects.all()
     

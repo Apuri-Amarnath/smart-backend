@@ -3,16 +3,18 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db import transaction
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions, viewsets
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
-from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation
+from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
+    Subject, Semester
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
-    ChangeUserPasswordSerializer, Csv_RegistrationSerializer
+    ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -25,7 +27,8 @@ import git
 import csv
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
-from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
+from rest_framework.filters import SearchFilter,OrderingFilter
+from rest_framework import viewsets,filters
 from django.db.models import Case, When, IntegerField
 import logging
 
@@ -238,10 +241,10 @@ class CollegeViewSet(viewsets.ModelViewSet):
 class BonafideViewSet(viewsets.ModelViewSet):
     queryset = Bonafide.objects.all()
     serializer_class = BonafideSerializer
-    permission_classes = [IsAuthenticated]
-    renderer_classes = [UserRenderer]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['roll_no__registration_number']
+    #permission_classes = [IsAuthenticated]
+    #renderer_classes = [UserRenderer]
+    filter_backends = [SearchFilter,OrderingFilter]
+    search_fields = ['roll_no__registration_number']
 
     def get_queryset(self):
         status_order = Case(
@@ -265,32 +268,62 @@ class BonafideViewSet(viewsets.ModelViewSet):
         except Bonafide.DoesNotExist:
             raise ValidationError({'error': 'Details are not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            serializer.save(user=self.request.user)
 
-def perform_update(self, serializer):
-    with transaction.atomic():
-        serializer.save(user=self.request.user)
+    def update(self, request, *args, **kwargs):
+        if not self.request.data:
+            raise ValidationError({'error': 'Empty JSON payload is not allowed.'},
+                                  status=status.HTTP_400_BAD_REQUEST)
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_update(serializer)
+            return Response(
+                {'status': 'success', 'message': 'Details uploaded successfully.',
+                 'Bonafide_data': serializer.data},
+                status=status.HTTP_200_OK)
+        return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-def update(self, request, *args, **kwargs):
-    if not self.request.data:
-        raise ValidationError({'error': 'Empty JSON payload is not allowed.'},
-                              status=status.HTTP_400_BAD_REQUEST)
-    partial = kwargs.pop('partial', False)
-    instance = self.get_object()
-    serializer = self.get_serializer(instance, data=request.data, partial=partial)
-    if serializer.is_valid(raise_exception=True):
-        self.perform_update(serializer)
-        return Response(
-            {'status': 'success', 'message': 'Details uploaded successfully.',
-             'Bonafide_data': serializer.data},
-            status=status.HTTP_200_OK)
-    return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+class SubjectViewSet(viewsets.ModelViewSet):
+    queryset = Subject.objects.all()
+    serializer_class = SubjectSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['subject_name', 'subject_code', 'instructor']
 
 
-def create(self, request, *args, **kwargs):
-    serializer = self.get_serializer(data=request.data)
-    if serializer.is_valid():
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class SemesterViewSet(viewsets.ModelViewSet):
+    queryset = Semester.objects.all()
+    serializer_class = SemesterSerializer
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['semester_name', 'subjects__subject_code', ]
+    ordering_fields = '__all__'
+    ordering = ['semester_name']
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_update(serializer)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
