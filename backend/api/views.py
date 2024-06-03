@@ -22,13 +22,14 @@ from rest_framework.exceptions import ValidationError
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import PermissionDenied
 import subprocess
 import git
 import csv
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.filters import SearchFilter,OrderingFilter
-from rest_framework import viewsets,filters
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework import viewsets, filters
 from django.db.models import Case, When, IntegerField
 import logging
 
@@ -229,21 +230,21 @@ class CollegeViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         if not self.request.user.is_staff:
-            raise ValidationError({'error': 'Only admin or teacher users can create colleges.'})
+            raise ValidationError({'error': 'Only admin or staff users can create colleges.'})
         serializer.save()
 
     def perform_create(self, serializer):
         if not self.request.user.is_staff:
-            raise ValidationError({'error': 'Only admin or teacher users can create colleges.'})
+            raise ValidationError({'error': 'Only admin or staff users can create colleges.'})
         serializer.save()
 
 
 class BonafideViewSet(viewsets.ModelViewSet):
     queryset = Bonafide.objects.all()
     serializer_class = BonafideSerializer
-    #permission_classes = [IsAuthenticated]
-    #renderer_classes = [UserRenderer]
-    filter_backends = [SearchFilter,OrderingFilter]
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['roll_no__registration_number']
 
     def get_queryset(self):
@@ -297,27 +298,53 @@ class BonafideViewSet(viewsets.ModelViewSet):
 
 
 class SubjectViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
     filter_backends = [SearchFilter]
     search_fields = ['subject_name', 'subject_code', 'instructor']
 
+    def create(self, request, *args, **kwargs):
+        if not self.request.user.is_staff:
+            raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if not self.request.user.is_staff:
+            raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
+        return super().create(request, *args, **kwargs)
+
 
 class SemesterViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
     filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ['semester_name', 'subjects__subject_code', ]
+    search_fields = ['semester_name', 'branch']
     ordering_fields = '__all__'
-    ordering = ['semester_name']
+    ordering = ['semester_name', ]
 
     def create(self, request, *args, **kwargs):
+        if not self.request.user.is_staff:
+            raise ValidationError({'error': 'Only admin or staff users can create semester data.'})
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer):
+        if not self.request.user.is_staff:
+            raise ValidationError({'error': 'Only admin or staff users can update semester data.'})
+        serializer.save()
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_staff:
+            raise ValidationError({'error': 'Only admin or staff users can create semester data.'})
+        serializer.save()
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)

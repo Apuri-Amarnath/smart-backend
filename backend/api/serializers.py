@@ -201,25 +201,24 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 
 class SemesterSerializer(serializers.ModelSerializer):
-    subject_codes = serializers.ListField(child=serializers.CharField(),write_only=True)
+    subject_codes = serializers.ListField(child=serializers.CharField(), write_only=True)
     subjects = SubjectSerializer(many=True, read_only=True)
 
     class Meta:
         model = Semester
-        fields = ['id', 'semester_name', 'subjects', 'subject_codes']
+        fields = ['id', 'semester_name', 'subjects', 'subject_codes', 'branch']
 
     def create(self, validated_data):
         subject_codes = validated_data.pop('subject_codes')
         subjects = Subject.objects.filter(subject_code__in=subject_codes)
-        semester_name = validated_data.get('semester_name')
-        semester, created = Semester.objects.get_or_create(semester_name=semester_name)
-
+        semester = Semester.objects.create(**validated_data)
         semester.subjects.add(*subjects)
 
         return semester
 
     def update(self, instance, validated_data):
         subject_codes = validated_data.pop('subject_code', None)
+        instance.branch = validated_data.get('branch', instance.branch)
         instance.semester_name = validated_data.get('semester_name', instance.semester_name)
         instance.save()
 
