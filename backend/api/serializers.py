@@ -217,7 +217,9 @@ class BonafideSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         student_value = attrs.get('student')
         roll_no_value = attrs.get('roll_no')
-        if student_value != roll_no_value:
+        if student_value != roll_no_value.personal_information:
+            print("rollno",roll_no_value)
+            print("student",student_value)
             raise serializers.ValidationError('student and roll_no should be the same')
         return attrs
 
