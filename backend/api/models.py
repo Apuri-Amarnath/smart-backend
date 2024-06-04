@@ -87,7 +87,7 @@ class User(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
-        return self.is_admin or self.role == 'faculty' or self.role == 'office' or self.role == 'principal'
+        return self.is_admin or self.role in ['faculty', 'principal','office']
 
 
 def upload_path(instance, filename, folder):

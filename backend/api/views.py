@@ -64,6 +64,7 @@ def update(request):
 # manually generate token
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
+    refresh['role'] = user.role
 
     return {
         'refresh': str(refresh),
