@@ -1,6 +1,7 @@
 import base64
 
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from django.core.validators import MinLengthValidator
 from rest_framework import serializers, status
 
@@ -163,7 +164,27 @@ class CollegeSerializer(serializers.ModelSerializer):
         read_only_fields = ['roll_no']
 
 
+class Base64ImageField(serializers.Field):
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith('data:image'):
+
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            return ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+        elif isinstance(data, str):
+
+            return ContentFile(base64.b64decode(data), name='temp')
+        return data
+
+    def to_representation(self, value):
+        if value:
+            return base64.b64encode(value).decode('utf-8')
+        return None
+
+
 class BonafideSerializer(serializers.ModelSerializer):
+    supporting_document = Base64ImageField(required=False)
+
     college_details = CollegeSerializer(source='college', read_only=True)
     student_details = PersonalInfoSerializer(source='student', read_only=True)
     roll_no_details = serializers.CharField(source='roll_no.registration_number', read_only=True)
@@ -178,20 +199,20 @@ class BonafideSerializer(serializers.ModelSerializer):
         read_only_fields = ['student_details', 'college_details', 'bonafide_number', 'applied_date']
 
     def create(self, validated_data):
-        if 'supporting_document' in validated_data:
-            validated_data['supporting_document'] = base64.b64decode(validated_data.pop('supporting_document'))
-        return super().create(validated_data)
+        supporting_document = validated_data.pop('supporting_document', None)
+        instance = super().create(validated_data)
+        if supporting_document:
+            instance.supporting_document = supporting_document.read()
+            instance.save()
+        return instance
 
     def update(self, instance, validated_data):
-        if 'supporting_document' in validated_data:
-            validated_data['supporting_document'] = base64.b64decode(validated_data.pop('supporting_document'))
-        return super().update(instance, validated_data)
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        if instance.supporting_document:
-            ret['supporting_document'] = base64.b64encode(instance.supporting_document).decode('utf-8')
-        return ret
+        supporting_document = validated_data.pop('supporting_document', None)
+        instance = super().update(instance, validated_data)
+        if supporting_document:
+            instance.supporting_document = supporting_document.read()
+            instance.save()
+        return instance
 
 
 class SubjectSerializer(serializers.ModelSerializer):
