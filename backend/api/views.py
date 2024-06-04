@@ -74,6 +74,7 @@ def get_tokens_for_user(user):
 
 class TokenRefresh(APIView):
     renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         refresh_token = request.data.get('refresh')
