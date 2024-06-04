@@ -142,7 +142,7 @@
       <workItem from="1717329678471" duration="10301000" />
       <workItem from="1717350018151" duration="2349000" />
       <workItem from="1717427655202" duration="11594000" />
-      <workItem from="1717508678135" duration="1916000" />
+      <workItem from="1717508678135" duration="2241000" />
     </task>
     <task id="LOCAL-00001" summary="started project">
       <option name="closed" value="true" />
@@ -520,7 +520,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717438422046</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="added subject with semester api">
+      <option name="closed" value="true" />
+      <created>1717510927559</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1717510927559</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -1,7 +1,11 @@
+import base64
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
+from django.utils.html import format_html
+
 from .models import Semester, Subject, User, UserProfile, PersonalInformation, ContactInformation, AcademicInformation, \
     College, Bonafide
 
@@ -73,6 +77,20 @@ class UserModelAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
+class BonafideAdmin(admin.ModelAdmin):
+    list_display = ['college', 'student', 'roll_no', 'issue_date', 'status', 'supporting_document_display']
+
+    def supporting_document_display(self, obj):
+        if obj.supporting_document:
+            # Encode the binary data to base64
+            encoded_document = base64.b64encode(obj.supporting_document).decode('utf-8')
+            # Return the HTML for displaying the image
+            return format_html('<img src="data:image/png;base64,{}" width="100" />', encoded_document)
+        return "No Image"
+
+    supporting_document_display.short_description = 'Supporting Document'
+
+
 # Now register the new UserModelAdmin...
 admin.site.register(User, UserModelAdmin)
 # ... and, since we're not using Django's built-in permissions,
@@ -81,6 +99,6 @@ admin.site.register(PersonalInformation)
 admin.site.register(AcademicInformation)
 admin.site.register(ContactInformation)
 admin.site.register(College)
-admin.site.register(Bonafide)
+admin.site.register(Bonafide, BonafideAdmin)
 admin.site.register(Semester)
 admin.site.register(Subject)
