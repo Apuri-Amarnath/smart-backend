@@ -201,7 +201,7 @@ class Bonafide(models.Model):
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="bonafide_college")
     student = models.ForeignKey(PersonalInformation, on_delete=models.CASCADE, related_name="bonafide_student")
     roll_no = models.ForeignKey(User, on_delete=models.CASCADE, related_name="roll_no")
-    supporting_document = BinaryField(verbose_name="supporting_document", null=True, blank=True)
+    supporting_document = models.BinaryField(verbose_name="supporting_document", null=True, blank=True)
     issue_date = models.DateField(verbose_name="issue date", null=True, blank=True)
     applied_date = models.DateField(verbose_name="applied date", null=True, blank=True)
     required_for = models.CharField(verbose_name="required for", null=True, blank=True, max_length=225)
