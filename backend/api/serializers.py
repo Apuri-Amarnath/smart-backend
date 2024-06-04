@@ -214,6 +214,13 @@ class BonafideSerializer(serializers.ModelSerializer):
             instance.save()
         return instance
 
+    def validate(self, attrs):
+        student_registration_number = attrs.get('student_details', {}).get('registration_number')
+        roll_number_registraton_number = attrs.get('roll_no', {}).get('registration_number')
+        if not student_registration_number or not roll_number_registraton_number:
+            raise serializers.ValidationError('Both student registation number and roll number are not same')
+        return attrs
+
 
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
