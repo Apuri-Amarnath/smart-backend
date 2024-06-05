@@ -6,7 +6,7 @@ from django.core.validators import MinLengthValidator
 from rest_framework import serializers, status
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
-    Subject, Semester
+    Subject, Semester, Semester_Registration
 
 User = get_user_model()
 
@@ -218,8 +218,8 @@ class BonafideSerializer(serializers.ModelSerializer):
         student_value = attrs.get('student')
         roll_no_value = attrs.get('roll_no')
         if student_value != roll_no_value.personal_information:
-            print("rollno",roll_no_value)
-            print("student",student_value)
+            print("rollno", roll_no_value)
+            print("student", student_value)
             raise serializers.ValidationError('student and roll_no should be the same')
         return attrs
 
@@ -243,7 +243,6 @@ class SemesterSerializer(serializers.ModelSerializer):
         subjects = Subject.objects.filter(subject_code__in=subject_codes)
         semester = Semester.objects.create(**validated_data)
         semester.subjects.add(*subjects)
-
         return semester
 
     def update(self, instance, validated_data):
@@ -251,9 +250,24 @@ class SemesterSerializer(serializers.ModelSerializer):
         instance.branch = validated_data.get('branch', instance.branch)
         instance.semester_name = validated_data.get('semester_name', instance.semester_name)
         instance.save()
-
         if subject_codes is not None:
             subjects = Subject.objects.filter(subject_code__in=subject_codes)
             instance.subjects.set(subjects)
-
         return instance
+
+
+class SemesterRegistrationSerializer(serializers.ModelSerializer):
+    semester = SemesterSerializer(read_only=True)
+    student_details = PersonalInfoSerializer(source='student', read_only=True)
+    student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True)
+
+    class Meta:
+        model = Semester_Registration
+        fields = '__all__'
+        read_only_fields = ['id', 'student_details']
+
+    def create(self, validated_data):
+        student = validated_data.pop('student')
+        semester = Semester.objects.get(id=self.context['request'].data['semester'])
+        registration = Semester_Registration.objects.create(student=student, semester=semester)
+        return registration

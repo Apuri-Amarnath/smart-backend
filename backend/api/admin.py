@@ -7,7 +7,7 @@ from django import forms
 from django.utils.html import format_html
 
 from .models import Semester, Subject, User, UserProfile, PersonalInformation, ContactInformation, AcademicInformation, \
-    College, Bonafide
+    College, Bonafide, Semester_Registration
 
 
 class UserCreationForm(forms.ModelForm):
@@ -102,3 +102,4 @@ admin.site.register(College)
 admin.site.register(Bonafide, BonafideAdmin)
 admin.site.register(Semester)
 admin.site.register(Subject)
+admin.site.register(Semester_Registration)
