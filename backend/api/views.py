@@ -360,6 +360,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
 
 class SemesterRegistrationViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
     queryset = Semester_Registration.objects.all()
     serializer_class = SemesterRegistrationSerializer
 
