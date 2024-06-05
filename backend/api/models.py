@@ -87,7 +87,7 @@ class User(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
-        return self.is_admin or self.role in ['faculty', 'principal','office']
+        return self.is_admin or self.role in ['faculty', 'principal', 'office']
 
 
 def upload_path(instance, filename, folder):
@@ -223,7 +223,7 @@ class Bonafide(models.Model):
 
 class Subject(models.Model):
     subject_name = models.CharField(verbose_name="subject", max_length=225, null=True, blank=True)
-    subject_code = models.CharField(verbose_name="subject_id", max_length=30, null=True,unique=True)
+    subject_code = models.CharField(verbose_name="subject_id", max_length=30, null=True, unique=True)
     instructor = models.CharField(verbose_name="Instructor", max_length=100, null=True, blank=True)
 
     def __str__(self):
@@ -231,7 +231,7 @@ class Subject(models.Model):
 
 
 class Semester(models.Model):
-    branch = models.CharField(verbose_name="branch", max_length=225,null=True, blank=True)
+    branch = models.CharField(verbose_name="branch", max_length=225, null=True, blank=True)
     semester_name = models.CharField(verbose_name="semester_name", max_length=225)
     subjects = models.ManyToManyField(Subject, verbose_name="subjects", related_name="semester_subjects")
 
@@ -240,3 +240,18 @@ class Semester(models.Model):
 
     def get_subjects_list(self):
         return self.subjects.all()
+
+
+class Semester_Registration(models.Model):
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="semester_registrations")
+    student = models.ForeignKey(PersonalInformation, on_delete=models.CASCADE,
+                                related_name="semester_registration_student")
+    applied_date = models.DateField(verbose_name="semester_registration_date", null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.applied_date:
+            self.applied_date = date.today()
+        super(Semester_Registration, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.semester} - {self.student}"

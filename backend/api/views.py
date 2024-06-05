@@ -10,11 +10,12 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
-    Subject, Semester
+    Subject, Semester, Semester_Registration
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
-    ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer
+    ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer, \
+    SemesterRegistrationSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -356,3 +357,18 @@ class SemesterViewSet(viewsets.ModelViewSet):
             self.perform_update(serializer)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SemesterRegistrationViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
+    queryset = Semester_Registration.objects.all()
+    serializer_class = SemesterRegistrationSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response(serializer, {'message': 'Semester registration Successfull'},
+                            status=status.HTTP_201_CREATED)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
