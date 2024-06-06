@@ -244,7 +244,7 @@ class Semester(models.Model):
 
 class Semester_Registration(models.Model):
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="semester_registrations")
-    student = models.ForeignKey(PersonalInformation, on_delete=models.CASCADE,
+    student = models.ForeignKey(UserProfile, on_delete=models.CASCADE,
                                 related_name="semester_registration_student")
     applied_date = models.DateField(verbose_name="semester_registration_date", null=True, blank=True)
 
