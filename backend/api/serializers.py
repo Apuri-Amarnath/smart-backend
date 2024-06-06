@@ -258,8 +258,8 @@ class SemesterSerializer(serializers.ModelSerializer):
 
 class SemesterRegistrationSerializer(serializers.ModelSerializer):
     semester = SemesterSerializer(read_only=True)
-    student_details = PersonalInfoSerializer(source='student', read_only=True)
-    student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True)
+    student_details = UserProfileSerializer(source='student', read_only=True)
+    student = serializers.PrimaryKeyRelatedField(queryset=UserProfile.objects.all(), write_only=True)
 
     class Meta:
         model = Semester_Registration
