@@ -361,14 +361,19 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
 class SemesterRegistrationViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    filter_backends = [SearchFilter]
+    search_fields = ['student__user__registration_number']
     renderer_classes = [UserRenderer]
     queryset = Semester_Registration.objects.all()
     serializer_class = SemesterRegistrationSerializer
 
-    def post(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            self.perform_create(serializer)
-            return Response(serializer, {'message': 'Semester registration Successfull'},
-                            status=status.HTTP_201_CREATED)
-        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, {'message': 'Semester registration successful'},
+                        status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save()
