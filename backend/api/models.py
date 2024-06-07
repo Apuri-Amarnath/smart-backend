@@ -218,7 +218,7 @@ class Bonafide(models.Model):
         super(Bonafide, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.student.first_name} - {self.student.last_name} - {self.roll_no}- {self.bonafide_number} - {self.issue_date}"
+        return f" fname: {self.student.first_name} -- lname: {self.student.last_name} -- roll_no: {self.roll_no} -- bonafide no: {self.bonafide_number} -- date:  {self.issue_date}"
 
 
 class Subject(models.Model):
@@ -227,7 +227,7 @@ class Subject(models.Model):
     instructor = models.CharField(verbose_name="Instructor", max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.subject_name} - ({self.subject_code})"
+        return f"subject name: {self.subject_name} -- subject code: {self.subject_code} -- instructor: {self.instructor}"
 
 
 class Semester(models.Model):
@@ -236,7 +236,8 @@ class Semester(models.Model):
     subjects = models.ManyToManyField(Subject, verbose_name="subjects", related_name="semester_subjects")
 
     def __str__(self):
-        return f"{self.semester_name}"
+        subjects_list = ", ".join([subject.name for subject in self.subjects.all()])
+        return f" semester: {self.semester_name} -- subjects: {subjects_list}"
 
     def get_subjects_list(self):
         return self.subjects.all()
@@ -255,3 +256,73 @@ class Semester_Registration(models.Model):
 
     def __str__(self):
         return f"{self.semester} - {self.student}"
+
+
+# class Hostel_Allotment(models.Model):
+#    STATUS_CHOICES = [
+#        ('not-applied', 'Not-applied'),
+#        ('applied', 'Applied'),
+#        ('pending', 'Pending'),
+#        ('approved', 'Approved'),
+#    ]
+#    registration_number = models.OneToOneField(User, on_delete=models.CASCADE,related_name="hostel_allotment_registrations")
+#    latest_marksheet = models.BinaryField(verbose_name="marksheet", null=True, blank=True)
+#    status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="not-applied")
+#    def __str__(self):
+#        return f"{self.registration_number} - {self.status}"
+#
+class Hostel_No_Due_request(models.Model):
+    semester = models.CharField(max_length=225, verbose_name="semester", null=True, blank=True)
+    registration_number = models.OneToOneField(User, on_delete=models.CASCADE, related_name="registration_number")
+    Maintance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
+    Mess_fees_date = models.DateField(verbose_name="Mess_fees", null=True, blank=True)
+    self_declaration = models.BooleanField(verbose_name="self_agree", null=True, blank=True, default=False)
+    requested_date = models.DateField(verbose_name="requested_date", null=True, blank=True)
+    approved_date = models.DateField(verbose_name="approves_date", null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.registration_number} -- semester: {self.semester} -- requested date: {self.requested_date} -- approved date: {self.approved_date}"
+
+
+class Guest_room_request(models.Model):
+    PURPOSE_CHOICES = [
+        ('for staying parents', 'For Staying Parents'),
+        ('for staying relatives', 'For Staying Relatives'),
+        ('for staying invited delegate', 'For Staying Invited Delegate'),
+        ('for staying alumni', 'For Staying Alumni')
+    ]
+
+    registration_number = models.OneToOneField(User, on_delete=models.CASCADE, related_name="registration_number")
+    purpose_of_request = models.CharField(max_length=225, choices=PURPOSE_CHOICES)
+    from_date = models.DateField(verbose_name="from_date", null=True, blank=True)
+    to_date = models.DateField(verbose_name="to_date", null=True, blank=True)
+    no_of_persons = models.IntegerField(verbose_name="no_of_persons", blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.registration_number} -- from: {self.from_date} -- to: {self.to_date} no of: {self.no_of_persons}'
+
+
+class Complaints(models.Model):
+    COMPLAINT_CHOICES = [
+        ('ragging related', 'Ragging Related'),
+        ('academic fees', 'Academic Fees'),
+        ('classes related', 'Classes Related'),
+        ('others', 'Others')
+    ]
+    STATUS_CHOICES = [
+        ('not-applied', 'Not-applied'),
+        ('applied', 'Applied'),
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+    ]
+    registration_number = models.OneToOneField(User, on_delete=models.CASCADE,
+                                               related_name="registration_number/employee_no")
+    name = models.CharField(max_length=225, verbose_name="name", null=True, blank=True)
+    branch = models.CharField(max_length=225, verbose_name="branch", null=True, blank=True)
+    complaint_type = models.CharField(choices=COMPLAINT_CHOICES, max_length=225, verbose_name="complaint type",
+                                      null=True, blank=True)
+    complaint_description = models.TextField(verbose_name="complaint description", null=True, blank=True)
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status", null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.registration_number} -- Name: {self.name} -- {self.branch} -- complaint type: {self.complaint_type}'
