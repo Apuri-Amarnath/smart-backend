@@ -258,22 +258,35 @@ class Semester_Registration(models.Model):
         return f"{self.semester} - {self.student}"
 
 
-# class Hostel_Allotment(models.Model):
-#    STATUS_CHOICES = [
-#        ('not-applied', 'Not-applied'),
-#        ('applied', 'Applied'),
-#        ('pending', 'Pending'),
-#        ('approved', 'Approved'),
-#    ]
-#    registration_number = models.OneToOneField(User, on_delete=models.CASCADE,related_name="hostel_allotment_registrations")
-#    latest_marksheet = models.BinaryField(verbose_name="marksheet", null=True, blank=True)
-#    status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="not-applied")
-#    def __str__(self):
-#        return f"{self.registration_number} - {self.status}"
-#
+class Hostel_Allotment(models.Model):
+    STATUS_CHOICES = [
+        ('not-applied', 'Not-applied'),
+        ('applied', 'Applied'),
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                                related_name="hostel_allotment_registrations")
+
+    latest_marksheet = models.BinaryField(verbose_name="marksheet", null=True, blank=True)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="not-applied")
+
+    def __str__(self):
+        return f"{self.user.registration_number} - {self.status}"
+
+
+class Hostel_Room_Allotment(models.Model):
+    registration_details = models.OneToOneField(Hostel_Allotment, on_delete=models.CASCADE,
+                                                related_name="hostel_room_allotment")
+    hostel_room = models.CharField(max_length=225, null=True, blank=True, verbose_name="hostel_room", unique=True)
+
+    def __str__(self):
+        return f" room no : {self.hostel_room} -- registration No : {self.registration_details.user.registration_number}"
+
+
 class Hostel_No_Due_request(models.Model):
     semester = models.CharField(max_length=225, verbose_name="semester", null=True, blank=True)
-    registration_number = models.OneToOneField(User, on_delete=models.CASCADE, related_name="registration_number")
+    registration_number = models.OneToOneField(User, on_delete=models.CASCADE, related_name="Hostel_no_due_request")
     Maintance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
     Mess_fees_date = models.DateField(verbose_name="Mess_fees", null=True, blank=True)
     self_declaration = models.BooleanField(verbose_name="self_agree", null=True, blank=True, default=False)
@@ -292,31 +305,32 @@ class Guest_room_request(models.Model):
         ('for staying alumni', 'For Staying Alumni')
     ]
 
-    registration_number = models.OneToOneField(User, on_delete=models.CASCADE, related_name="registration_number")
+    registration_number = models.OneToOneField(User, on_delete=models.CASCADE, related_name="guest_room_request")
     purpose_of_request = models.CharField(max_length=225, choices=PURPOSE_CHOICES)
     from_date = models.DateField(verbose_name="from_date", null=True, blank=True)
     to_date = models.DateField(verbose_name="to_date", null=True, blank=True)
     no_of_persons = models.IntegerField(verbose_name="no_of_persons", blank=True, null=True)
 
     def __str__(self):
-        return f'{self.registration_number} -- from: {self.from_date} -- to: {self.to_date} no of: {self.no_of_persons}'
+        return f'{self.User.registration_number} -- from: {self.from_date} -- to: {self.to_date} no of: {self.no_of_persons}'
 
 
-class Complaints(models.Model):
+class Complaint(models.Model):
     COMPLAINT_CHOICES = [
         ('ragging related', 'Ragging Related'),
         ('academic fees', 'Academic Fees'),
         ('classes related', 'Classes Related'),
         ('others', 'Others')
     ]
+
     STATUS_CHOICES = [
-        ('not-applied', 'Not-applied'),
         ('applied', 'Applied'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
     ]
+
     registration_number = models.OneToOneField(User, on_delete=models.CASCADE,
-                                               related_name="registration_number/employee_no")
+                                               related_name="registration_number_or_employee_no")
     name = models.CharField(max_length=225, verbose_name="name", null=True, blank=True)
     branch = models.CharField(max_length=225, verbose_name="branch", null=True, blank=True)
     complaint_type = models.CharField(choices=COMPLAINT_CHOICES, max_length=225, verbose_name="complaint type",

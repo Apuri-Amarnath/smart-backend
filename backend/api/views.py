@@ -10,12 +10,14 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
-    Subject, Semester, Semester_Registration
+    Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
+    Hostel_Room_Allotment
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
     ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer, \
-    SemesterRegistrationSerializer
+    SemesterRegistrationSerializer, HostelAllotmentSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
+    HostelRoomAllotmentSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -376,3 +378,48 @@ class SemesterRegistrationViewset(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
+
+
+class HostelAllotmentViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['registration_number']
+    queryset = Hostel_Allotment.objects.all()
+    serializer_class = HostelAllotmentSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['registration_number']
+    queryset = Hostel_Room_Allotment.objects.all()
+    serializer_class = HostelRoomAllotmentSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            hostel_room_allotment = serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context

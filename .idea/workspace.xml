@@ -5,8 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed semester-registration">
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0012_complaints_guest_room_request_hostel_allotment_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0013_complaint_delete_complaints.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0014_rename_registration_number_hostel_allotment_user.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0015_rename_registration_number_hostel_room_allotment_user.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0016_rename_user_hostel_room_allotment_registration_details.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0017_alter_hostel_room_allotment_hostel_room.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0018_alter_hostel_allotment_user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,15 +161,8 @@
       <workItem from="1717669508766" duration="1572000" />
       <workItem from="1717671742106" duration="221000" />
       <workItem from="1717673913227" duration="2839000" />
-      <workItem from="1717745760809" duration="3192000" />
-    </task>
-    <task id="LOCAL-00012" summary="added update-server">
-      <option name="closed" value="true" />
-      <created>1715855930899</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1715855930899</updated>
+      <workItem from="1717745760809" duration="4723000" />
+      <workItem from="1717844717528" duration="17022000" />
     </task>
     <task id="LOCAL-00013" summary="initial deploy">
       <option name="closed" value="true" />
@@ -544,7 +548,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717676750666</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="fixed semester-registration">
+      <option name="closed" value="true" />
+      <created>1717749282740</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1717749282740</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

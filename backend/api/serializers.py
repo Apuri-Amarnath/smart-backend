@@ -6,7 +6,8 @@ from django.core.validators import MinLengthValidator
 from rest_framework import serializers, status
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
-    Subject, Semester, Semester_Registration
+    Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
+    Guest_room_request, Complaint
 
 User = get_user_model()
 
@@ -271,3 +272,118 @@ class SemesterRegistrationSerializer(serializers.ModelSerializer):
         semester = Semester.objects.get(id=self.context['request'].data['semester'])
         registration = Semester_Registration.objects.create(student=student, semester=semester)
         return registration
+
+
+class HostelAllotmentSerializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField(write_only=True)
+    latest_marksheet = Base64ImageField(required=False)
+
+    class Meta:
+        model = Hostel_Allotment
+        fields = ['id', 'registration_number', 'latest_marksheet', 'status']
+        read_only_fields = ['user']
+
+    def create(self, validated_data):
+        registration_number = validated_data.pop('registration_number')
+        latest_marksheet = validated_data.pop('latest_marksheet', None)
+        try:
+            user = User.objects.get(registration_number=registration_number)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User does not exist")
+        status = validated_data.pop('status')
+
+        hostel_allotment = Hostel_Allotment.objects.create(
+            user=user,
+            status=status
+        )
+        if latest_marksheet:
+            hostel_allotment.latest_marksheet = latest_marksheet.read()
+            hostel_allotment.save()
+
+        return hostel_allotment
+
+    def update(self, instance, validated_data):
+        registration_number = validated_data.pop('registration_number')
+        latest_marksheet = validated_data.pop('latest_marksheet', None)
+
+        if registration_number:
+            try:
+                user = User.objects.get(registration_number=registration_number)
+                instance.user = user
+            except User.DoesNotExist:
+                raise serializers.ValidationError("User does not exist")
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if latest_marksheet:
+            instance.latest_marksheet = latest_marksheet.read()
+        instance.save()
+        return instance
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['registration_number'] = instance.user.registration_number
+        return representation
+
+
+class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Hostel_Room_Allotment
+        fields = ['registration_number', 'hostel_room']
+
+    def create(self, validated_data):
+        registration_number = validated_data.pop('registration_number')
+        hostel_room = validated_data.pop('hostel_room')
+
+        try:
+            # Query Hostel_Allotment by user's registration_number
+            hostel_allotment = Hostel_Allotment.objects.get(user__registration_number=registration_number)
+        except Hostel_Allotment.DoesNotExist:
+            raise serializers.ValidationError("Hostel allotment not found for the given registration number")
+        if Hostel_Room_Allotment.objects.filter(registration_details=hostel_allotment) is not None:
+            raise serializers.ValidationError("Hostel room is already alloteed")
+
+        if Hostel_Room_Allotment.objects.filter(hostel_room=hostel_room).exists():
+            raise serializers.ValidationError(f"A hostel room with the given number is already allotted.")
+
+        hostel_room_allotment = Hostel_Room_Allotment.objects.create(
+            registration_details=hostel_allotment,
+            hostel_room=hostel_room
+        )
+
+        return hostel_room_allotment
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['registration_number'] = instance.registration_details.user.registration_number
+        return representation
+
+
+class HostelNoDuesSerializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField(source="user.registration_number", read_only=True)
+
+    class Meta:
+        model = Hostel_No_Due_request
+        fields = '__all__'
+        read_only_fields = ['registration_number']
+
+
+class GuestRoomAllotmentSerializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField(source="user.registration_number", read_only=True)
+
+    class Meta:
+        model = Guest_room_request
+        fields = '__all__'
+        read_only_fields = ['registration_number']
+
+
+class ComplaintSerializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField(source="user.registration_number", read_only=True)
+
+    class Meta:
+        model = Complaint
+        fields = '__all__'
+        read_only_fields = ['registration_number']
