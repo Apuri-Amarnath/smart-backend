@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed semester-registration">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added Hostel allotment">
       <change afterPath="$PROJECT_DIR$/backend/api/migrations/0012_complaints_guest_room_request_hostel_allotment_and_more.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/backend/api/migrations/0013_complaint_delete_complaints.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/backend/api/migrations/0014_rename_registration_number_hostel_allotment_user.py" afterDir="false" />
@@ -162,15 +162,7 @@
       <workItem from="1717671742106" duration="221000" />
       <workItem from="1717673913227" duration="2839000" />
       <workItem from="1717745760809" duration="4723000" />
-      <workItem from="1717844717528" duration="17022000" />
-    </task>
-    <task id="LOCAL-00013" summary="initial deploy">
-      <option name="closed" value="true" />
-      <created>1715862138068</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1715862138068</updated>
+      <workItem from="1717844717528" duration="17440000" />
     </task>
     <task id="LOCAL-00014" summary="allowed all origins">
       <option name="closed" value="true" />
@@ -556,7 +548,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717749282740</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="added Hostel allotment">
+      <option name="closed" value="true" />
+      <created>1717862241314</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1717862241315</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -607,7 +607,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="pushing to new repo" />
     <MESSAGE value="logout added" />
     <MESSAGE value="added config for ci/cd" />
     <MESSAGE value="added update-server" />
@@ -632,7 +631,8 @@
     <MESSAGE value="validation fix" />
     <MESSAGE value="semester-registration" />
     <MESSAGE value="fixed semester-registration" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed semester-registration" />
+    <MESSAGE value="added Hostel allotment" />
+    <option name="LAST_COMMIT_MESSAGE" value="added Hostel allotment" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
