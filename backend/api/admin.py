@@ -7,7 +7,8 @@ from django import forms
 from django.utils.html import format_html
 
 from .models import Semester, Subject, User, UserProfile, PersonalInformation, ContactInformation, AcademicInformation, \
-    College, Bonafide, Semester_Registration
+    College, Bonafide, Semester_Registration, Hostel_Allotment, Hostel_Room_Allotment, Hostel_No_Due_request, \
+    Guest_room_request, Complaint
 
 
 class UserCreationForm(forms.ModelForm):
@@ -103,3 +104,8 @@ admin.site.register(Bonafide, BonafideAdmin)
 admin.site.register(Semester)
 admin.site.register(Subject)
 admin.site.register(Semester_Registration)
+admin.site.register(Hostel_Allotment)
+admin.site.register(Hostel_Room_Allotment)
+admin.site.register(Hostel_No_Due_request)
+admin.site.register(Complaint)
+admin.site.register(Guest_room_request)
