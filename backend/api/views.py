@@ -11,13 +11,13 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
-    Hostel_Room_Allotment
+    Hostel_Room_Allotment, Fees_model, Mess_fee_payment
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
     ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer, \
     SemesterRegistrationSerializer, HostelAllotmentSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
-    HostelRoomAllotmentSerializer
+    HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -33,6 +33,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
+from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin
 from django.db.models import Case, When, IntegerField
 import logging
 
@@ -179,7 +180,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     queryset = UserProfile.objects.all()
     renderer_classes = [UserRenderer]
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStudentOrAdmin]
 
     def get_object(self):
         try:
@@ -381,7 +382,7 @@ class SemesterRegistrationViewset(viewsets.ModelViewSet):
 
 
 class HostelAllotmentViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStudentOrAdmin | IsCaretakerOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter]
     search_fields = ['registration_number']
@@ -405,14 +406,19 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
 
 
 class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin | IsStudentOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['registration_number']
+    search_fields = ['registration_details__user__registration_number']
     queryset = Hostel_Room_Allotment.objects.all()
     serializer_class = HostelRoomAllotmentSerializer
 
     def create(self, request, *args, **kwargs):
+        if not (request.user.role == 'admin' or request.user.role == 'caretaker'):
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             hostel_room_allotment = serializer.save()
@@ -423,3 +429,110 @@ class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
+
+
+class MessFeeCreateSet(APIView):
+    queryset = Fees_model.objects.all()
+    serializer_class = MessFeeSerializer
+    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin]
+
+    def post(self, request, format=None):
+        serializer = MessFeeSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({'message': 'data added succesfully'}, status=status.HTTP_201_CREATED)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateMessFeeViewset(APIView):
+    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin]
+
+    def put(self, request, pk, format=None):
+        if pk != 1:
+            return Response({'error': 'invalid pk'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            fee = Fees_model.objects.get(pk=pk)
+        except Fees_model.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = MessFeeSerializer(fee, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({'message': 'data updated succesfully'}, status=status.HTTP_202_ACCEPTED)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetMessFeeViewset(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk=1, format=None):
+        if pk:
+            try:
+                fee = Fees_model.objects.get(pk=pk)
+            except Fees_model.DoesNotExist:
+                return Response({"message": "ID does not Exists"}, status.HTTP_404_NOT_FOUND)
+            serializer = MessFeeSerializer(fee)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            fee = Fees_model.objects.all()
+            serializer = MessFeeSerializer(fee, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class MessFeePaymentCreateViewset(APIView):
+    serializer_class = MessFeePaymentSerializer
+
+    def get(self, request, *args, **kwargs):
+        mess_fee_payments = Mess_fee_payment.objects.all()
+        serializer = MessFeePaymentSerializer(mess_fee_payments, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        serializer = MessFeePaymentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MessFeePaymentDetailView(APIView):
+    def get_object(self, pk):
+        try:
+            return Mess_fee_payment.objects.get(pk=pk)
+        except Mess_fee_payment.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        mess_fee_payment = self.get_object(pk)
+        serializer = MessFeePaymentSerializer(mess_fee_payment)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        mess_fee_payment = self.get_object(pk)
+        serializer = MessFeePaymentSerializer(mess_fee_payment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        mess_fee_payment = self.get_object(pk)
+        mess_fee_payment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class HostelAllotmentStatusUpdateView(APIView):
+    serializer_class = HostelAllotmentStatusUpdateSerializer
+
+    def get_object(self, pk):
+        try:
+            return Hostel_Allotment.objects.get(pk=pk)
+        except Hostel_Allotment.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk, format=None):
+        hostel_allotment = self.get_object(pk)
+        serializer = HostelAllotmentStatusUpdateSerializer(hostel_allotment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

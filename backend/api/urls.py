@@ -4,7 +4,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLogoutView, update, CollegeViewSet, \
     BonafideViewSet, ChangePasswordView, SemesterViewSet, SubjectViewSet, TokenRefresh, SemesterRegistrationViewset, \
-    HostelRoomAllotmentViewset, HostelAllotmentViewset
+    HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, MessFeeCreateSet, \
+    UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView
 
 router = DefaultRouter()
 router.register(r'college', CollegeViewSet, basename='college-details')
@@ -23,5 +24,13 @@ urlpatterns = [
     path('profile/', UserProfileView.as_view(), name='profile'),
     path('update_server/', update, name='update'),
     path('token/refresh/', TokenRefresh.as_view(), name='token_refresh'),
+    path('fees/create/', MessFeeCreateSet.as_view(), name='create_fee'),
+    path('fees/update/<int:pk>/', UpdateMessFeeViewset.as_view(), name='update_fee'),
+    path('fees/<int:pk>/', GetMessFeeViewset.as_view(), name='get-fee'),
+    path('fees/', GetMessFeeViewset.as_view(), name='fees-list'),
+    path('mess-fees-payment/', MessFeePaymentCreateViewset.as_view(), name='mess_fees_payment'),
+    path('mess-fees-payment/<int:pk>/', MessFeePaymentDetailView.as_view(), name='mess_fees_payment_id'),
+    path('hostel-allotments/<int:pk>/update-status/', HostelAllotmentStatusUpdateView.as_view(),
+         name='host_allotments_status_update'),
     path('', include(router.urls), )
 ]

@@ -7,8 +7,15 @@ source smart-backend/.venv/bin/activate
 
 pwd
 cd smart-backend/backend
-pip install -r requirements.txt
+pwd
+if [ -f db.sqlite3 ]; then
+    rm db.sqlite3
+    echo "deleted sqlite"
+else
+    echo "db.sqlite.3 does not exist"
+fi
 
+pip install -r requirements.txt
 pwd
 
 python manage.py makemigrations
