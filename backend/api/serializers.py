@@ -7,7 +7,7 @@ from rest_framework import serializers, status
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
-    Guest_room_request, Complaint
+    Guest_room_request, Complaint, Fees_model, Mess_fee_payment
 
 User = get_user_model()
 
@@ -332,7 +332,8 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hostel_Room_Allotment
-        fields = ['registration_number', 'hostel_room']
+        fields = ['registration_number', 'hostel_room', 'id']
+        read_only_fields = ['id', 'registration_details']
 
     def create(self, validated_data):
         registration_number = validated_data.pop('registration_number')
@@ -343,11 +344,10 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
             hostel_allotment = Hostel_Allotment.objects.get(user__registration_number=registration_number)
         except Hostel_Allotment.DoesNotExist:
             raise serializers.ValidationError("Hostel allotment not found for the given registration number")
-        if Hostel_Room_Allotment.objects.filter(registration_details=hostel_allotment) is not None:
-            raise serializers.ValidationError("Hostel room is already alloteed")
-
+        if Hostel_Room_Allotment.objects.filter(registration_details=hostel_allotment).exists():
+            raise serializers.ValidationError("A room has already been allotted to this registration number.")
         if Hostel_Room_Allotment.objects.filter(hostel_room=hostel_room).exists():
-            raise serializers.ValidationError(f"A hostel room with the given number is already allotted.")
+            raise serializers.ValidationError("A hostel room with the given number is already allotted.")
 
         hostel_room_allotment = Hostel_Room_Allotment.objects.create(
             registration_details=hostel_allotment,
@@ -358,7 +358,11 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['registration_number'] = instance.registration_details.user.registration_number
+        representation['registration_details'] = {
+            'id': instance.registration_details.id,
+            'hostel_room': instance.hostel_room,
+            'registration_number': instance.registration_details.user.registration_number
+        }
         return representation
 
 
@@ -387,3 +391,54 @@ class ComplaintSerializer(serializers.ModelSerializer):
         model = Complaint
         fields = '__all__'
         read_only_fields = ['registration_number']
+
+
+class MessFeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fees_model
+        fields = '__all__'
+
+
+class MessFeePaymentSerializer(serializers.ModelSerializer):
+    registration_details = HostelRoomAllotmentSerializer()
+
+    class Meta:
+        model = Mess_fee_payment
+        fields = ['id', 'registration_details', 'from_date', 'to_date', 'mess_fees', 'maintainance_fees',
+                  'security_fees', 'total_fees']
+
+    def create(self, validated_data):
+        registration_details_data = validated_data.pop('registration_details')
+        registration_number = registration_details_data.pop('registration_number')
+
+        # Create or update Hostel_Room_Allotment
+        try:
+            hostel_room_allotment = HostelRoomAllotmentSerializer().create(registration_details_data)
+        except serializers.ValidationError as e:
+            raise serializers.ValidationError(e.detail)
+
+        mess_fee_payment = Mess_fee_payment.objects.create(
+            registration_details=hostel_room_allotment,
+            **validated_data
+        )
+        return mess_fee_payment
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        # Include nested representation for registration_details
+        registration_details = representation.pop('registration_details')
+        representation['registration_details'] = registration_details
+
+        return representation
+
+
+class HostelAllotmentStatusUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hostel_Allotment
+        fields = ['id', 'status']
+
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        return instance

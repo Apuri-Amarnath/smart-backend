@@ -4,9 +4,40 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="deleted static files">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added cmd to delete Sql file.">
+      <change afterPath="$PROJECT_DIR$/backend/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/management/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/management/commands/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/management/commands/create_initial_groups.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0002_mess_fee_payment_total_fees.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/permissions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/signals.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.sh" beforeDir="false" afterPath="$PROJECT_DIR$/config.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0002_remove_bonafide_batch_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0003_bonafide_supporting_document.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0004_alter_bonafide_roll_no.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0005_subject_bonafide_applied_date.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0006_subject_instructor_semester.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0007_semester_branch.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0008_alter_subject_subject_code.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0009_alter_subject_subject_code.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0010_semester_registration.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0011_alter_semester_registration_student.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0012_complaints_guest_room_request_hostel_allotment_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0013_complaint_delete_complaints.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0014_rename_registration_number_hostel_allotment_user.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0015_rename_registration_number_hostel_room_allotment_user.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0016_rename_user_hostel_room_allotment_registration_details.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0017_alter_hostel_room_allotment_hostel_room.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0018_alter_hostel_allotment_user.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +123,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\smart education\backend\api\management\commands" />
       <recent name="C:\smart education" />
       <recent name="C:\smart education\education\src" />
     </key>
@@ -151,15 +183,10 @@
       <workItem from="1717671742106" duration="221000" />
       <workItem from="1717673913227" duration="2839000" />
       <workItem from="1717745760809" duration="4723000" />
-      <workItem from="1717844717528" duration="18595000" />
-    </task>
-    <task id="LOCAL-00015" summary="allowed all origins">
-      <option name="closed" value="true" />
-      <created>1715888018755</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1715888018755</updated>
+      <workItem from="1717844717528" duration="18628000" />
+      <workItem from="1717863518794" duration="619000" />
+      <workItem from="1718111669899" duration="7899000" />
+      <workItem from="1718194454495" duration="12124000" />
     </task>
     <task id="LOCAL-00016" summary="allowed all origins">
       <option name="closed" value="true" />
@@ -545,7 +572,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717862615982</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="added cmd to delete Sql file.">
+      <option name="closed" value="true" />
+      <created>1717863463999</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1717863463999</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -596,7 +631,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="added config for ci/cd" />
     <MESSAGE value="added update-server" />
     <MESSAGE value="initial deploy" />
     <MESSAGE value="allowed all origins" />
@@ -621,7 +655,8 @@
     <MESSAGE value="fixed semester-registration" />
     <MESSAGE value="added Hostel allotment" />
     <MESSAGE value="deleted static files" />
-    <option name="LAST_COMMIT_MESSAGE" value="deleted static files" />
+    <MESSAGE value="added cmd to delete Sql file." />
+    <option name="LAST_COMMIT_MESSAGE" value="added cmd to delete Sql file." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />

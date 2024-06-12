@@ -56,6 +56,7 @@ class User(AbstractBaseUser):
         ('faculty', 'Faculty'),
         ('admin', 'Admin'),
         ('principal', 'Principal'),
+        ('caretaker', 'Caretaker')
     ]
     registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True,
                                            validators=[MinLengthValidator(11)])
@@ -76,18 +77,22 @@ class User(AbstractBaseUser):
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
         # Simplest possible answer: Yes, always
-        return self.is_admin
+        if self.is_admin:
+            return True
+        return super().has_perm(perm, obj)
 
     def has_module_perms(self, app_label):
         "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
-        return True
+        if self.is_admin:
+            return True
+        return super.has_module_perms(app_label)
 
     @property
     def is_staff(self):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
-        return self.is_admin or self.role in ['faculty', 'principal', 'office']
+        return self.is_admin or self.role in ['faculty', 'principal', 'office', 'caretaker']
 
 
 def upload_path(instance, filename, folder):
@@ -266,13 +271,17 @@ class Hostel_Allotment(models.Model):
         ('approved', 'Approved'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE,
-                                related_name="hostel_allotment_registrations")
+                             related_name="hostel_allotment_registrations")
 
     latest_marksheet = models.BinaryField(verbose_name="marksheet", null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="not-applied")
 
     def __str__(self):
         return f"{self.user.registration_number} - {self.status}"
+
+    def update_status(self, new_status):
+        self.status = new_status
+        self.save
 
 
 class Hostel_Room_Allotment(models.Model):
@@ -282,6 +291,22 @@ class Hostel_Room_Allotment(models.Model):
 
     def __str__(self):
         return f" room no : {self.hostel_room} -- registration No : {self.registration_details.user.registration_number}"
+
+
+class Fees_model(models.Model):
+    Maintainance_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="Maintainance_fees")
+    Mess_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="Mess fees")
+    Security_Deposit = models.CharField(max_length=225, null=True, blank=True, verbose_name="Security deposit")
+
+
+class Mess_fee_payment(models.Model):
+    registration_details = models.ForeignKey(Hostel_Room_Allotment, on_delete=models.CASCADE)
+    from_date = models.DateField(null=True, blank=True)
+    to_date = models.DateField(null=True, blank=True)
+    mess_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="mess-fee")
+    maintainance_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="maintainance-fee")
+    security_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="security-fee")
+    total_fees = models.DecimalField(max_digits=30, decimal_places=2, default=0, null=True, blank=True)
 
 
 class Hostel_No_Due_request(models.Model):
