@@ -381,7 +381,6 @@ class GuestRoomAllotmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest_room_request
         fields = '__all__'
-        read_only_fields = ['registration_number']
 
 
 class ComplaintSerializer(serializers.ModelSerializer):
@@ -390,7 +389,6 @@ class ComplaintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complaint
         fields = '__all__'
-        read_only_fields = ['registration_number']
 
 
 class MessFeeSerializer(serializers.ModelSerializer):
