@@ -11,13 +11,14 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
-    Hostel_Room_Allotment, Fees_model, Mess_fee_payment
+    Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
     ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer, \
     SemesterRegistrationSerializer, HostelAllotmentSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
-    HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer
+    HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
+    ComplaintSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -462,6 +463,7 @@ class UpdateMessFeeViewset(APIView):
 
 
 class GetMessFeeViewset(APIView):
+    renderer_classes = [UserRenderer]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk=1, format=None):
@@ -479,7 +481,9 @@ class GetMessFeeViewset(APIView):
 
 
 class MessFeePaymentCreateViewset(APIView):
+    renderer_classes = [UserRenderer]
     serializer_class = MessFeePaymentSerializer
+    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin]
 
     def get(self, request, *args, **kwargs):
         mess_fee_payments = Mess_fee_payment.objects.all()
@@ -495,6 +499,9 @@ class MessFeePaymentCreateViewset(APIView):
 
 
 class MessFeePaymentDetailView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Mess_fee_payment.objects.get(pk=pk)
@@ -522,6 +529,8 @@ class MessFeePaymentDetailView(APIView):
 
 class HostelAllotmentStatusUpdateView(APIView):
     serializer_class = HostelAllotmentStatusUpdateSerializer
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin]
 
     def get_object(self, pk):
         try:
@@ -536,3 +545,37 @@ class HostelAllotmentStatusUpdateView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
+    serializer_class = GuestRoomAllotmentSerializer
+    queryset = Guest_room_request.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(registration_number=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response({'data': serializer.data, 'message': 'guest room allotment successfull '},
+                            status=status.HTTP_201_CREATED)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ComplaintViewSet(viewsets.ModelViewSet):
+    serializer_class = ComplaintSerializer
+    queryset = Complaint.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(registration_number=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response({'data': serializer.data, 'message': 'Complaint successfully created'},
+                            status=status.HTTP_200_OK)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

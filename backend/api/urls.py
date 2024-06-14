@@ -5,7 +5,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLogoutView, update, CollegeViewSet, \
     BonafideViewSet, ChangePasswordView, SemesterViewSet, SubjectViewSet, TokenRefresh, SemesterRegistrationViewset, \
     HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, MessFeeCreateSet, \
-    UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView
+    UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
+    GuestRoomAllotmentViewSet, ComplaintViewSet
 
 router = DefaultRouter()
 router.register(r'college', CollegeViewSet, basename='college-details')
@@ -15,6 +16,8 @@ router.register(r'subject', SubjectViewSet, basename='subjects')
 router.register(r'semester-registrations', SemesterRegistrationViewset, basename='semester_registration')
 router.register(r'hostel-room-allotments', HostelRoomAllotmentViewset, basename='hostel_room_allotment')
 router.register(r'hostel-allotments', HostelAllotmentViewset, basename='hostel_allotment')
+router.register(r'guest-room-allotments', GuestRoomAllotmentViewSet, basename='guest_room_allotment')
+router.register(r'complaints', ComplaintViewSet, basename='complaints')
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
