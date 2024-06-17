@@ -7,7 +7,7 @@ from rest_framework import serializers, status
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
-    Guest_room_request, Complaint, Fees_model, Mess_fee_payment
+    Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request
 
 User = get_user_model()
 
@@ -440,3 +440,13 @@ class HostelAllotmentStatusUpdateSerializer(serializers.ModelSerializer):
         instance.status = validated_data.get('status', instance.status)
         instance.save()
         return instance
+
+
+class Overall_No_Due_Serializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField(source='user.registration_number', read_only=True)
+
+    class Meta:
+        model = Overall_No_Dues_Request
+        fields = '__all__'
+        read_only_fields = ['registration_number']
+
