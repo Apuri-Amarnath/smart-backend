@@ -6,7 +6,7 @@ from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLog
     BonafideViewSet, ChangePasswordView, SemesterViewSet, SubjectViewSet, TokenRefresh, SemesterRegistrationViewset, \
     HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, MessFeeCreateSet, \
     UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
-    GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet
+    GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset
 
 router = DefaultRouter()
 router.register(r'college', CollegeViewSet, basename='college-details')
@@ -19,6 +19,7 @@ router.register(r'hostel-allotments', HostelAllotmentViewset, basename='hostel_a
 router.register(r'guest-room-allotments', GuestRoomAllotmentViewSet, basename='guest_room_allotment')
 router.register(r'complaints', ComplaintViewSet, basename='complaints')
 router.register(r'overall-no-dues', Overall_no_duesViewSet, basename='overall_no_dues')
+router.register(r'hostel-no-dues', Hostel_No_dueViewset, basename='hostel_no_dues')
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),

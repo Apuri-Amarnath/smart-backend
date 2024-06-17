@@ -579,9 +579,6 @@ class ComplaintViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            validated_data = serializer.validated_data
-            validated_data['user'] = request.user
-            complaints = Complaint.objects.create(**validated_data)
             self.perform_create(serializer)
             return Response({'data': serializer.data, 'message': 'Complaint successfully created'},
                             status=status.HTTP_200_OK)
@@ -605,8 +602,28 @@ class Overall_no_duesViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            validated_data = serializer.validated_data
-            validated_data['user'] = request.user
-            overall_no_dues = Overall_No_Dues_Request.objects.create(**validated_data)
+            self.perform_create(serializer)
             return Response({'message': 'Request was applied successfully'}, status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Hostel_No_dueViewset(viewsets.ModelViewSet):
+    serializer_class = HostelNoDuesSerializer
+    queryset = Hostel_No_Due_request.objects.all()
+    permission_classes = [IsAuthenticated, IsStudentOrAdmin]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response({'message': 'Request was applied successfully'}, status=status.HTTP_200_OK)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'student':
+            return Hostel_No_Due_request.objects.filter(user=user)
+        return Hostel_No_Due_request.objects.all()

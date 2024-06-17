@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="updated user based roles.">
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0005_no_dues_list_overall_no_dues_request.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
@@ -163,23 +161,7 @@
       <workItem from="1718194454495" duration="12776000" />
       <workItem from="1718207315162" duration="531000" />
       <workItem from="1718372073391" duration="3741000" />
-      <workItem from="1718612563378" duration="9594000" />
-    </task>
-    <task id="LOCAL-00019" summary="serializers.py is updated">
-      <option name="closed" value="true" />
-      <created>1715923609078</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1715923609078</updated>
-    </task>
-    <task id="LOCAL-00020" summary="serializers.py is updated">
-      <option name="closed" value="true" />
-      <created>1715960832739</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1715960832739</updated>
+      <workItem from="1718612563378" duration="11023000" />
     </task>
     <task id="LOCAL-00021" summary="user profile updated">
       <option name="closed" value="true" />
@@ -557,7 +539,23 @@
       <option name="project" value="LOCAL" />
       <updated>1718374960425</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="updated user based roles.">
+      <option name="closed" value="true" />
+      <created>1718624237399</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1718624237399</updated>
+    </task>
+    <task id="LOCAL-00069" summary="updated user based roles.">
+      <option name="closed" value="true" />
+      <created>1718624272820</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1718624272820</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
