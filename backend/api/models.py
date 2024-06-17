@@ -330,7 +330,7 @@ class Guest_room_request(models.Model):
         ('for staying alumni', 'For Staying Alumni')
     ]
 
-    registration_number = models.OneToOneField(User, on_delete=models.CASCADE, related_name="guest_room_request")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="guest_room_request")
     purpose_of_request = models.CharField(max_length=225, choices=PURPOSE_CHOICES)
     from_date = models.DateField(verbose_name="from_date", null=True, blank=True)
     to_date = models.DateField(verbose_name="to_date", null=True, blank=True)
@@ -354,7 +354,7 @@ class Complaint(models.Model):
         ('approved', 'Approved'),
     ]
 
-    registration_number = models.OneToOneField(User, on_delete=models.CASCADE,
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
                                                related_name="registration_number_or_employee_no")
     name = models.CharField(max_length=225, verbose_name="name", null=True, blank=True)
     branch = models.CharField(max_length=225, verbose_name="branch", null=True, blank=True)
@@ -365,3 +365,37 @@ class Complaint(models.Model):
 
     def __str__(self):
         return f'{self.registration_number} -- Name: {self.name} -- {self.branch} -- complaint type: {self.complaint_type}'
+
+
+class Overall_No_Dues_Request(models.Model):
+    STATUS_CHOICES = [
+        ('applied', 'Applied'),
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('not_applied', 'Not Applied'),
+    ]
+
+    name = models.CharField(max_length=225, verbose_name="Name", null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='overall_no_due', null=True, blank=True)
+    branch = models.CharField(max_length=225, verbose_name="Branch", null=True, blank=True)
+    father_name = models.CharField(max_length=225, verbose_name="Father's Name", null=True, blank=True)
+    category = models.CharField(max_length=225, verbose_name="Category", null=True, blank=True)
+    self_declaration = models.BooleanField(default=False, verbose_name="Self Declaration")
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, default='not_applied', verbose_name="Status")
+
+    def __str__(self):
+        return f'{self.user.registration_number} -- Name: {self.name} -- Branch: {self.branch} -- Category: {self.category}'
+
+
+class No_Dues_list(models.Model):
+    STATUS_CHOICES = [('pending', 'Pending'),
+                      ('approved', 'Approved'), ]
+    Department_name = models.CharField(max_length=225, verbose_name="Department")
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",
+                              default='waiting for approval')
+    approved_date = models.DateField(verbose_name="approved_date")
+    applied_date = models.DateField(verbose_name="applied_date")
+    approved = models.BooleanField(default=False, verbose_name="approved")
+
+    def __str__(self):
+        return f'{self.Department_name} -- Dep Name: {self.Department_name} -- status: {self.status} -- approved: {self.approved}'

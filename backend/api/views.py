@@ -11,14 +11,14 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
-    Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint
+    Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
     ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer, \
     SemesterRegistrationSerializer, HostelAllotmentSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
     HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
-    ComplaintSerializer
+    ComplaintSerializer, Overall_No_Due_Serializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -553,14 +553,18 @@ class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(registration_number=self.request.user)
+        serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            validated_data = serializer.validated_data
+            validated_data['user'] = request.user
+            guest_room = Guest_room_request.objects.create(**validated_data)
             self.perform_create(serializer)
-            return Response({'data': serializer.data, 'message': 'guest room allotment successfull '},
-                            status=status.HTTP_201_CREATED)
+            return Response(
+                {'data': serializer.data, 'message': 'guest room allotment request was successfully created '},
+                status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -570,12 +574,39 @@ class ComplaintViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(registration_number=self.request.user)
+        serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            validated_data = serializer.validated_data
+            validated_data['user'] = request.user
+            complaints = Complaint.objects.create(**validated_data)
             self.perform_create(serializer)
             return Response({'data': serializer.data, 'message': 'Complaint successfully created'},
                             status=status.HTTP_200_OK)
+        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Overall_no_duesViewSet(viewsets.ModelViewSet):
+    serializer_class = Overall_No_Due_Serializer
+    queryset = Overall_No_Dues_Request.objects.all()
+    permission_classes = [IsAuthenticated, IsStudentOrAdmin]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'student':
+            return Overall_No_Dues_Request.objects.filter(user=user)
+        return Overall_No_Dues_Request.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            validated_data = serializer.validated_data
+            validated_data['user'] = request.user
+            overall_no_dues = Overall_No_Dues_Request.objects.create(**validated_data)
+            return Response({'message': 'Request was applied successfully'}, status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

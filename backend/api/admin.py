@@ -8,7 +8,7 @@ from django.utils.html import format_html
 
 from .models import Semester, Subject, User, UserProfile, PersonalInformation, ContactInformation, AcademicInformation, \
     College, Bonafide, Semester_Registration, Hostel_Allotment, Hostel_Room_Allotment, Hostel_No_Due_request, \
-    Guest_room_request, Complaint, Fees_model, Mess_fee_payment
+    Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request
 
 
 class UserCreationForm(forms.ModelForm):
@@ -111,3 +111,4 @@ admin.site.register(Complaint)
 admin.site.register(Guest_room_request)
 admin.site.register(Fees_model)
 admin.site.register(Mess_fee_payment)
+admin.site.register(Overall_No_Dues_Request)
