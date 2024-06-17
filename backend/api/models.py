@@ -6,7 +6,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models import BinaryField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from datetime import date
+from datetime import date, timezone
 
 
 # custom user manager
@@ -393,14 +393,24 @@ class Overall_No_Dues_Request(models.Model):
 
 
 class No_Dues_list(models.Model):
+    request_id = models.ForeignKey(Overall_No_Dues_Request, on_delete=models.CharField, related_name='no_dues_list',
+                                   null=True, blank=True)
+    STATUS_CHOICES = [('pending', 'Pending'),
+                      ('approved', 'Approved'), ]
+    approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
+    applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
+    approved = models.BooleanField(default=False, verbose_name="approved")
+
+    def __str__(self):
+        return f'{self.Department_name} -- Dep Name: {self.Department_name} -- status: {self.status} -- approved: {self.approved}'
+
+
+class Departments_for_no_due(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'), ]
     Department_name = models.CharField(max_length=225, verbose_name="Department")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",
                               default='waiting for approval')
-    approved_date = models.DateField(verbose_name="approved_date")
-    applied_date = models.DateField(verbose_name="applied_date")
+    approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
+    applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
     approved = models.BooleanField(default=False, verbose_name="approved")
-
-    def __str__(self):
-        return f'{self.Department_name} -- Dep Name: {self.Department_name} -- status: {self.status} -- approved: {self.approved}'
