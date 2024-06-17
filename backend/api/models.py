@@ -311,7 +311,7 @@ class Mess_fee_payment(models.Model):
 
 class Hostel_No_Due_request(models.Model):
     semester = models.CharField(max_length=225, verbose_name="semester", null=True, blank=True)
-    registration_number = models.OneToOneField(User, on_delete=models.CASCADE, related_name="Hostel_no_due_request")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="Hostel_no_due_request")
     Maintance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
     Mess_fees_date = models.DateField(verbose_name="Mess_fees", null=True, blank=True)
     self_declaration = models.BooleanField(verbose_name="self_agree", null=True, blank=True, default=False)
@@ -319,7 +319,12 @@ class Hostel_No_Due_request(models.Model):
     approved_date = models.DateField(verbose_name="approves_date", null=True, blank=True)
 
     def __str__(self):
-        return f"{self.registration_number} -- semester: {self.semester} -- requested date: {self.requested_date} -- approved date: {self.approved_date}"
+        return f"{self.user.registration_number} -- semester: {self.semester} -- requested date: {self.requested_date} -- approved date: {self.approved_date}"
+
+    def save(self, *args, **kwargs):
+        if not self.requested_date:
+            self.requested_date = date.today()
+            super(Hostel_No_Due_request, self).save(*args, **kwargs)
 
 
 class Guest_room_request(models.Model):
@@ -337,7 +342,7 @@ class Guest_room_request(models.Model):
     no_of_persons = models.IntegerField(verbose_name="no_of_persons", blank=True, null=True)
 
     def __str__(self):
-        return f'{self.User.registration_number} -- from: {self.from_date} -- to: {self.to_date} no of: {self.no_of_persons}'
+        return f'{self.user.registration_number} -- from: {self.from_date} -- to: {self.to_date} no of: {self.no_of_persons}'
 
 
 class Complaint(models.Model):
@@ -355,7 +360,7 @@ class Complaint(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE,
-                                               related_name="registration_number_or_employee_no")
+                                related_name="registration_number_or_employee_no")
     name = models.CharField(max_length=225, verbose_name="name", null=True, blank=True)
     branch = models.CharField(max_length=225, verbose_name="branch", null=True, blank=True)
     complaint_type = models.CharField(choices=COMPLAINT_CHOICES, max_length=225, verbose_name="complaint type",

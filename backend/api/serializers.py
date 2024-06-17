@@ -372,7 +372,12 @@ class HostelNoDuesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hostel_No_Due_request
         fields = '__all__'
-        read_only_fields = ['registration_number']
+        read_only_fields = ['registration_number', 'requested_date', 'user']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        return super().create(validated_data)
 
 
 class GuestRoomAllotmentSerializer(serializers.ModelSerializer):
@@ -389,6 +394,12 @@ class ComplaintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complaint
         fields = '__all__'
+        read_only_fields = ['registration_number', 'user']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        return super().create(validated_data)
 
 
 class MessFeeSerializer(serializers.ModelSerializer):
@@ -448,5 +459,9 @@ class Overall_No_Due_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Overall_No_Dues_Request
         fields = '__all__'
-        read_only_fields = ['registration_number']
+        read_only_fields = ['registration_number', 'user']
 
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        return super().create(validated_data)
