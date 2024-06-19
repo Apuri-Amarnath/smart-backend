@@ -6,7 +6,7 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models import BinaryField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from datetime import date
+from datetime import date, timezone
 
 
 # custom user manager
@@ -272,6 +272,7 @@ class Hostel_Allotment(models.Model):
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="hostel_allotment_registrations")
+    cgpa = models.CharField(max_length=125, verbose_name="CGPA", null=True, blank=True)
 
     latest_marksheet = models.BinaryField(verbose_name="marksheet", null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="not-applied")
@@ -392,15 +393,37 @@ class Overall_No_Dues_Request(models.Model):
         return f'{self.user.registration_number} -- Name: {self.name} -- Branch: {self.branch} -- Category: {self.category}'
 
 
-class No_Dues_list(models.Model):
+class Departments_for_no_due(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'), ]
     Department_name = models.CharField(max_length=225, verbose_name="Department")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",
                               default='waiting for approval')
-    approved_date = models.DateField(verbose_name="approved_date")
-    applied_date = models.DateField(verbose_name="applied_date")
+    approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
+    applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
     approved = models.BooleanField(default=False, verbose_name="approved")
 
     def __str__(self):
-        return f'{self.Department_name} -- Dep Name: {self.Department_name} -- status: {self.status} -- approved: {self.approved}'
+        return f'{self.Department_name}'
+
+
+class No_Dues_list(models.Model):
+    request_id = models.ForeignKey(Overall_No_Dues_Request, on_delete=models.CharField, related_name='no_dues_list',
+                                   null=True, blank=True)
+    STATUS_CHOICES = [('pending', 'Pending'),
+                      ('approved', 'Approved'), ]
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name='status',
+                              default='waiting for approval')
+    approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
+    applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
+    approved = models.BooleanField(default=False, verbose_name="approved")
+    departments = models.ManyToManyField(Departments_for_no_due, related_name='no_due_lists')
+
+    def __str__(self):
+        department_names = ', '.join([department.Department_name for department in self.departments.all()])
+        return f'Request: {self.request_id} -- Departments: {department_names} --  -- Approved: {self.approved}'
+
+    def save(self, *args, **kwargs):
+        # Automatically add all departments to the departments field
+        self.departments.set(Departments_for_no_due.objects.all())
+        super().save(*args, **kwargs)
