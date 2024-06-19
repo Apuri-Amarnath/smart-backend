@@ -386,7 +386,7 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStudentOrAdmin | IsCaretakerOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['registration_number']
+    search_fields = ['user__registration_number']
     queryset = Hostel_Allotment.objects.all()
     serializer_class = HostelAllotmentSerializer
 
