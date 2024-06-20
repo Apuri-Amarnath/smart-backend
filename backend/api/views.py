@@ -551,6 +551,7 @@ class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
     serializer_class = GuestRoomAllotmentSerializer
     queryset = Guest_room_request.objects.all()
     permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -569,6 +570,7 @@ class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
 
 
 class ComplaintViewSet(viewsets.ModelViewSet):
+    renderer_classes = [UserRenderer]
     serializer_class = ComplaintSerializer
     queryset = Complaint.objects.all()
     permission_classes = [IsAuthenticated]
@@ -589,6 +591,7 @@ class Overall_no_duesViewSet(viewsets.ModelViewSet):
     serializer_class = Overall_No_Due_Serializer
     queryset = Overall_No_Dues_Request.objects.all()
     permission_classes = [IsAuthenticated, IsStudentOrAdmin]
+    renderer_classes = [UserRenderer]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -611,6 +614,7 @@ class Hostel_No_dueViewset(viewsets.ModelViewSet):
     serializer_class = HostelNoDuesSerializer
     queryset = Hostel_No_Due_request.objects.all()
     permission_classes = [IsAuthenticated, IsStudentOrAdmin]
+    renderer_classes = [UserRenderer]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
