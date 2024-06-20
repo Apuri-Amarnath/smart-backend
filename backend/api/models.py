@@ -361,7 +361,7 @@ class Complaint(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE,
-                                related_name="registration_number_or_employee_no")
+                             related_name="registration_number_or_employee_no")
     name = models.CharField(max_length=225, verbose_name="name", null=True, blank=True)
     branch = models.CharField(max_length=225, verbose_name="branch", null=True, blank=True)
     complaint_type = models.CharField(choices=COMPLAINT_CHOICES, max_length=225, verbose_name="complaint type",
@@ -388,9 +388,10 @@ class Overall_No_Dues_Request(models.Model):
     category = models.CharField(max_length=225, verbose_name="Category", null=True, blank=True)
     self_declaration = models.BooleanField(default=False, verbose_name="Self Declaration")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, default='not_applied', verbose_name="Status")
+    session = models.CharField(max_length=225, verbose_name="Session", null=True, blank=True)
 
     def __str__(self):
-        return f'{self.user.registration_number} -- Name: {self.name} -- Branch: {self.branch} -- Category: {self.category}'
+        return f'{self.user.registration_number} -- Name: {self.name} -- Branch: {self.branch} -- Category: {self.category} --session {self.session}'
 
 
 class Departments_for_no_due(models.Model):
@@ -398,7 +399,7 @@ class Departments_for_no_due(models.Model):
                       ('approved', 'Approved'), ]
     Department_name = models.CharField(max_length=225, verbose_name="Department")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",
-                              default='waiting for approval')
+                              default='pending')
     approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
     applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
     approved = models.BooleanField(default=False, verbose_name="approved")
@@ -408,12 +409,12 @@ class Departments_for_no_due(models.Model):
 
 
 class No_Dues_list(models.Model):
-    request_id = models.ForeignKey(Overall_No_Dues_Request, on_delete=models.CharField, related_name='no_dues_list',
-                                   null=True, blank=True)
+    request_id = models.OneToOneField(Overall_No_Dues_Request, on_delete=models.CASCADE, related_name='no_dues_list',
+                                      null=True, blank=True)
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'), ]
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name='status',
-                              default='waiting for approval')
+                              default='pending')
     approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
     applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
     approved = models.BooleanField(default=False, verbose_name="approved")
@@ -424,6 +425,7 @@ class No_Dues_list(models.Model):
         return f'Request: {self.request_id} -- Departments: {department_names} --  -- Approved: {self.approved}'
 
     def save(self, *args, **kwargs):
-        # Automatically add all departments to the departments field
-        self.departments.set(Departments_for_no_due.objects.all())
         super().save(*args, **kwargs)
+        if not self.departments.exists():
+            all_departments = Departments_for_no_due.objects.all()
+            self.departments.set(all_departments)
