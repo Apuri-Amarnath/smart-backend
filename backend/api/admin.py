@@ -90,6 +90,27 @@ class BonafideAdmin(admin.ModelAdmin):
 
     supporting_document_display.short_description = 'Supporting Document'
 
+class No_Dues_listAdminForm(forms.ModelForm):
+    class Meta:
+        model = No_Dues_list
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk is None:  # Only set initial departments for new instances
+            self.fields['departments'].initial = Departments_for_no_due.objects.all()
+
+class No_Dues_listAdmin(admin.ModelAdmin):
+    form = No_Dues_listAdminForm
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if not change:  # If this is a new instance
+            obj.departments.set(Departments_for_no_due.objects.all())
+
+admin.site.register(Departments_for_no_due)
+admin.site.register(No_Dues_list, No_Dues_listAdmin)
+admin.site.register(Overall_No_Dues_Request)
 
 # Now register the new UserModelAdmin...
 admin.site.register(User, UserModelAdmin)
@@ -110,6 +131,3 @@ admin.site.register(Complaint)
 admin.site.register(Guest_room_request)
 admin.site.register(Fees_model)
 admin.site.register(Mess_fee_payment)
-admin.site.register(Overall_No_Dues_Request)
-admin.site.register(No_Dues_list)
-admin.site.register(Departments_for_no_due)
