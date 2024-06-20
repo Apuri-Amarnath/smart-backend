@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="test">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added cgpa field">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identifier.sqlite" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/management/commands/adddepartments_for_no_dues.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/management/commands/adddepartments_for_no_dues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,22 +163,8 @@
       <workItem from="1718631934636" duration="820000" />
       <workItem from="1718633075417" duration="296000" />
       <workItem from="1718797750646" duration="21000" />
-    </task>
-    <task id="LOCAL-00024" summary="configured img upload">
-      <option name="closed" value="true" />
-      <created>1716105933767</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1716105933767</updated>
-    </task>
-    <task id="LOCAL-00025" summary="user profile fixed">
-      <option name="closed" value="true" />
-      <created>1716178744828</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1716178744828</updated>
+      <workItem from="1718812038104" duration="3087000" />
+      <workItem from="1718864184194" duration="377000" />
     </task>
     <task id="LOCAL-00026" summary="req bonafide added">
       <option name="closed" value="true" />
@@ -555,7 +542,23 @@
       <option name="project" value="LOCAL" />
       <updated>1718631962069</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="added cgpa field">
+      <option name="closed" value="true" />
+      <created>1718813713600</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1718813713601</updated>
+    </task>
+    <task id="LOCAL-00074" summary="added cgpa field">
+      <option name="closed" value="true" />
+      <created>1718814154955</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1718814154955</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -606,7 +609,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="allowed all origins" />
     <MESSAGE value="min_length(registration) is 11" />
     <MESSAGE value="serializers.py is updated" />
     <MESSAGE value="user profile updated" />
@@ -631,7 +633,8 @@
     <MESSAGE value="added cmd to delete Sql file." />
     <MESSAGE value="updated user based roles." />
     <MESSAGE value="test" />
-    <option name="LAST_COMMIT_MESSAGE" value="test" />
+    <MESSAGE value="added cgpa field" />
+    <option name="LAST_COMMIT_MESSAGE" value="added cgpa field" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
