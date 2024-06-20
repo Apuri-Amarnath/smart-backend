@@ -483,7 +483,7 @@ class GetMessFeeViewset(APIView):
 class MessFeePaymentCreateViewset(APIView):
     renderer_classes = [UserRenderer]
     serializer_class = MessFeePaymentSerializer
-    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin]
+    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin,IsStudentOrAdmin]
 
     def get(self, request, *args, **kwargs):
         mess_fee_payments = Mess_fee_payment.objects.all()

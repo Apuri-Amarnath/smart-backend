@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added cgpa field">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/management/commands/adddepartments_for_no_dues.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/management/commands/adddepartments_for_no_dues.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added cgpa field" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -164,15 +160,7 @@
       <workItem from="1718633075417" duration="296000" />
       <workItem from="1718797750646" duration="21000" />
       <workItem from="1718812038104" duration="3087000" />
-      <workItem from="1718864184194" duration="377000" />
-    </task>
-    <task id="LOCAL-00026" summary="req bonafide added">
-      <option name="closed" value="true" />
-      <created>1716182330509</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1716182330509</updated>
+      <workItem from="1718864184194" duration="1077000" />
     </task>
     <task id="LOCAL-00027" summary="updated auto deploy">
       <option name="closed" value="true" />
@@ -558,7 +546,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718814154955</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="added cgpa field">
+      <option name="closed" value="true" />
+      <created>1718864609677</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1718864609678</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
