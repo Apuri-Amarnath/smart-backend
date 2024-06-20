@@ -552,6 +552,8 @@ class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
     queryset = Guest_room_request.objects.all()
     permission_classes = [IsAuthenticated]
     renderer_classes = [UserRenderer]
+    filter_backends = [SearchFilter]
+    search_fields = ['user__registration_number']
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
