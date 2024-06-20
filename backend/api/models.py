@@ -336,7 +336,7 @@ class Guest_room_request(models.Model):
         ('for staying alumni', 'For Staying Alumni')
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="guest_room_request")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="guest_room_request")
     purpose_of_request = models.CharField(max_length=225, choices=PURPOSE_CHOICES)
     from_date = models.DateField(verbose_name="from_date", null=True, blank=True)
     to_date = models.DateField(verbose_name="to_date", null=True, blank=True)
