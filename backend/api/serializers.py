@@ -386,6 +386,12 @@ class GuestRoomAllotmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest_room_request
         fields = '__all__'
+        read_only_fields = ['registration_number', 'user']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        return super().create(validated_data)
 
 
 class ComplaintSerializer(serializers.ModelSerializer):
