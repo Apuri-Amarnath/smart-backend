@@ -368,6 +368,7 @@ class Complaint(models.Model):
                                       null=True, blank=True)
     complaint_description = models.TextField(verbose_name="complaint description", null=True, blank=True)
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status", null=True, blank=True)
+    registered_date = models.DateField(verbose_name="registered date", null=True, blank=True)
 
     def __str__(self):
         return f'{self.registration_number} -- Name: {self.name} -- {self.branch} -- complaint type: {self.complaint_type}'
@@ -394,7 +395,7 @@ class Overall_No_Dues_Request(models.Model):
         return f'{self.user.registration_number} -- Name: {self.name} -- Branch: {self.branch} -- Category: {self.category} --session {self.session}'
 
 
-class Departments_for_no_due(models.Model):
+class Departments_for_no_Dues(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'), ]
     Department_name = models.CharField(max_length=225, verbose_name="Department")
@@ -418,7 +419,7 @@ class No_Dues_list(models.Model):
     approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
     applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
     approved = models.BooleanField(default=False, verbose_name="approved")
-    departments = models.ManyToManyField(Departments_for_no_due, related_name='no_due_lists')
+    departments = models.ManyToManyField(Departments_for_no_Dues, related_name='no_due_lists')
 
     def __str__(self):
         department_names = ', '.join([department.Department_name for department in self.departments.all()])
@@ -427,5 +428,5 @@ class No_Dues_list(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if not self.departments.exists():
-            all_departments = Departments_for_no_due.objects.all()
+            all_departments = Departments_for_no_Dues.objects.all()
             self.departments.set(all_departments)

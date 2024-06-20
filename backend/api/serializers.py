@@ -7,7 +7,8 @@ from rest_framework import serializers, status
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
-    Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request
+    Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
+    Departments_for_no_Dues
 
 User = get_user_model()
 
@@ -471,3 +472,53 @@ class Overall_No_Due_Serializer(serializers.ModelSerializer):
         user = self.context['request'].user
         validated_data['user'] = user
         return super().create(validated_data)
+
+
+class Departments_for_no_dueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Departments_for_no_Dues
+        fields = ['id', 'Department_name', 'status', 'approved_date', 'applied_date', 'approved']
+
+
+class No_Due_ListSerializer(serializers.ModelSerializer):
+    departments = Departments_for_no_dueSerializer(many=True, required=False)
+
+    class Meta:
+        model = No_Dues_list
+        fields = '__all__'
+
+    def create(self, validated_data):
+        departments_data = validated_data.pop('departments', None)
+        instance = super().create(validated_data)
+
+        if departments_data is None:
+            all_departments = Departments_for_no_Dues.objects.all()
+            instance.departments.set(all_departments)
+        else:
+            departments = []
+            for department_data in departments_data:
+                department_id = department_data.get('id', None)
+                if department_id:
+                    department = Departments_for_no_Dues.objects.get(id=department_id)
+                    departments.append(department)
+            instance.departments.set(departments)
+
+        return instance
+
+    def update(self, instance, validated_data):
+        departments_data = validated_data.pop('departments', None)
+        instance = super().update(instance, validated_data)
+
+        if departments_data is None:
+            all_departments = Departments_for_no_Dues.objects.all()
+            instance.departments.set(all_departments)
+        else:
+            departments = []
+            for department_data in departments_data:
+                department_id = department_data.get('id', None)
+                if department_id:
+                    department = Departments_for_no_Dues.objects.get(id=department_id)
+                    departments.append(department)
+            instance.departments.set(departments)
+
+        return instance

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from api.models import Departments_for_no_due
+from api.models import Departments_for_no_Dues
 
 
 class Command(BaseCommand):
@@ -100,7 +100,7 @@ class Command(BaseCommand):
         ]
 
         for department_data in default_departments:
-            Departments_for_no_due.objects.get_or_create(
+            Departments_for_no_Dues.objects.get_or_create(
                 Department_name=department_data['Department_name'],
                 defaults={
                     'status': department_data['status'],
