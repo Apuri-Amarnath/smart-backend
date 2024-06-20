@@ -552,6 +552,8 @@ class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
     queryset = Guest_room_request.objects.all()
     permission_classes = [IsAuthenticated]
     renderer_classes = [UserRenderer]
+    filter_backends = [SearchFilter]
+    search_fields = ['user__registration_number']
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -559,9 +561,6 @@ class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            validated_data = serializer.validated_data
-            validated_data['user'] = request.user
-            guest_room = Guest_room_request.objects.create(**validated_data)
             self.perform_create(serializer)
             return Response(
                 {'data': serializer.data, 'message': 'guest room allotment request was successfully created '},
