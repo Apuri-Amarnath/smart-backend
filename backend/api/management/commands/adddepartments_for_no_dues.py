@@ -103,8 +103,11 @@ class Command(BaseCommand):
             Departments_for_no_due.objects.get_or_create(
                 Department_name=department_data['Department_name'],
                 defaults={
-                    'status': department_data['']
+                    'status': department_data['status'],
+                    'approved': department_data['approved'],
+                    'approved_date':None,
 
+                    'applied_date': None,
                 }
         )
         self.stdout.write(self.style.SUCCESS('departments populated successfully'))

@@ -360,7 +360,7 @@ class Complaint(models.Model):
         ('approved', 'Approved'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE,
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
                                 related_name="registration_number_or_employee_no")
     name = models.CharField(max_length=225, verbose_name="name", null=True, blank=True)
     branch = models.CharField(max_length=225, verbose_name="branch", null=True, blank=True)
