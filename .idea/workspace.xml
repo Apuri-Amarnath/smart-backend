@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fix messfeepayment">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fix messfeepayment" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -164,14 +162,7 @@
       <workItem from="1718812038104" duration="3087000" />
       <workItem from="1718864184194" duration="1077000" />
       <workItem from="1718881570491" duration="354000" />
-    </task>
-    <task id="LOCAL-00028" summary="updated auto deploy">
-      <option name="closed" value="true" />
-      <created>1716199783407</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1716199783407</updated>
+      <workItem from="1718883819526" duration="781000" />
     </task>
     <task id="LOCAL-00029" summary="updated bonafide fields">
       <option name="closed" value="true" />
@@ -557,7 +548,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718881686004</updated>
     </task>
-    <option name="localTasksCounter" value="77" />
+    <task id="LOCAL-00077" summary="fix messfeepayment">
+      <option name="closed" value="true" />
+      <created>1718883932520</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1718883932521</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
