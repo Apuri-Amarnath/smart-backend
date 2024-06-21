@@ -330,11 +330,18 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
 
 class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(write_only=True)
+    registration_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Hostel_Room_Allotment
-        fields = ['registration_number', 'hostel_room', 'id']
-        read_only_fields = ['id', 'registration_details']
+        fields = ['registration_number', 'hostel_room', 'id', 'registration_details']
+        read_only_fields = ['id']
+
+    def get_registration_details(self, obj):
+        return {
+            'id': obj.registration_details.id,
+            'registration_number': obj.registration_details.user.registration_number
+        }
 
     def create(self, validated_data):
         registration_number = validated_data.pop('registration_number')
@@ -359,11 +366,8 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['registration_details'] = {
-            'id': instance.registration_details.id,
-            'hostel_room': instance.hostel_room,
-            'registration_number': instance.registration_details.user.registration_number
-        }
+        registration_details = representation.pop('registration_details')
+        representation.update(registration_details)
         return representation
 
 
