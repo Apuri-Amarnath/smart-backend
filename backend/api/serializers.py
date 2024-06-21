@@ -284,6 +284,13 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
         fields = ['id', 'registration_number', 'latest_marksheet', 'status']
         read_only_fields = ['user']
 
+    def validate(self, attrs):
+        registration_number = attrs.get('registration_number')
+        if Hostel_Allotment.objects.filter(
+                user__registration_number=registration_number).exists():
+            raise serializers.ValidationError("Only 1 is allowed your request already Exists, Wait for approval")
+        return attrs
+
     def create(self, validated_data):
         registration_number = validated_data.pop('registration_number')
         latest_marksheet = validated_data.pop('latest_marksheet', None)
@@ -304,7 +311,7 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
         return hostel_allotment
 
     def update(self, instance, validated_data):
-        registration_number = validated_data.pop('registration_number')
+        registration_number = validated_data.pop('registration_number', None)
         latest_marksheet = validated_data.pop('latest_marksheet', None)
 
         if registration_number:
@@ -348,7 +355,6 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
         hostel_room = validated_data.pop('hostel_room')
 
         try:
-            # Query Hostel_Allotment by user's registration_number
             hostel_allotment = Hostel_Allotment.objects.get(user__registration_number=registration_number)
         except Hostel_Allotment.DoesNotExist:
             raise serializers.ValidationError("Hostel allotment not found for the given registration number")
