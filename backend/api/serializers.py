@@ -416,7 +416,7 @@ class MessFeeSerializer(serializers.ModelSerializer):
 
 
 class MessFeePaymentSerializer(serializers.ModelSerializer):
-    registration_details = HostelRoomAllotmentSerializer()
+    registration_details = serializers.PrimaryKeyRelatedField(queryset=Hostel_Room_Allotment.objects.all())
 
     class Meta:
         model = Mess_fee_payment
@@ -425,16 +425,9 @@ class MessFeePaymentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         registration_details_data = validated_data.pop('registration_details')
-        registration_number = registration_details_data.pop('registration_number')
-
-        # Create or update Hostel_Room_Allotment
-        try:
-            hostel_room_allotment = HostelRoomAllotmentSerializer().create(registration_details_data)
-        except serializers.ValidationError as e:
-            raise serializers.ValidationError(e.detail)
 
         mess_fee_payment = Mess_fee_payment.objects.create(
-            registration_details=hostel_room_allotment,
+            registration_details=registration_details_data,
             **validated_data
         )
         return mess_fee_payment
@@ -443,7 +436,7 @@ class MessFeePaymentSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
 
         # Include nested representation for registration_details
-        registration_details = representation.pop('registration_details')
+        registration_details = HostelRoomAllotmentSerializer(instance.registration_details).data
         representation['registration_details'] = registration_details
 
         return representation
