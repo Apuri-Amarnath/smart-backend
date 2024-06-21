@@ -288,7 +288,7 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
         registration_number = attrs.get('registration_number')
         if Hostel_Allotment.objects.filter(
                 user__registration_number=registration_number).exists():
-            raise serializers.ValidationError("Only 1 is allowed your request already Exists, Wait for approval")
+            raise serializers.ValidationError("Only 1 Request is allowed your request already Exists, Wait for approval")
         return attrs
 
     def create(self, validated_data):
