@@ -355,9 +355,9 @@ class Complaint(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('applied', 'Applied'),
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
+        ('registered', 'Registered'),
+        ('under investigation', 'Under Investigation'),
+        ('resolved', 'Resolved'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -366,6 +366,7 @@ class Complaint(models.Model):
     branch = models.CharField(max_length=225, verbose_name="branch", null=True, blank=True)
     complaint_type = models.CharField(choices=COMPLAINT_CHOICES, max_length=225, verbose_name="complaint type",
                                       null=True, blank=True)
+    subject = models.CharField(max_length=225, verbose_name="subject", null=True, blank=True)
     complaint_description = models.TextField(verbose_name="complaint description", null=True, blank=True)
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status", null=True, blank=True)
     registered_date = models.DateField(verbose_name="registered date", null=True, blank=True)
