@@ -313,12 +313,12 @@ class SubjectViewSet(viewsets.ModelViewSet):
     search_fields = ['subject_name', 'subject_code', 'instructor']
 
     def create(self, request, *args, **kwargs):
-        if not self.request.user.is_staff:
+        if not self.request.user.role == 'admin' or request.user.role == 'faculty':
             raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
         return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        if not self.request.user.is_staff:
+        if not self.request.user.role == 'admin' or request.user.role == 'faculty':
             raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
         return super().create(request, *args, **kwargs)
 
