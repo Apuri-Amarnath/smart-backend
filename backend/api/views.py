@@ -482,10 +482,10 @@ class GetMessFeeViewset(APIView):
 
 
 class MessFeePaymentCreateViewset(viewsets.ModelViewSet):
-    # renderer_classes = [UserRenderer]
+    renderer_classes = [UserRenderer]
     serializer_class = MessFeePaymentSerializer
     queryset = Mess_fee_payment.objects.all()
-    # permission_classes = [IsAuthenticated, IsCaretakerOrAdmin | IsStudentOrAdmin]
+    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin | IsStudentOrAdmin]
     filter_backends = [filters.SearchFilter]
     search_fields = ['registration_details__registration_details__user__registration_number']
 
