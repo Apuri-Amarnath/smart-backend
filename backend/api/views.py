@@ -313,12 +313,12 @@ class SubjectViewSet(viewsets.ModelViewSet):
     search_fields = ['subject_name', 'subject_code', 'instructor']
 
     def create(self, request, *args, **kwargs):
-        if not self.request.user.role == 'admin' or request.user.role == 'faculty':
+        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
             raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
         return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        if not self.request.user.role == 'admin' or request.user.role == 'faculty':
+        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
             raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
         return super().create(request, *args, **kwargs)
 
@@ -334,7 +334,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
     ordering = ['semester_name', ]
 
     def create(self, request, *args, **kwargs):
-        if not self.request.user.is_staff:
+        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
             raise ValidationError({'error': 'Only admin or staff users can create semester data.'})
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -344,12 +344,12 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_update(self, serializer):
-        if not self.request.user.is_staff:
+        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
             raise ValidationError({'error': 'Only admin or staff users can update semester data.'})
         serializer.save()
 
     def perform_create(self, serializer):
-        if not self.request.user.is_staff:
+        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
             raise ValidationError({'error': 'Only admin or staff users can create semester data.'})
         serializer.save()
 
