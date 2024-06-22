@@ -288,7 +288,8 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
         registration_number = attrs.get('registration_number')
         if Hostel_Allotment.objects.filter(
                 user__registration_number=registration_number).exists():
-            raise serializers.ValidationError("Only 1 Request is allowed your request already Exists, Wait for approval")
+            raise serializers.ValidationError(
+                "Only 1 Request is allowed your request already Exists, Wait for approval")
         return attrs
 
     def create(self, validated_data):
@@ -372,8 +373,8 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        registration_details = representation.pop('registration_details')
-        representation.update(registration_details)
+        registration_details = self.get_registration_details(instance)
+        representation['registration_details'] = registration_details
         return representation
 
 
@@ -442,10 +443,13 @@ class MessFeePaymentSerializer(serializers.ModelSerializer):
         )
         return mess_fee_payment
 
+    def validate_registration_details(self, value):
+        if not Hostel_Room_Allotment.objects.filter(pk=value.pk).exists():
+            raise serializers.ValidationError("The provided registration details do not exist.")
+        return value
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-
-        # Include nested representation for registration_details
         registration_details = HostelRoomAllotmentSerializer(instance.registration_details).data
         representation['registration_details'] = registration_details
 
