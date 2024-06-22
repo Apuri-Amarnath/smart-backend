@@ -481,15 +481,21 @@ class GetMessFeeViewset(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class MessFeePaymentCreateViewset(APIView):
+class MessFeePaymentCreateViewset(viewsets.ModelViewSet):
     renderer_classes = [UserRenderer]
     serializer_class = MessFeePaymentSerializer
+    queryset = Mess_fee_payment.objects.all()
     permission_classes = [IsAuthenticated, IsCaretakerOrAdmin | IsStudentOrAdmin]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['registration_details__registration_details__user__registration_number']
 
     def get(self, request, *args, **kwargs):
         mess_fee_payments = Mess_fee_payment.objects.all()
         serializer = MessFeePaymentSerializer(mess_fee_payments, many=True)
         return Response(serializer.data)
+
+    def perform_create(self, serializer):
+        serializer.save()
 
     def post(self, request, *args, **kwargs):
         serializer = MessFeePaymentSerializer(data=request.data)

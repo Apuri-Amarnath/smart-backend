@@ -21,6 +21,7 @@ router.register(r'complaints', ComplaintViewSet, basename='complaints')
 router.register(r'overall-no-dues', Overall_no_duesViewSet, basename='overall_no_dues')
 router.register(r'hostel-no-dues', Hostel_No_dueViewset, basename='hostel_no_dues')
 router.register(r'No-dues-list', NoDuesListViewSet, basename='no_dues_list')
+router.register(r'mess-fees-payment', MessFeePaymentCreateViewset, basename='mess_fee_payment')
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
@@ -34,8 +35,6 @@ urlpatterns = [
     path('fees/update/<int:pk>/', UpdateMessFeeViewset.as_view(), name='update_fee'),
     path('fees/<int:pk>/', GetMessFeeViewset.as_view(), name='get-fee'),
     path('fees/', GetMessFeeViewset.as_view(), name='fees-list'),
-    path('mess-fees-payment/', MessFeePaymentCreateViewset.as_view(), name='mess_fees_payment'),
-    path('mess-fees-payment/<int:pk>/', MessFeePaymentDetailView.as_view(), name='mess_fees_payment_id'),
     path('hostel-allotments/<int:pk>/update-status/', HostelAllotmentStatusUpdateView.as_view(),
          name='host_allotments_status_update'),
     path('', include(router.urls), )
