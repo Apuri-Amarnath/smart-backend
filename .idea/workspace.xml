@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed mess fee">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed mess fee" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -169,23 +165,7 @@
       <workItem from="1718883819526" duration="8288000" />
       <workItem from="1718909633878" duration="375000" />
       <workItem from="1718964601357" duration="4983000" />
-      <workItem from="1719064880624" duration="6193000" />
-    </task>
-    <task id="LOCAL-00043" summary="applied date added">
-      <option name="closed" value="true" />
-      <created>1717352010145</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1717352010145</updated>
-    </task>
-    <task id="LOCAL-00044" summary="updated bonafide get method">
-      <option name="closed" value="true" />
-      <created>1717352239386</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1717352239386</updated>
+      <workItem from="1719064880624" duration="6528000" />
     </task>
     <task id="LOCAL-00045" summary="added subject with semester api">
       <option name="closed" value="true" />
@@ -563,7 +543,23 @@
       <option name="project" value="LOCAL" />
       <updated>1719071957385</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="fixed mess fee">
+      <option name="closed" value="true" />
+      <created>1719073182007</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1719073182007</updated>
+    </task>
+    <task id="LOCAL-00093" summary="fixed mess fee">
+      <option name="closed" value="true" />
+      <created>1719073234528</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1719073234528</updated>
+    </task>
+    <option name="localTasksCounter" value="94" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
