@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added date in complaint">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fix subjects add">
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0023_alter_subject_subject_name.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,38 +169,8 @@
       <workItem from="1718881570491" duration="354000" />
       <workItem from="1718883819526" duration="8288000" />
       <workItem from="1718909633878" duration="375000" />
-    </task>
-    <task id="LOCAL-00035" summary="bonafide filtering done">
-      <option name="closed" value="true" />
-      <created>1717336521236</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1717336521236</updated>
-    </task>
-    <task id="LOCAL-00036" summary="bonafide filtering done">
-      <option name="closed" value="true" />
-      <created>1717336716466</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1717336716466</updated>
-    </task>
-    <task id="LOCAL-00037" summary="bonafide filtering done">
-      <option name="closed" value="true" />
-      <created>1717336953438</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1717336953438</updated>
-    </task>
-    <task id="LOCAL-00038" summary="bonafide filtering done">
-      <option name="closed" value="true" />
-      <created>1717337051905</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1717337051905</updated>
+      <workItem from="1718964601357" duration="4983000" />
+      <workItem from="1719064880624" duration="630000" />
     </task>
     <task id="LOCAL-00039" summary="bonafide filtering done">
       <option name="closed" value="true" />
@@ -559,7 +532,39 @@
       <option name="project" value="LOCAL" />
       <updated>1718909773163</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="updated fees model">
+      <option name="closed" value="true" />
+      <created>1718965388246</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1718965388247</updated>
+    </task>
+    <task id="LOCAL-00085" summary="updated fees model">
+      <option name="closed" value="true" />
+      <created>1718966183879</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1718966183880</updated>
+    </task>
+    <task id="LOCAL-00086" summary="allotment fix">
+      <option name="closed" value="true" />
+      <created>1718969433936</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1718969433937</updated>
+    </task>
+    <task id="LOCAL-00087" summary="allotment fix">
+      <option name="closed" value="true" />
+      <created>1718969497181</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1718969497181</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -610,9 +615,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="user profile fixed" />
-    <MESSAGE value="req bonafide added" />
-    <MESSAGE value="updated auto deploy" />
     <MESSAGE value="updated bonafide fields" />
     <MESSAGE value="added changepass" />
     <MESSAGE value="post method fixed" />
@@ -635,7 +637,10 @@
     <MESSAGE value="fix guestroom" />
     <MESSAGE value="added search filter on guestroom" />
     <MESSAGE value="added date in complaint" />
-    <option name="LAST_COMMIT_MESSAGE" value="added date in complaint" />
+    <MESSAGE value="updated fees model" />
+    <MESSAGE value="allotment fix" />
+    <MESSAGE value="fix subjects add" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix subjects add" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
