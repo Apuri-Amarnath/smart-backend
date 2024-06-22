@@ -70,6 +70,7 @@ def update(request):
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     refresh['role'] = user.role
+    refresh['registration_number'] = user.registration_number
 
     return {
         'refresh': str(refresh),

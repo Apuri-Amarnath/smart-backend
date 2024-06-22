@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fix subjects add">
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0023_alter_subject_subject_name.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,23 +168,7 @@
       <workItem from="1718883819526" duration="8288000" />
       <workItem from="1718909633878" duration="375000" />
       <workItem from="1718964601357" duration="4983000" />
-      <workItem from="1719064880624" duration="630000" />
-    </task>
-    <task id="LOCAL-00039" summary="bonafide filtering done">
-      <option name="closed" value="true" />
-      <created>1717337461462</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1717337461462</updated>
-    </task>
-    <task id="LOCAL-00040" summary="bonafide filtering done">
-      <option name="closed" value="true" />
-      <created>1717337895123</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1717337895123</updated>
+      <workItem from="1719064880624" duration="1554000" />
     </task>
     <task id="LOCAL-00041" summary="applied date added">
       <option name="closed" value="true" />
@@ -564,7 +546,23 @@
       <option name="project" value="LOCAL" />
       <updated>1718969497181</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <task id="LOCAL-00088" summary="fix subjects add">
+      <option name="closed" value="true" />
+      <created>1719065515460</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1719065515460</updated>
+    </task>
+    <task id="LOCAL-00089" summary="fix subjects add">
+      <option name="closed" value="true" />
+      <created>1719065769431</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1719065769431</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
