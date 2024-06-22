@@ -312,7 +312,7 @@ class Mess_fee_payment(models.Model):
 
 class Hostel_No_Due_request(models.Model):
     semester = models.CharField(max_length=225, verbose_name="semester", null=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="Hostel_no_due_request")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Hostel_no_due_request")
     Maintance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
     Mess_fees_date = models.DateField(verbose_name="Mess_fees", null=True, blank=True)
     self_declaration = models.BooleanField(verbose_name="self_agree", null=True, blank=True, default=False)
