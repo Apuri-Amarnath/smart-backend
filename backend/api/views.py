@@ -384,8 +384,8 @@ class SemesterRegistrationViewset(viewsets.ModelViewSet):
 
 
 class HostelAllotmentViewset(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated, IsStudentOrAdmin | IsCaretakerOrAdmin]
-    # renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated, IsStudentOrAdmin | IsCaretakerOrAdmin]
+    renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['user__registration_number', 'status']
     queryset = Hostel_Allotment.objects.all()
