@@ -25,7 +25,7 @@ class YearMonthField(serializers.DateTimeField):
 
     def to_internal_value(self, data):
         try:
-            return datetime.strptime(data, '-01', '%Y-%m-%d').date()
+            return datetime.strptime(data + '-01', '%Y-%m-%d').date()
         except ValueError:
             self.fail('invalid', format='YYYY-MM', input=data)
 
