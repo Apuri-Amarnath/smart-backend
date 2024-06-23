@@ -642,3 +642,5 @@ class Hostel_No_dueViewset(viewsets.ModelViewSet):
 class NoDuesListViewSet(viewsets.ModelViewSet):
     queryset = No_Dues_list.objects.all()
     serializer_class = No_Due_ListSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['request_id__user__registration_number']

@@ -487,7 +487,13 @@ class HostelAllotmentStatusUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class Overall_No_Due_Serializer(serializers.ModelSerializer):
+class Departments_for_no_dueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Departments_for_no_Dues
+        fields = ['id', 'Department_name', 'status', 'approved_date', 'applied_date', 'approved']
+
+
+class Overall_No_Dues_RequestSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
 
     class Meta:
@@ -501,14 +507,9 @@ class Overall_No_Due_Serializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class Departments_for_no_dueSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Departments_for_no_Dues
-        fields = ['id', 'Department_name', 'status', 'approved_date', 'applied_date', 'approved']
-
-
 class No_Due_ListSerializer(serializers.ModelSerializer):
     departments = Departments_for_no_dueSerializer(many=True, required=False)
+    request_id = Overall_No_Dues_RequestSerializer(read_only=True)
 
     class Meta:
         model = No_Dues_list
@@ -516,11 +517,10 @@ class No_Due_ListSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         departments_data = validated_data.pop('departments', None)
-        instance = super().create(validated_data)
-
+        no_due_list_instance = super().create(validated_data)
         if departments_data is None:
             all_departments = Departments_for_no_Dues.objects.all()
-            instance.departments.set(all_departments)
+            no_due_list_instance.departments.set(all_departments)
         else:
             departments = []
             for department_data in departments_data:
@@ -528,9 +528,9 @@ class No_Due_ListSerializer(serializers.ModelSerializer):
                 if department_id:
                     department = Departments_for_no_Dues.objects.get(id=department_id)
                     departments.append(department)
-            instance.departments.set(departments)
+            no_due_list_instance.departments.set(departments)
 
-        return instance
+        return no_due_list_instance
 
     def update(self, instance, validated_data):
         departments_data = validated_data.pop('departments', None)
@@ -549,3 +549,28 @@ class No_Due_ListSerializer(serializers.ModelSerializer):
             instance.departments.set(departments)
 
         return instance
+
+
+class Overall_No_Due_Serializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField(source='user.registration_number', read_only=True)
+
+    class Meta:
+        model = Overall_No_Dues_Request
+        fields = '__all__'
+        read_only_fields = ['registration_number', 'user']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+
+        overall_no_dues_instance = super().create(validated_data)
+        no_due_list_data = {
+            'request_id': overall_no_dues_instance.id,
+        }
+        no_due_list_instance = No_Dues_list.objects.create(request_id=overall_no_dues_instance)
+        all_departments = Departments_for_no_Dues.objects.all()
+
+        overall_no_dues_instance.no_due_list = no_due_list_instance
+        overall_no_dues_instance.save()
+
+        return overall_no_dues_instance
