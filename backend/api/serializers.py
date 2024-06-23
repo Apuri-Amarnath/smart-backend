@@ -1,4 +1,5 @@
 import base64
+import datetime
 
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
@@ -11,6 +12,23 @@ from .models import User, UserProfile, PersonalInformation, AcademicInformation,
     Departments_for_no_Dues
 
 User = get_user_model()
+
+
+class YearMonthField(serializers.DateTimeField):
+    def __init__(self, **kwargs):
+        kwargs['input_formats'] = ['%Y-%m']
+        super().__init__(**kwargs)
+
+    def to_representation(self, value):
+        if value:
+            return value.strftime('%Y-%m')
+        return None
+
+    def to_internal_value(self, data):
+        try:
+            return datetime.strptime(data, '-01', '%Y-%m-%d').date()
+        except ValueError:
+            self.fail('invalid', format='YYYY-MM', input=data)
 
 
 class Csv_RegistrationSerializer(serializers.Serializer):
@@ -428,6 +446,8 @@ class MessFeeSerializer(serializers.ModelSerializer):
 
 class MessFeePaymentSerializer(serializers.ModelSerializer):
     registration_details = serializers.PrimaryKeyRelatedField(queryset=Hostel_Room_Allotment.objects.all())
+    from_date = YearMonthField()
+    to_date = YearMonthField()
 
     class Meta:
         model = Mess_fee_payment
