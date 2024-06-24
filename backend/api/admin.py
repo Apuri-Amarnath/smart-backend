@@ -8,7 +8,9 @@ from django.utils.html import format_html
 
 from .models import Semester, Subject, User, UserProfile, PersonalInformation, ContactInformation, AcademicInformation, \
     College, Bonafide, Semester_Registration, Hostel_Allotment, Hostel_Room_Allotment, Hostel_No_Due_request, \
-    Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request,No_Dues_list,Departments_for_no_Dues
+    Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
+    Departments_for_no_Dues
+
 
 class UserCreationForm(forms.ModelForm):
     """
@@ -90,6 +92,7 @@ class BonafideAdmin(admin.ModelAdmin):
 
     supporting_document_display.short_description = 'Supporting Document'
 
+
 class No_Dues_listAdminForm(forms.ModelForm):
     class Meta:
         model = No_Dues_list
@@ -100,6 +103,7 @@ class No_Dues_listAdminForm(forms.ModelForm):
         if self.instance.pk is None:  # Only set initial departments for new instances
             self.fields['departments'].initial = Departments_for_no_Dues.objects.all()
 
+
 class No_Dues_listAdmin(admin.ModelAdmin):
     form = No_Dues_listAdminForm
 
@@ -107,6 +111,7 @@ class No_Dues_listAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
         if not change:  # If this is a new instance
             obj.departments.set(Departments_for_no_Dues.objects.all())
+
 
 admin.site.register(Departments_for_no_Dues)
 admin.site.register(No_Dues_list, No_Dues_listAdmin)

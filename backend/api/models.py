@@ -1,6 +1,6 @@
 import uuid
 
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models import BinaryField
@@ -59,7 +59,7 @@ class User(AbstractBaseUser):
         ('caretaker', 'Caretaker')
     ]
     registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True,
-                                           validators=[MinLengthValidator(11)])
+                                           validators=[MinLengthValidator(6), MaxLengthValidator(11)])
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -112,7 +112,7 @@ class PersonalInformation(models.Model):
     middle_name = models.CharField(verbose_name="middle name", max_length=100, blank=True, null=True)
     date_of_birth = models.DateField(verbose_name="birth", blank=True, null=True)
     gender = models.CharField(verbose_name="gender", max_length=10, blank=True, null=True)
-    profile_picture = models.ImageField(max_length=200, upload_to=upload_to_profile_pictures, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to=upload_to_profile_pictures, blank=True, null=True)
 
 
 class ContactInformation(models.Model):
