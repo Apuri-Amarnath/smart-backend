@@ -30,6 +30,24 @@ class YearMonthField(serializers.DateTimeField):
             self.fail('invalid', format='YYYY-MM', input=data)
 
 
+class Base64ImageField(serializers.Field):
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith('data:image'):
+
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            return ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+        elif isinstance(data, str):
+
+            return ContentFile(base64.b64decode(data), name='temp')
+        return data
+
+    def to_representation(self, value):
+        if value:
+            return base64.b64encode(value).decode('utf-8')
+        return None
+
+
 class Csv_RegistrationSerializer(serializers.Serializer):
     file = serializers.FileField()
 
@@ -181,24 +199,6 @@ class CollegeSerializer(serializers.ModelSerializer):
         model = College
         fields = '__all__'
         read_only_fields = ['roll_no']
-
-
-class Base64ImageField(serializers.Field):
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith('data:image'):
-
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
-            return ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-        elif isinstance(data, str):
-
-            return ContentFile(base64.b64decode(data), name='temp')
-        return data
-
-    def to_representation(self, value):
-        if value:
-            return base64.b64encode(value).decode('utf-8')
-        return None
 
 
 class BonafideSerializer(serializers.ModelSerializer):

@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="overall due post cmple" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fix mess fee">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -168,15 +170,8 @@
       <workItem from="1719064880624" duration="6528000" />
       <workItem from="1719082313775" duration="668000" />
       <workItem from="1719123477471" duration="5767000" />
-      <workItem from="1719142669424" duration="302000" />
-    </task>
-    <task id="LOCAL-00051" summary="fixed blob field">
-      <option name="closed" value="true" />
-      <created>1717513868125</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1717513868125</updated>
+      <workItem from="1719142669424" duration="699000" />
+      <workItem from="1719146034353" duration="150000" />
     </task>
     <task id="LOCAL-00052" summary="fixed token refresh">
       <option name="closed" value="true" />
@@ -562,7 +557,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719142969673</updated>
     </task>
-    <option name="localTasksCounter" value="100" />
+    <task id="LOCAL-00100" summary="fix mess fee">
+      <option name="closed" value="true" />
+      <created>1719143011504</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1719143011504</updated>
+    </task>
+    <option name="localTasksCounter" value="101" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -613,7 +616,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="bonafide filtering done" />
     <MESSAGE value="applied date added" />
     <MESSAGE value="updated bonafide get method" />
     <MESSAGE value="added subject with semester api" />
@@ -638,7 +640,8 @@
     <MESSAGE value="fixed mess fee" />
     <MESSAGE value="fixed Hostel Due" />
     <MESSAGE value="overall due post cmple" />
-    <option name="LAST_COMMIT_MESSAGE" value="overall due post cmple" />
+    <MESSAGE value="fix mess fee" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix mess fee" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
