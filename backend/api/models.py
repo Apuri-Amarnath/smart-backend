@@ -202,6 +202,7 @@ class Bonafide(models.Model):
         ('pending', 'Pending'),
         ('rejected', 'Rejected'),
         ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
     ]
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="bonafide_college")
     student = models.ForeignKey(PersonalInformation, on_delete=models.CASCADE, related_name="bonafide_student")
@@ -269,6 +270,7 @@ class Hostel_Allotment(models.Model):
         ('applied', 'Applied'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="hostel_allotment_registrations")
@@ -335,12 +337,18 @@ class Guest_room_request(models.Model):
         ('for staying invited delegate', 'For Staying Invited Delegate'),
         ('for staying alumni', 'For Staying Alumni')
     ]
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected')
+    ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="guest_room_request")
     purpose_of_request = models.CharField(max_length=225, choices=PURPOSE_CHOICES)
     from_date = models.DateField(verbose_name="from_date", null=True, blank=True)
     to_date = models.DateField(verbose_name="to_date", null=True, blank=True)
     no_of_persons = models.IntegerField(verbose_name="no_of_persons", blank=True, null=True)
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, default="Pending")
 
     def __str__(self):
         return f'{self.user.registration_number} -- from: {self.from_date} -- to: {self.to_date} no of: {self.no_of_persons}'
