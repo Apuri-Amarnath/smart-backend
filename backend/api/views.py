@@ -11,14 +11,15 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
-    Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request, No_Dues_list
+    Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request, No_Dues_list, \
+    VerifySemesterRegistration
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
     ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer, \
     SemesterRegistrationSerializer, HostelAllotmentSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
     HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
-    ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer
+    ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -34,7 +35,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
-from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin
+from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin
 from django.db.models import Case, When, IntegerField
 import logging
 
@@ -644,3 +645,12 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     serializer_class = No_Due_ListSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['request_id__user__registration_number']
+
+
+class SemesterVerificationViewSet(viewsets.ModelViewSet):
+    queryset = VerifySemesterRegistration.objects.all()
+    serializer_class = SemesterVerificationSerializer
+    permission_classes = [IsAuthenticated, IsFacultyOrAdmin]
+
+    def perform_create(self, serializer):
+        serializer.save()

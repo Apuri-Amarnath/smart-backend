@@ -7,6 +7,7 @@
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="multiple fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -174,15 +175,8 @@
       <workItem from="1719142669424" duration="699000" />
       <workItem from="1719146034353" duration="150000" />
       <workItem from="1719255650445" duration="4478000" />
-      <workItem from="1719311349355" duration="897000" />
-    </task>
-    <task id="LOCAL-00055" summary="semester-registration">
-      <option name="closed" value="true" />
-      <created>1717600014439</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1717600014439</updated>
+      <workItem from="1719311349355" duration="2830000" />
+      <workItem from="1719341436383" duration="397000" />
     </task>
     <task id="LOCAL-00056" summary="semester-registration">
       <option name="closed" value="true" />
@@ -568,7 +562,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719260055007</updated>
     </task>
-    <option name="localTasksCounter" value="104" />
+    <task id="LOCAL-00104" summary="multiple fixes">
+      <option name="closed" value="true" />
+      <created>1719314036334</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1719314036334</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

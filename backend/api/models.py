@@ -439,3 +439,14 @@ class No_Dues_list(models.Model):
         if not self.departments.exists():
             all_departments = Departments_for_no_Dues.objects.all()
             self.departments.set(all_departments)
+
+
+class VerifySemesterRegistration(models.Model):
+    STATUS_CHOICES = [
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    registration_details = models.ForeignKey(Semester_Registration, on_delete=models.CASCADE,
+                                             related_name='registration_details')
+    remarks = models.CharField(max_length=300, verbose_name="remarks")
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
