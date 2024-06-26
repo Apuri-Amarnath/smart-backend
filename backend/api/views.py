@@ -652,7 +652,7 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
     serializer_class = SemesterVerificationSerializer
     permission_classes = [IsAuthenticated, IsFacultyOrAdmin]
     filter_backends = [SearchFilter]
-    search_fields = ['status', 'registration_details_info__student_details__user__registration_number']
+    search_fields = ['status', 'registration_details__student__registration_number']
 
     def perform_create(self, serializer):
         serializer.save()
