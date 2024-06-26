@@ -8,7 +8,7 @@ from rest_framework import serializers, status
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
-    Departments_for_no_Dues
+    Departments_for_no_Dues, VerifySemesterRegistration
 
 User = get_user_model()
 
@@ -573,3 +573,11 @@ class Overall_No_Due_Serializer(serializers.ModelSerializer):
         overall_no_dues_instance.save()
 
         return overall_no_dues_instance
+
+
+class SemesterVerificationSerializer(serializers.ModelSerializer):
+    registration_details = SemesterRegistrationSerializer(read_only=True)
+
+    class Meta:
+        model = VerifySemesterRegistration
+        fields = '__all__'

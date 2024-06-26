@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from api.models import Fees_model, Bonafide
+from api.models import Fees_model, Bonafide, VerifySemesterRegistration
 
 
 class Command(BaseCommand):
@@ -12,6 +12,7 @@ class Command(BaseCommand):
         caretaker_group, _ = Group.objects.get_or_create(name='Caretaker')
         admin_group, _ = Group.objects.get_or_create(name='Admin')
         student_group, _ = Group.objects.get_or_create(name='Student')
+        faculty_group, _ = Group.objects.get_or_create(name='Faculty')
 
         content_type = ContentType.objects.get_for_model(Fees_model)
         can_view_caretaker, _ = Permission.objects.get_or_create(
@@ -31,8 +32,16 @@ class Command(BaseCommand):
             content_type=content_type_Bonafide,
         )
 
+        content_type_Faculty = ContentType.objects.get_for_model(VerifySemesterRegistration)
+        can_view_faculty, _ = Permission.objects.get_or_create(
+            codename='can_view_faculty',
+            name='Can view faculty content',
+            content_type=content_type_Faculty,
+        )
+
         caretaker_group.permissions.add(can_view_caretaker)
         admin_group.permissions.add(can_view_admin)
         student_group.permissions.add(can_view_student)
+        faculty_group.permissions.add(can_view_faculty)
 
         self.stdout.write(self.style.SUCCESS('Successfully created initial groups and permissions'))
