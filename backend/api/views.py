@@ -228,7 +228,7 @@ class CollegeViewSet(viewsets.ModelViewSet):
     queryset = College.objects.all()
     serializer_class = CollegeSerializer
     renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsFacultyOrAdmin]
 
     def get_object(self):
         try:
