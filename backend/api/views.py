@@ -228,7 +228,7 @@ class CollegeViewSet(viewsets.ModelViewSet):
     queryset = College.objects.all()
     serializer_class = CollegeSerializer
     renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated, IsFacultyOrAdmin]
+    permission_classes = [IsAuthenticated, IsFacultyOrAdmin | IsStudentOrAdmin]
 
     def get_object(self):
         try:
@@ -238,12 +238,12 @@ class CollegeViewSet(viewsets.ModelViewSet):
             raise ValidationError({'error': 'College does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     def perform_update(self, serializer):
-        if not self.request.user.is_staff:
+        if not self.request.user.role == 'faculty' or not self.request.user.role == 'admin':
             raise ValidationError({'error': 'Only admin or staff users can create colleges.'})
         serializer.save()
 
     def perform_create(self, serializer):
-        if not self.request.user.is_staff:
+        if not self.request.user.role == 'faculty' or not self.request.user.role == 'admin':
             raise ValidationError({'error': 'Only admin or staff users can create colleges.'})
         serializer.save()
 
