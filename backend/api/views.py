@@ -237,15 +237,15 @@ class CollegeViewSet(viewsets.ModelViewSet):
         except College.DoesNotExist:
             raise ValidationError({'error': 'College does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-    def perform_update(self, serializer):
-        if not self.request.user.role == 'faculty' or not self.request.user.role == 'admin':
-            raise ValidationError({'error': 'Only admin or staff users can create colleges.'})
-        serializer.save()
+    def create(self, request, *args, **kwargs):
+        if self.request.user.role not in ['admin', 'faculty']:
+            raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
+        return super().create(request, *args, **kwargs)
 
-    def perform_create(self, serializer):
-        if not self.request.user.role == 'faculty' or not self.request.user.role == 'admin':
-            raise ValidationError({'error': 'Only admin or staff users can create colleges.'})
-        serializer.save()
+    def update(self, request, *args, **kwargs):
+        if self.request.user.role not in ['admin', 'faculty']:
+            raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
+        return super().create(request, *args, **kwargs)
 
 
 class BonafideViewSet(viewsets.ModelViewSet):
@@ -315,12 +315,12 @@ class SubjectViewSet(viewsets.ModelViewSet):
     search_fields = ['subject_name', 'subject_code', 'instructor']
 
     def create(self, request, *args, **kwargs):
-        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
+        if self.request.user.role not in ['admin', 'faculty']:
             raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
         return super().create(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
+        if self.request.user.role not in ['admin', 'faculty']:
             raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
         return super().create(request, *args, **kwargs)
 
@@ -336,7 +336,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
     ordering = ['semester_name', ]
 
     def create(self, request, *args, **kwargs):
-        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
+        if self.request.user.role not in ['admin', 'faculty']:
             raise ValidationError({'error': 'Only admin or staff users can create semester data.'})
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -346,12 +346,12 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_update(self, serializer):
-        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
+        if self.request.user.role not in ['admin', 'faculty']:
             raise ValidationError({'error': 'Only admin or staff users can update semester data.'})
         serializer.save()
 
     def perform_create(self, serializer):
-        if not self.request.user.role == 'admin' or self.request.user.role == 'faculty':
+        if self.request.user.role not in ['admin', 'faculty']:
             raise ValidationError({'error': 'Only admin or staff users can create semester data.'})
         serializer.save()
 
