@@ -576,8 +576,15 @@ class Overall_No_Due_Serializer(serializers.ModelSerializer):
 
 
 class SemesterVerificationSerializer(serializers.ModelSerializer):
-    registration_details = SemesterRegistrationSerializer(read_only=True)
+    registration_details = serializers.PrimaryKeyRelatedField(
+        queryset=Semester_Registration.objects.all(),
+        write_only=True
+    )
+    registration_details_info = SemesterRegistrationSerializer(read_only=True, source='registration_details')
 
     class Meta:
         model = VerifySemesterRegistration
-        fields = '__all__'
+        fields = ['id', 'registration_details', 'registration_details_info', 'remarks', 'status']
+
+    def create(self, validated_data):
+        return VerifySemesterRegistration.objects.create(**validated_data)
