@@ -14,6 +14,11 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
+from django.utils import timezone
+
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
