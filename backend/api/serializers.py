@@ -631,7 +631,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notification
-        fields = ['id', 'message', 'registration_number', 'time']
+        fields = ['id', 'message', 'time', 'registration_number','user']
         read_only_fields = ['registration_number', 'time']
 
     def create(self, validated_data):
