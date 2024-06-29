@@ -155,7 +155,7 @@ class AcademicInformation(models.Model):
 
 class TransferCertificateInformation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
-                                related_name='TransferCertificate_or_CharacterCertificate')
+                                related_name='tc_information')
     TC_or_CL_no = models.CharField(verbose_name="TC_or_CL_no", max_length=225, null=True, blank=True)
     issuing_date_tc = models.DateField(verbose_name="issuing_date_tc", null=True, blank=True)
     purpose = models.CharField(verbose_name="purpose", max_length=225, null=True, blank=True)
@@ -163,6 +163,9 @@ class TransferCertificateInformation(models.Model):
     character_certificate_no = models.CharField(verbose_name="character_certificate_no", max_length=225, null=True,
                                                 blank=True)
     issuing_date_cr = models.DateField(verbose_name="issuing_date_cr", null=True, blank=True)
+
+    def __str__(self):
+        return f"TC_or_CL_no: {self.TC_or_CL_no} -- user : {self.user.registration_number}"
 
 
 class UserProfile(models.Model):
@@ -174,7 +177,7 @@ class UserProfile(models.Model):
     academic_information = models.OneToOneField(AcademicInformation, on_delete=models.CASCADE,
                                                 related_name='academic_profile')
     tc_information = models.OneToOneField(TransferCertificateInformation, on_delete=models.CASCADE,
-                                          related_name='tc_information')
+                                          related_name='tc_profile')
 
     def __str__(self):
         return self.user.registration_number
