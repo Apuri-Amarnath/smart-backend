@@ -648,6 +648,7 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     queryset = No_Dues_list.objects.all()
     serializer_class = No_Due_ListSerializer
     filter_backends = [filters.SearchFilter]
+    renderer_classes = [UserRenderer]
     search_fields = ['request_id__user__registration_number']
 
 
@@ -655,6 +656,7 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
     queryset = VerifySemesterRegistration.objects.all()
     serializer_class = SemesterVerificationSerializer
     permission_classes = [IsAuthenticated, IsFacultyOrAdmin]
+    renderer_classes = [UserRenderer]
     filter_backends = [SearchFilter]
     search_fields = ['status', 'registration_details__student__user__registration_number']
 
@@ -668,6 +670,7 @@ class NotificationsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['user__registration_number']
+    renderer_classes = [UserRenderer]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
