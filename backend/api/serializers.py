@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from rest_framework import serializers, status
+from django.utils import timezone
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
@@ -627,14 +628,20 @@ class SemesterVerificationSerializer(serializers.ModelSerializer):
 
 class NotificationSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
-    time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
+    time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
 
     class Meta:
         model = Notification
-        fields = ['id', 'message', 'time', 'registration_number','user']
+        fields = ['id', 'message', 'time', 'registration_number']
         read_only_fields = ['registration_number', 'time']
 
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['user'] = user
         return super().create(validated_data)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        local_time = timezone.localtime(instance.time, timezone=timezone.get_fixed_timezone(330))
+        data['time'] = local_time.strftime('%Y-%m-%d %H:%M:%S')
+        return data
