@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db import transaction
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions, viewsets
@@ -679,3 +680,15 @@ class NotificationsViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         instance.delete()
+
+    @action(detail=False, methods=['delete'])
+    def delete_all_notification(self, request):
+        ids = request.data.get('ids', [])
+        if not ids:
+            return Response({'error': 'No ids provided.'}, status=status.HTTP_400_BAD_REQUEST)
+        notifications = Notification.objects.filter(id__in=ids, user=request.user)
+        if not notifications.exists():
+            return Response({'error': 'No Notifications found.'}, status=status.HTTP_400_BAD_REQUEST)
+        count = notifications.count()
+        notifications.delete()
+        return Response({'message': 'Notifications deleted succesfully.'}, status=status.HTTP_200_OK)
