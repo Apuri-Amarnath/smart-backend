@@ -664,15 +664,16 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
 class NotificationsViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['user__registration_number']
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        if instance.user != request.user:
-            return Response({"error": "You do not have permission to delete this notification."},
-                            status=status.HTTP_403_FORBIDDEN)
+        request_user = request.user
+        notification_user = instance.user
+        if request_user != notification_user:
+            raise PermissionDenied("You do not have permission to delete this notification.")
         self.perform_destroy(instance)
         return Response({"message": "Notifications has been cleared."}, status=status.HTTP_200_OK)
 

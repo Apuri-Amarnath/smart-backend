@@ -2,7 +2,7 @@ import base64
 from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 from rest_framework import serializers, status
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
@@ -31,9 +31,6 @@ class YearMonthField(serializers.DateTimeField):
 
 
 class YearField(serializers.Field):
-    def __init__(self, **kwargs):
-        kwargs['input_formats'] = ['%Y']
-        super().__init__(**kwargs)
 
     def to_representation(self, value):
         if value:
@@ -41,10 +38,15 @@ class YearField(serializers.Field):
         return None
 
     def to_internal_value(self, data):
+        if isinstance(data, int):
+            data = str(data)
+        if not isinstance(data, str):
+            self.fail('invalid', input=data)
         try:
-            return datetime.strptime(data + '-01', '%Y-%m-%d').date()
+            # Assume the first day of the year to parse it correctly
+            return datetime.strptime(data + '-01-01', '%Y-%m-%d').date()
         except ValueError:
-            self.fail('invalid', format='YYYY', input=data)
+            self.fail('invalid', input=data)
 
 
 class Base64ImageField(serializers.Field):
@@ -96,7 +98,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
-    registration_number = serializers.CharField(max_length=20, validators=[MinLengthValidator(11)])
+    registration_number = serializers.CharField(max_length=20,
+                                                validators=[MinLengthValidator(6), MaxLengthValidator(11)])
 
     class Meta:
         model = User
@@ -629,7 +632,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notification
-        fields = '__all__'
+        fields = ['id','message', 'registration_number']
 
     def create(self, validated_data):
         user = self.context['request'].user
