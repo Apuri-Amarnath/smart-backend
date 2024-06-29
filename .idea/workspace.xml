@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added verify semester-registration" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added changes">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,7 +61,7 @@
     </option>
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
-        <option name="accountId" value="9b335c4b-a4ae-41e3-beed-e0dab5ee63fc" />
+        <option name="accountId" value="97611f42-26fc-46ed-8d5a-204a1952fe60" />
         <option name="url" value="https://github.com/Apuri-Amarnath/smart-backend.git" />
       </UrlAndAccount>
     </option>
@@ -85,7 +89,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;amar-back&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/smart education/backend/db.sqlite3&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/smart education/backend&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -102,6 +106,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\smart education\backend" />
       <recent name="C:\smart education\backend\api\management\commands" />
       <recent name="C:\smart education" />
       <recent name="C:\smart education\education\src" />
@@ -188,47 +193,9 @@
       <workItem from="1719341436383" duration="1112000" />
       <workItem from="1719394093635" duration="1721000" />
       <workItem from="1719418181723" duration="1186000" />
-      <workItem from="1719422042563" duration="681000" />
-    </task>
-    <task id="LOCAL-00063" summary="deleted static files">
-      <option name="closed" value="true" />
-      <created>1717862615982</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
-      <option name="project" value="LOCAL" />
-      <updated>1717862615982</updated>
-    </task>
-    <task id="LOCAL-00064" summary="added cmd to delete Sql file.">
-      <option name="closed" value="true" />
-      <created>1717863463999</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1717863463999</updated>
-    </task>
-    <task id="LOCAL-00065" summary="updated user based roles.">
-      <option name="closed" value="true" />
-      <created>1718206951657</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1718206951658</updated>
-    </task>
-    <task id="LOCAL-00066" summary="updated user based roles.">
-      <option name="closed" value="true" />
-      <created>1718207364413</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1718207364413</updated>
-    </task>
-    <task id="LOCAL-00067" summary="updated user based roles.">
-      <option name="closed" value="true" />
-      <created>1718374960425</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1718374960425</updated>
+      <workItem from="1719422042563" duration="1153000" />
+      <workItem from="1719661812479" duration="6492000" />
+      <workItem from="1719668705435" duration="9034000" />
     </task>
     <task id="LOCAL-00068" summary="updated user based roles.">
       <option name="closed" value="true" />
@@ -582,7 +549,47 @@
       <option name="project" value="LOCAL" />
       <updated>1719422560430</updated>
     </task>
-    <option name="localTasksCounter" value="112" />
+    <task id="LOCAL-00112" summary="added verify semester-registration">
+      <option name="closed" value="true" />
+      <created>1719422860444</created>
+      <option name="number" value="00112" />
+      <option name="presentableId" value="LOCAL-00112" />
+      <option name="project" value="LOCAL" />
+      <updated>1719422860445</updated>
+    </task>
+    <task id="LOCAL-00113" summary="added verify semester-registration">
+      <option name="closed" value="true" />
+      <created>1719422977502</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1719422977502</updated>
+    </task>
+    <task id="LOCAL-00114" summary="some changes">
+      <option name="closed" value="true" />
+      <created>1719667842405</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1719667842406</updated>
+    </task>
+    <task id="LOCAL-00115" summary="added changes">
+      <option name="closed" value="true" />
+      <created>1719671226741</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1719671226742</updated>
+    </task>
+    <task id="LOCAL-00116" summary="added changes">
+      <option name="closed" value="true" />
+      <created>1719676966948</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1719676966948</updated>
+    </task>
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -633,8 +640,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="added subject with semester api" />
-    <MESSAGE value="fixed blob field" />
     <MESSAGE value="fixed token refresh" />
     <MESSAGE value="validation fix" />
     <MESSAGE value="semester-registration" />
@@ -658,7 +663,9 @@
     <MESSAGE value="fix mess fee" />
     <MESSAGE value="multiple fixes" />
     <MESSAGE value="added verify semester-registration" />
-    <option name="LAST_COMMIT_MESSAGE" value="added verify semester-registration" />
+    <MESSAGE value="some changes" />
+    <MESSAGE value="added changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="added changes" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />

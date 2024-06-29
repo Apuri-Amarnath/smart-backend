@@ -2,13 +2,13 @@ import base64
 from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 from rest_framework import serializers, status
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
-    Departments_for_no_Dues, VerifySemesterRegistration
+    Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification
 
 User = get_user_model()
 
@@ -28,6 +28,25 @@ class YearMonthField(serializers.DateTimeField):
             return datetime.strptime(data + '-01', '%Y-%m-%d').date()
         except ValueError:
             self.fail('invalid', format='YYYY-MM', input=data)
+
+
+class YearField(serializers.Field):
+
+    def to_representation(self, value):
+        if value:
+            return value.strftime('%Y')
+        return None
+
+    def to_internal_value(self, data):
+        if isinstance(data, int):
+            data = str(data)
+        if not isinstance(data, str):
+            self.fail('invalid', input=data)
+        try:
+            # Assume the first day of the year to parse it correctly
+            return datetime.strptime(data + '-01-01', '%Y-%m-%d').date()
+        except ValueError:
+            self.fail('invalid', input=data)
 
 
 class Base64ImageField(serializers.Field):
@@ -79,7 +98,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
-    registration_number = serializers.CharField(max_length=20, validators=[MinLengthValidator(11)])
+    registration_number = serializers.CharField(max_length=20,
+                                                validators=[MinLengthValidator(6), MaxLengthValidator(11)])
 
     class Meta:
         model = User
@@ -144,6 +164,16 @@ class ContactInformationSerializer(serializers.ModelSerializer):
         read_only_fields = ['user']
 
 
+class Tc_Serializer(serializers.ModelSerializer):
+    registration_year = YearField()
+    year = YearField()
+
+    class Meta:
+        model = TransferCertificateInformation
+        exclude = ['id']
+        read_only_fields = ['user']
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -155,6 +185,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     personal_information = PersonalInfoSerializer()
     contact_information = ContactInformationSerializer()
     academic_information = AcademicInfoSerializer()
+    tc_information = Tc_Serializer()
     user = UserSerializer(read_only=True)
 
     class Meta:
@@ -166,6 +197,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         personal_info_data = validated_data.pop('personal_information', {})
         contact_info_data = validated_data.pop('contact_information', {})
         academic_info_data = validated_data.pop('academic_information', {})
+        tc_info_data = validated_data.pop('tc_information', {})
         user_data = validated_data.pop('user', {})
 
         # Update personal information
@@ -185,6 +217,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         for attr, value in academic_info_data.items():
             setattr(academic_info, attr, value)
         academic_info.save()
+
+        tc_info = instance.tc_information
+        for attr, value in tc_info_data.items():
+            setattr(tc_info, attr, value)
+        tc_info.save()
 
         return instance
 
@@ -588,3 +625,16 @@ class SemesterVerificationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return VerifySemesterRegistration.objects.create(**validated_data)
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField(source='user.registration_number', read_only=True)
+
+    class Meta:
+        model = Notification
+        fields = ['id','message', 'registration_number']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        return super().create(validated_data)
