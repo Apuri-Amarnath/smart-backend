@@ -151,6 +151,7 @@ class AcademicInfoSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
     registration_year = YearField()
     year = YearField()
+
     class Meta:
         model = AcademicInformation
         exclude = ['id']
@@ -165,7 +166,6 @@ class ContactInformationSerializer(serializers.ModelSerializer):
 
 
 class Tc_Serializer(serializers.ModelSerializer):
-
     class Meta:
         model = TransferCertificateInformation
         exclude = ['id']
@@ -627,10 +627,12 @@ class SemesterVerificationSerializer(serializers.ModelSerializer):
 
 class NotificationSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
+    time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
 
     class Meta:
         model = Notification
-        fields = ['id','message', 'registration_number']
+        fields = ['id', 'message', 'time', 'registration_number','user']
+        read_only_fields = ['registration_number', 'time']
 
     def create(self, validated_data):
         user = self.context['request'].user

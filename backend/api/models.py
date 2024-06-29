@@ -6,7 +6,8 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models import BinaryField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from datetime import date, timezone
+from datetime import date
+from django.utils import timezone
 
 
 # custom user manager
@@ -503,10 +504,14 @@ class VerifySemesterRegistration(models.Model):
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nofications_user')
     message = models.TextField(verbose_name="message", max_length=400, blank=True, null=True)
+    time = models.DateTimeField(verbose_name="time", default=timezone.now)
+
+    def __str__(self):
+        return f'Notification for -- {self.user.registration_number} -- {self.time}'
 
 
 @receiver(post_save, sender=User)
 def create_welcome_message(sender, instance, created, **kwargs):
     if created:
-        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard")
-        update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")
+        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard", )
+        update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile", )
