@@ -190,7 +190,6 @@ def create_related_information(sender, instance, created, **kwargs):
         contact_info = ContactInformation.objects.create(user=instance)
         academic_info = AcademicInformation.objects.create(user=instance)
         tc_info = TransferCertificateInformation.objects.create(user=instance)
-
         UserProfile.objects.create(user=instance, personal_information=personal_info, contact_information=contact_info,
                                    academic_information=academic_info, tc_information=tc_info)
 
@@ -501,6 +500,13 @@ class VerifySemesterRegistration(models.Model):
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
 
 
-class Notifications(models.Model):
+class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nofications_user')
     message = models.TextField(verbose_name="message", max_length=400, blank=True, null=True)
+
+
+@receiver(post_save, sender=User)
+def create_welcome_message(sender, instance, created, **kwargs):
+    if created:
+        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard")
+        update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")

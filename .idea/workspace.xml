@@ -4,42 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="some changes">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added changes">
+      <change afterPath="$PROJECT_DIR$/backend/api/management/commands/add_welcome_message.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0002_mess_fee_payment_total_fees.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0003_rename_total_fees_mess_fee_payment_total_fees_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0004_alter_mess_fee_payment_registration_details.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0005_no_dues_list_overall_no_dues_request.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0006_alter_overall_no_dues_request_registration_number.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0007_remove_overall_no_dues_request_registration_number_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0008_remove_overall_no_dues_request_user_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0009_remove_overall_no_dues_request_registration_number_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0010_rename_registration_number_complaint_user_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0011_rename_registration_number_hostel_no_due_request_user.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0012_no_dues_list_request_id_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0013_departments_for_no_due_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0014_hostel_allotment_cgpa_no_dues_list_status.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0015_alter_complaint_user.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0016_alter_guest_room_request_user.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0017_alter_departments_for_no_due_status_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0018_overall_no_dues_request_session_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0019_rename_departments_for_no_due_departments_for_no_dues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0020_complaint_registered_date.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0021_alter_hostel_allotment_user.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0022_alter_hostel_allotment_user.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0023_alter_subject_subject_name.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0024_complaint_subject_alter_complaint_status.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0025_alter_hostel_no_due_request_user.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0026_alter_personalinformation_profile_picture_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0027_alter_bonafide_status_alter_hostel_allotment_status.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0028_guest_room_request_status.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0029_verifysemesterregistration.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0030_remove_academicinformation_batch_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0031_rename_transfercertificate_or_charactercertificate_transfercertificateinformation.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +64,7 @@
     </option>
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
-        <option name="accountId" value="9b335c4b-a4ae-41e3-beed-e0dab5ee63fc" />
+        <option name="accountId" value="97611f42-26fc-46ed-8d5a-204a1952fe60" />
         <option name="url" value="https://github.com/Apuri-Amarnath/smart-backend.git" />
       </UrlAndAccount>
     </option>
@@ -227,15 +198,7 @@
       <workItem from="1719418181723" duration="1186000" />
       <workItem from="1719422042563" duration="1153000" />
       <workItem from="1719661812479" duration="6492000" />
-      <workItem from="1719668705435" duration="2433000" />
-    </task>
-    <task id="LOCAL-00066" summary="updated user based roles.">
-      <option name="closed" value="true" />
-      <created>1718207364413</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1718207364413</updated>
+      <workItem from="1719668705435" duration="6229000" />
     </task>
     <task id="LOCAL-00067" summary="updated user based roles.">
       <option name="closed" value="true" />
@@ -621,7 +584,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719667842406</updated>
     </task>
-    <option name="localTasksCounter" value="115" />
+    <task id="LOCAL-00115" summary="added changes">
+      <option name="closed" value="true" />
+      <created>1719671226741</created>
+      <option name="number" value="00115" />
+      <option name="presentableId" value="LOCAL-00115" />
+      <option name="project" value="LOCAL" />
+      <updated>1719671226742</updated>
+    </task>
+    <option name="localTasksCounter" value="116" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -672,7 +643,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fixed blob field" />
     <MESSAGE value="fixed token refresh" />
     <MESSAGE value="validation fix" />
     <MESSAGE value="semester-registration" />
@@ -697,7 +667,8 @@
     <MESSAGE value="multiple fixes" />
     <MESSAGE value="added verify semester-registration" />
     <MESSAGE value="some changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="some changes" />
+    <MESSAGE value="added changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="added changes" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />

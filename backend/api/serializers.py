@@ -8,7 +8,7 @@ from rest_framework import serializers, status
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
-    Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notifications
+    Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification
 
 User = get_user_model()
 
@@ -162,6 +162,9 @@ class ContactInformationSerializer(serializers.ModelSerializer):
 
 
 class Tc_Serializer(serializers.ModelSerializer):
+    registration_year = YearField()
+    year = YearField()
+
     class Meta:
         model = TransferCertificateInformation
         exclude = ['id']
@@ -625,7 +628,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
 
     class Meta:
-        model = Notifications
+        model = Notification
         fields = '__all__'
 
     def create(self, validated_data):
