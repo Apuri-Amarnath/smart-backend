@@ -43,7 +43,6 @@ class YearField(serializers.Field):
         if not isinstance(data, str):
             self.fail('invalid', input=data)
         try:
-            # Assume the first day of the year to parse it correctly
             return datetime.strptime(data + '-01-01', '%Y-%m-%d').date()
         except ValueError:
             self.fail('invalid', input=data)
@@ -150,7 +149,8 @@ class PersonalInfoSerializer(serializers.ModelSerializer):
 
 class AcademicInfoSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
-
+    registration_year = YearField()
+    year = YearField()
     class Meta:
         model = AcademicInformation
         exclude = ['id']
@@ -165,8 +165,6 @@ class ContactInformationSerializer(serializers.ModelSerializer):
 
 
 class Tc_Serializer(serializers.ModelSerializer):
-    registration_year = YearField()
-    year = YearField()
 
     class Meta:
         model = TransferCertificateInformation
