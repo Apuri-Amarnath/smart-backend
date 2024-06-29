@@ -142,7 +142,7 @@ class AcademicInformation(models.Model):
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='academic_information')
     last_qualification = models.CharField(choices=LAST_QUALIFICATION_CHOICES, max_length=225, blank=True, null=True)
-    year = models.IntegerField(verbose_name="year", blank=True, null=True)
+    year = models.DateField(verbose_name="year", blank=True, null=True)
     school = models.CharField(verbose_name="school", max_length=225, null=True, default=None)
     board = models.CharField(choices=BOARD_CHOICES, max_length=225, null=True)
     branch = models.CharField(verbose_name="branch", max_length=225, null=True, blank=True)
