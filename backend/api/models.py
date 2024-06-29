@@ -145,6 +145,7 @@ class AcademicInformation(models.Model):
     year = models.IntegerField(verbose_name="year", blank=True, null=True)
     school = models.CharField(verbose_name="school", max_length=225, null=True, default=None)
     board = models.CharField(choices=BOARD_CHOICES, max_length=225, null=True)
+    branch = models.CharField(verbose_name="branch", max_length=225, null=True, blank=True)
     merit_serial_number = models.CharField(verbose_name="merit serial number", max_length=225, null=True, default=None)
     category = models.CharField(verbose_name="category", max_length=225, null=True, blank=True)
     college_name = models.CharField(verbose_name="college name", max_length=225, null=True, blank=True)
