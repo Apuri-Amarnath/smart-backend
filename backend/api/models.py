@@ -112,33 +112,57 @@ class PersonalInformation(models.Model):
     middle_name = models.CharField(verbose_name="middle name", max_length=100, blank=True, null=True)
     date_of_birth = models.DateField(verbose_name="birth", blank=True, null=True)
     gender = models.CharField(verbose_name="gender", max_length=10, blank=True, null=True)
+    permanent_address = models.TextField(verbose_name="permanent address", max_length=300, blank=True, null=True)
+    isCorrespndance_same = models.BooleanField(verbose_name="both address same", blank=True, null=True, default=False)
+    correspndance_address = models.TextField(verbose_name="correspndance address", blank=True, null=True,
+                                             max_length=300)
     profile_picture = models.ImageField(upload_to=upload_to_profile_pictures, blank=True, null=True)
 
 
 class ContactInformation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='contact_information')
-    email = models.EmailField(verbose_name="email address", max_length=225, blank=True, null=True)
-    phone_number = models.CharField(verbose_name="phone number", max_length=15, blank=True, null=True)
-    alternate_phone_number = models.CharField(verbose_name="alternate phone", max_length=15, blank=True, null=True)
-    address = models.TextField(verbose_name="address", blank=True, null=True, max_length=300)
-    city = models.CharField(verbose_name="city", max_length=100, blank=True, null=True)
-    state = models.CharField(verbose_name="state", max_length=100, blank=True, null=True)
-    postal_code = models.CharField(verbose_name="postal code", max_length=10, null=True, blank=True)
-    country = models.CharField(verbose_name="country", max_length=100, blank=True, null=True)
+    student_email = models.EmailField(verbose_name="student email address", max_length=225, blank=True, null=True)
+    student_phone_number = models.CharField(verbose_name="student phone number", max_length=15, blank=True, null=True)
+    fathers_mobile_number = models.CharField(verbose_name="fathers phone number", max_length=15, blank=True, null=True)
 
 
 class AcademicInformation(models.Model):
+    LAST_QUALIFICATION_CHOICES = [
+        ('matric', 'Matric'),
+        ('intermediate', 'Intermediate'),
+        ('polytechnic', 'Polytechnic'),
+    ]
+    BOARD_CHOICES = [
+        ('CBSE', 'CBSE'),
+        ('ICSE', 'ICSE'),
+        ('BSEB', 'BSEB'),
+        ('others', 'Others'),
+    ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='academic_information')
-    enrollment_date = models.DateField(verbose_name="enrollment date", blank=True, null=True)
-    program = models.CharField(verbose_name="program", blank=True, null=True, max_length=100)
-    major = models.CharField(verbose_name="major", blank=True, null=True, max_length=100)
-    current_year = models.IntegerField(verbose_name="current year", blank=True, null=True)
-    gpa = models.DecimalField(verbose_name="GPA", blank=True, null=True, max_digits=4, decimal_places=2)
-    course_enrolled = models.TextField(verbose_name="course enrolled", blank=True, null=True)
-    year_semester = models.CharField(verbose_name="year/semester", max_length=10, null=True, blank=True)
-    batch = models.CharField(verbose_name="batch", max_length=10, null=True, blank=True)
-    department = models.CharField(verbose_name="department", max_length=225, null=True, blank=True)
-    course_start_date = models.DateField(verbose_name="course start date", null=True, blank=True)
+    last_qualification = models.CharField(choices=LAST_QUALIFICATION_CHOICES, max_length=225, blank=True, null=True)
+    year = models.IntegerField(verbose_name="year", blank=True, null=True)
+    school = models.CharField(verbose_name="school", max_length=225, null=True, default=None)
+    board = models.CharField(choices=BOARD_CHOICES, max_length=225, null=True)
+    merit_serial_number = models.CharField(verbose_name="merit serial number", max_length=225, null=True, default=None)
+    category = models.CharField(verbose_name="category", max_length=225, null=True, blank=True)
+    college_name = models.CharField(verbose_name="college name", max_length=225, null=True, blank=True)
+    date_of_admission = models.DateField(verbose_name="date of admission", null=True, blank=True)
+    session = models.CharField(verbose_name="session", max_length=225, null=True, blank=True)
+    university_reg_no = models.CharField(verbose_name="university registration number", max_length=225, null=True,
+                                         blank=True)
+    registration_year = models.DateField(verbose_name="registration year", null=True, blank=True)
+
+
+class TransferCertificateInformation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name='TransferCertificate_or_CharacterCertificate')
+    TC_or_CL_no = models.CharField(verbose_name="TC_or_CL_no", max_length=225, null=True, blank=True)
+    issuing_date_tc = models.DateField(verbose_name="issuing_date_tc", null=True, blank=True)
+    purpose = models.CharField(verbose_name="purpose", max_length=225, null=True, blank=True)
+    character_certificate_issued = models.BooleanField(verbose_name="character_certificate_issued", default=False)
+    character_certificate_no = models.CharField(verbose_name="character_certificate_no", max_length=225, null=True,
+                                                blank=True)
+    issuing_date_cr = models.DateField(verbose_name="issuing_date_cr", null=True, blank=True)
 
 
 class UserProfile(models.Model):
@@ -149,6 +173,8 @@ class UserProfile(models.Model):
                                                related_name='contact_profile')
     academic_information = models.OneToOneField(AcademicInformation, on_delete=models.CASCADE,
                                                 related_name='academic_profile')
+    tc_information = models.OneToOneField(TransferCertificateInformation, on_delete=models.CASCADE,
+                                          related_name='tc_information')
 
     def __str__(self):
         return self.user.registration_number
@@ -160,8 +186,10 @@ def create_related_information(sender, instance, created, **kwargs):
         personal_info = PersonalInformation.objects.create(user=instance)
         contact_info = ContactInformation.objects.create(user=instance)
         academic_info = AcademicInformation.objects.create(user=instance)
+        tc_info = TransferCertificateInformation.objects.create(user=instance)
+
         UserProfile.objects.create(user=instance, personal_information=personal_info, contact_information=contact_info,
-                                   academic_information=academic_info)
+                                   academic_information=academic_info, tc_information=tc_info)
 
 
 @receiver(post_save, sender=User)
@@ -169,6 +197,7 @@ def save_related_information(sender, instance, **kwargs):
     instance.personal_information.save()
     instance.contact_information.save()
     instance.academic_information.save()
+    instance.tc_information.save()
     instance.profile.save()
 
 
@@ -250,10 +279,16 @@ class Semester(models.Model):
 
 
 class Semester_Registration(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="semester_registrations")
     student = models.ForeignKey(UserProfile, on_delete=models.CASCADE,
                                 related_name="semester_registration_student")
     applied_date = models.DateField(verbose_name="semester_registration_date", null=True, blank=True)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="Pending")
 
     def save(self, *args, **kwargs):
         if not self.applied_date:
@@ -301,6 +336,9 @@ class Fees_model(models.Model):
     Mess_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="Mess fees")
     Security_Deposit = models.CharField(max_length=225, null=True, blank=True, verbose_name="Security deposit")
 
+    def __str__(self):
+        return f" id : {self.id} -- Main Fees : {self.Maintainance_fees} -- Mess Fees : {self.Mess_fees} -- Security Deposit {self.Security_Deposit} "
+
 
 class Mess_fee_payment(models.Model):
     registration_details = models.ForeignKey(Hostel_Room_Allotment, on_delete=models.CASCADE)
@@ -313,6 +351,13 @@ class Mess_fee_payment(models.Model):
 
 
 class Hostel_No_Due_request(models.Model):
+    STATUS_CHOICES = [
+        ('not-applied', 'Not-applied'),
+        ('applied', 'Applied'),
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
     semester = models.CharField(max_length=225, verbose_name="semester", null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Hostel_no_due_request")
     Maintance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
@@ -320,6 +365,7 @@ class Hostel_No_Due_request(models.Model):
     self_declaration = models.BooleanField(verbose_name="self_agree", null=True, blank=True, default=False)
     requested_date = models.DateField(verbose_name="requested_date", null=True, blank=True)
     approved_date = models.DateField(verbose_name="approves_date", null=True, blank=True)
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, default="not-applied")
 
     def __str__(self):
         return f"{self.user.registration_number} -- semester: {self.semester} -- requested date: {self.requested_date} -- approved date: {self.approved_date}"
@@ -450,3 +496,8 @@ class VerifySemesterRegistration(models.Model):
                                              related_name='registration_details')
     remarks = models.CharField(max_length=300, verbose_name="remarks")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
+
+
+class Notifications(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nofications_user')
+    message = models.TextField(verbose_name="message", max_length=400, blank=True, null=True)

@@ -4,7 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added verify semester-registration" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added verify semester-registration">
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0030_remove_academicinformation_batch_and_more.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0031_rename_transfercertificate_or_charactercertificate_transfercertificateinformation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/17db8717-027a-40c2-806d-e134de555165.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/17db8717-027a-40c2-806d-e134de555165.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/asgi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/settings.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/urls.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/wsgi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/college-logos/register.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/csv_uploads/users_registration_sample.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif_1bBdflM.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif_5Iq5J0R.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif_BGrfMVz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif_T4WMMeS.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif_yqyp09J.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/media/profile-pictures/samplesgifyfvyif_zQAI3oq.png" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -188,23 +210,8 @@
       <workItem from="1719341436383" duration="1112000" />
       <workItem from="1719394093635" duration="1721000" />
       <workItem from="1719418181723" duration="1186000" />
-      <workItem from="1719422042563" duration="681000" />
-    </task>
-    <task id="LOCAL-00063" summary="deleted static files">
-      <option name="closed" value="true" />
-      <created>1717862615982</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
-      <option name="project" value="LOCAL" />
-      <updated>1717862615982</updated>
-    </task>
-    <task id="LOCAL-00064" summary="added cmd to delete Sql file.">
-      <option name="closed" value="true" />
-      <created>1717863463999</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1717863463999</updated>
+      <workItem from="1719422042563" duration="1153000" />
+      <workItem from="1719661812479" duration="5671000" />
     </task>
     <task id="LOCAL-00065" summary="updated user based roles.">
       <option name="closed" value="true" />
@@ -582,7 +589,23 @@
       <option name="project" value="LOCAL" />
       <updated>1719422560430</updated>
     </task>
-    <option name="localTasksCounter" value="112" />
+    <task id="LOCAL-00112" summary="added verify semester-registration">
+      <option name="closed" value="true" />
+      <created>1719422860444</created>
+      <option name="number" value="00112" />
+      <option name="presentableId" value="LOCAL-00112" />
+      <option name="project" value="LOCAL" />
+      <updated>1719422860445</updated>
+    </task>
+    <task id="LOCAL-00113" summary="added verify semester-registration">
+      <option name="closed" value="true" />
+      <created>1719422977502</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1719422977502</updated>
+    </task>
+    <option name="localTasksCounter" value="114" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
