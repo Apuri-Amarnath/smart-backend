@@ -318,7 +318,7 @@ class SemesterRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Semester_Registration
-        fields = ['id', 'semester', 'student', 'student_details', 'applied_date']
+        fields = ['id', 'semester', 'student', 'student_details', 'applied_date','status']
         read_only_fields = ['id', 'student_details', 'semester']
 
     def create(self, validated_data):
