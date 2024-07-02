@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="mess fee update">
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0007_alter_mess_fee_payment_fee_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/migrations/0007_alter_mess_fee_payment_fee_type.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0008_alter_mess_fee_payment_fee_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/migrations/0008_alter_mess_fee_payment_fee_type.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,23 +182,7 @@
       <workItem from="1719661812479" duration="6492000" />
       <workItem from="1719668705435" duration="17014000" />
       <workItem from="1719695313240" duration="2394000" />
-      <workItem from="1719897699995" duration="8461000" />
-    </task>
-    <task id="LOCAL-00088" summary="fix subjects add">
-      <option name="closed" value="true" />
-      <created>1719065515460</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1719065515460</updated>
-    </task>
-    <task id="LOCAL-00089" summary="fix subjects add">
-      <option name="closed" value="true" />
-      <created>1719065769431</created>
-      <option name="number" value="00089" />
-      <option name="presentableId" value="LOCAL-00089" />
-      <option name="project" value="LOCAL" />
-      <updated>1719065769431</updated>
+      <workItem from="1719897699995" duration="9350000" />
     </task>
     <task id="LOCAL-00090" summary="fix subjects add">
       <option name="closed" value="true" />
@@ -576,7 +560,23 @@
       <option name="project" value="LOCAL" />
       <updated>1719908332876</updated>
     </task>
-    <option name="localTasksCounter" value="137" />
+    <task id="LOCAL-00137" summary="mess fee update">
+      <option name="closed" value="true" />
+      <created>1719908487886</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1719908487886</updated>
+    </task>
+    <task id="LOCAL-00138" summary="mess fee update">
+      <option name="closed" value="true" />
+      <created>1719908519277</created>
+      <option name="number" value="00138" />
+      <option name="presentableId" value="LOCAL-00138" />
+      <option name="project" value="LOCAL" />
+      <updated>1719908519277</updated>
+    </task>
+    <option name="localTasksCounter" value="139" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
