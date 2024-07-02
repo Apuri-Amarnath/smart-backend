@@ -1,6 +1,5 @@
 import os.path
 
-
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -651,7 +650,7 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     queryset = No_Dues_list.objects.all()
     serializer_class = No_Due_ListSerializer
     filter_backends = [filters.SearchFilter]
-    # renderer_classes = [UserRenderer]
+    #renderer_classes = [UserRenderer]
     search_fields = ['request_id__user__registration_number']
 
     @action(detail=True, methods=['patch'], url_path='departments/(?P<department_id>[^/.]+)')
@@ -709,11 +708,10 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
 class NotificationsViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['user__registration_number']
-
-    # renderer_classes = [UserRenderer]
+    renderer_classes = [UserRenderer]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

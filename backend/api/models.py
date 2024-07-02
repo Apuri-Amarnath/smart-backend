@@ -554,6 +554,6 @@ class VerifySemesterRegistration(models.Model):
 
 @receiver(post_save, sender=User)
 def create_welcome_message(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.role == 'student':
         welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard")
         update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")
