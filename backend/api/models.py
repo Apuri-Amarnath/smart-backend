@@ -364,7 +364,7 @@ class Fees_model(models.Model):
 
 class Mess_fee_payment(models.Model):
     FEE_TYPE = [
-        ('mees_fee', 'Mees Fee'),
+        ('mess_fee', 'Mees Fee'),
         ('maintainance_fee', 'Maintainance Fees'),
         ('security_fee', 'Security Fee')
     ]
