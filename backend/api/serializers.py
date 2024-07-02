@@ -486,7 +486,7 @@ class MessFeePaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mess_fee_payment
-        fields = ['id', 'registration_details', 'from_date', 'to_date', 'total_fees']
+        fields = ['id', 'registration_details', 'from_date', 'to_date','fee_type', 'total_fees']
 
     def create(self, validated_data):
         registration_details_data = validated_data.pop('registration_details')

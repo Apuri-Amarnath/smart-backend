@@ -653,18 +653,21 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['patch'], url_path='departments/(?P<department_id>[^/.]+)')
     def update_department(self, request, pk=None, department_id=None):
-        no_dues_list_instance = self.get_object()
-        department_data = request.data.get('department_data')
+        try:
+            no_dues_list_instance = self.get_object()
+        except No_Dues_list.DoesNotExist:
+            return Response({'error': 'No Due_list not found'}, status=status.HTTP_404_NOT_FOUND)
         try:
             department = Departments_for_no_Dues.objects.get(id=department_id)
-            department_serializer = Departments_for_no_dueSerializer(instance=department, data=department_data,
-                                                                     partial=True)
-            if department_serializer.is_valid():
-                department_serializer.save()
-                return Response(department_serializer.data)
-            return Response(department_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Departments_for_no_dueSerializer.DoesNotExist:
-            return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Departments_for_no_Dues.DoesNotExist:
+            return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
+        department_data = request.data
+        department_serializer = Departments_for_no_dueSerializer(instance=department, data=department_data,
+                                                                 partial=True)
+        if department_serializer.is_valid():
+            department_serializer.save()
+            return Response(department_serializer.data)
+        return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class SemesterVerificationViewSet(viewsets.ModelViewSet):
