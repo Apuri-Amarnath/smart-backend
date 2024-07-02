@@ -363,14 +363,15 @@ class Fees_model(models.Model):
 
 
 class Mess_fee_payment(models.Model):
-    FEE_TYPE = [('mees fee', 'Mees Fee'),
-                ('maintainance fee', 'Maintainance Fees'),
-                ('security fee', 'Security Fee')]
+    FEE_TYPE = [('mees_fee', 'Mees_Fee'),
+                ('maintainance_fee', 'Maintainance Fees'),
+                ('security_fee', 'Security Fee')]
     registration_details = models.ForeignKey(Hostel_Room_Allotment, on_delete=models.CASCADE)
     from_date = models.DateField(null=True, blank=True)
     to_date = models.DateField(null=True, blank=True)
     fee_type = models.CharField(max_length=225, choices=FEE_TYPE, null=True, blank=True, verbose_name="fee_type")
-    total_fees = models.DecimalField(max_digits=30, decimal_places=2, default=0, null=True, blank=True)
+    total_fees = models.DecimalField(max_digits=30, decimal_places=2, default=0, null
+    =True, blank=True)
 
 
 class Hostel_No_Due_request(models.Model):
