@@ -363,7 +363,7 @@ class Fees_model(models.Model):
 
 
 class Mess_fee_payment(models.Model):
-    FEE_TYPE = [('mees_fee', 'Mees_Fee'),
+    FEE_TYPE = [('mees_fee', 'Mees Fee'),
                 ('maintainance_fee', 'Maintainance Fees'),
                 ('security_fee', 'Security Fee')]
     registration_details = models.ForeignKey(Hostel_Room_Allotment, on_delete=models.CASCADE)
