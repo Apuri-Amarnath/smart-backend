@@ -526,7 +526,7 @@ class VerifySemesterRegistration(models.Model):
     ]
     registration_details = models.ForeignKey(Semester_Registration, on_delete=models.CASCADE,
                                              related_name='registration_details')
-    remarks = models.CharField(max_length=300, verbose_name="remarks")
+    remarks = models.CharField(max_length=300, verbose_name="remarks",blank=True,null=True)
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
 
     def save(self, *args, **kwargs):
