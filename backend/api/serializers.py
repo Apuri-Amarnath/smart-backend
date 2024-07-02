@@ -486,8 +486,7 @@ class MessFeePaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mess_fee_payment
-        fields = ['id', 'registration_details', 'from_date', 'to_date', 'mess_fees', 'maintainance_fees',
-                  'security_fees', 'total_fees']
+        fields = ['id', 'registration_details', 'from_date', 'to_date', 'mess_fees','fee_type', 'total_fees']
 
     def create(self, validated_data):
         registration_details_data = validated_data.pop('registration_details')
@@ -526,6 +525,13 @@ class Departments_for_no_dueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departments_for_no_Dues
         fields = ['id', 'Department_name', 'status', 'approved_date', 'applied_date', 'approved']
+
+    def update(self, instance, validated_data):
+        instance.approved_date = validated_data.get('approved_date', instance)
+        instance.approved = validated_data.get('approved', instance)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        return instance
 
 
 class Overall_No_Dues_RequestSerializer(serializers.ModelSerializer):
