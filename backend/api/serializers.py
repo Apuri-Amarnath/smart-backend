@@ -630,7 +630,7 @@ class SemesterVerificationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         instance = VerifySemesterRegistration.objects.create(**validated_data)
-        instance.registration_details.status = instance.status()
+        instance.registration_details.status = instance.status
         instance.registration_details.save()
         return instance
 
