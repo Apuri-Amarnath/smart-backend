@@ -5,6 +5,7 @@ from django.core.files.base import ContentFile
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from rest_framework import serializers, status
 from django.utils import timezone
+import logging
 
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
@@ -12,6 +13,7 @@ from .models import User, UserProfile, PersonalInformation, AcademicInformation,
     Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 class YearMonthField(serializers.DateTimeField):
@@ -559,34 +561,27 @@ class No_Due_ListSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         departments_data = validated_data.pop('departments', None)
         no_due_list_instance = super().create(validated_data)
+
         if departments_data is None:
             all_departments = Departments_for_no_Dues.objects.all()
             no_due_list_instance.departments.set(all_departments)
         else:
-            departments = []
-            for department_data in departments_data:
-                department_id = department_data.get('id', None)
-                if department_id:
-                    department = Departments_for_no_Dues.objects.get(id=department_id)
-                    departments.append(department)
+            departments = [Departments_for_no_Dues.objects.get(id=department_data['id']) for department_data in
+                           departments_data]
             no_due_list_instance.departments.set(departments)
 
         return no_due_list_instance
 
     def update(self, instance, validated_data):
         departments_data = validated_data.pop('departments', None)
-        instance = super().update(instance, validated_data)
+        instance.status = validated_data.get('status', instance.status)
+        instance.approved_date = validated_data.get('approved_date', instance.approved_date)
+        instance.approved = validated_data.get('approved', instance.approved)
+        instance.save()
 
-        if departments_data is None:
-            all_departments = Departments_for_no_Dues.objects.all()
-            instance.departments.set(all_departments)
-        else:
-            departments = []
-            for department_data in departments_data:
-                department_id = department_data.get('id', None)
-                if department_id:
-                    department = Departments_for_no_Dues.objects.get(id=department_id)
-                    departments.append(department)
+        if departments_data is not None:
+            departments = [Departments_for_no_Dues.objects.get(id=department_data['id']) for department_data in
+                           departments_data]
             instance.departments.set(departments)
 
         return instance
@@ -609,7 +604,6 @@ class Overall_No_Due_Serializer(serializers.ModelSerializer):
             'request_id': overall_no_dues_instance.id,
         }
         no_due_list_instance = No_Dues_list.objects.create(request_id=overall_no_dues_instance)
-        all_departments = Departments_for_no_Dues.objects.all()
 
         overall_no_dues_instance.no_due_list = no_due_list_instance
         overall_no_dues_instance.save()

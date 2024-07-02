@@ -1,8 +1,10 @@
 import os.path
+
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db import transaction
+from django.utils import timezone
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
@@ -648,7 +650,7 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     queryset = No_Dues_list.objects.all()
     serializer_class = No_Due_ListSerializer
     filter_backends = [filters.SearchFilter]
-    # renderer_classes = [UserRenderer]
+    #renderer_classes = [UserRenderer]
     search_fields = ['request_id__user__registration_number']
 
     @action(detail=True, methods=['patch'], url_path='departments/(?P<department_id>[^/.]+)')
@@ -665,7 +667,28 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
         department_serializer = Departments_for_no_dueSerializer(instance=department, data=department_data,
                                                                  partial=True)
         if department_serializer.is_valid():
-            department_serializer.save()
+            updated_department = department_serializer.save()
+
+            # Update No_Dues_list instance based on department status changes
+            if updated_department.status == 'approved' and updated_department.approved:
+                no_dues_list_instance.status = 'approved'
+                no_dues_list_instance.approved = True
+                no_dues_list_instance.approved_date = timezone.now()
+            else:
+                all_approved = all(
+                    dep.status == 'approved' and dep.approved for dep in no_dues_list_instance.departments.all()
+                )
+                if all_approved:
+                    no_dues_list_instance.status = 'approved'
+                    no_dues_list_instance.approved = True
+                    no_dues_list_instance.approved_date = timezone.now()
+                else:
+                    no_dues_list_instance.status = 'pending'
+                    no_dues_list_instance.approved = False
+                    no_dues_list_instance.approved_date = None
+
+            no_dues_list_instance.save()
+
             return Response(department_serializer.data)
         return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -678,14 +701,6 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter]
     search_fields = ['status', 'registration_details__student__user__registration_number']
 
-    def create(self, request, *args, **kwargs):
-        if not (request.user.role == 'admin' or request.user.role == 'faculty'):
-            return Response(
-                {"detail": "You do not have permission to perform this action."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        return super().create(request, *args, **kwargs)
-
     def perform_create(self, serializer):
         serializer.save()
 
@@ -693,11 +708,10 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
 class NotificationsViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['user__registration_number']
-
-    # renderer_classes = [UserRenderer]
+    renderer_classes = [UserRenderer]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

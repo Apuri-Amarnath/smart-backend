@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="mess fee update">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="no dues working fine">
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,39 +184,7 @@
       <workItem from="1719695313240" duration="2394000" />
       <workItem from="1719897699995" duration="9350000" />
       <workItem from="1719942699149" duration="2580000" />
-      <workItem from="1719948347422" duration="1541000" />
-    </task>
-    <task id="LOCAL-00097" summary="fixed Hostel Due">
-      <option name="closed" value="true" />
-      <created>1719124537326</created>
-      <option name="number" value="00097" />
-      <option name="presentableId" value="LOCAL-00097" />
-      <option name="project" value="LOCAL" />
-      <updated>1719124537327</updated>
-    </task>
-    <task id="LOCAL-00098" summary="overall due post cmple">
-      <option name="closed" value="true" />
-      <created>1719130142757</created>
-      <option name="number" value="00098" />
-      <option name="presentableId" value="LOCAL-00098" />
-      <option name="project" value="LOCAL" />
-      <updated>1719130142757</updated>
-    </task>
-    <task id="LOCAL-00099" summary="overall due post cmple">
-      <option name="closed" value="true" />
-      <created>1719142969672</created>
-      <option name="number" value="00099" />
-      <option name="presentableId" value="LOCAL-00099" />
-      <option name="project" value="LOCAL" />
-      <updated>1719142969673</updated>
-    </task>
-    <task id="LOCAL-00100" summary="fix mess fee">
-      <option name="closed" value="true" />
-      <created>1719143011504</created>
-      <option name="number" value="00100" />
-      <option name="presentableId" value="LOCAL-00100" />
-      <option name="project" value="LOCAL" />
-      <updated>1719143011504</updated>
+      <workItem from="1719948347422" duration="5265000" />
     </task>
     <task id="LOCAL-00101" summary="multiple fixes">
       <option name="closed" value="true" />
@@ -579,7 +546,39 @@
       <option name="project" value="LOCAL" />
       <updated>1719949254621</updated>
     </task>
-    <option name="localTasksCounter" value="146" />
+    <task id="LOCAL-00146" summary="mess fee update">
+      <option name="closed" value="true" />
+      <created>1719949908627</created>
+      <option name="number" value="00146" />
+      <option name="presentableId" value="LOCAL-00146" />
+      <option name="project" value="LOCAL" />
+      <updated>1719949908627</updated>
+    </task>
+    <task id="LOCAL-00147" summary="mess fee update">
+      <option name="closed" value="true" />
+      <created>1719950069391</created>
+      <option name="number" value="00147" />
+      <option name="presentableId" value="LOCAL-00147" />
+      <option name="project" value="LOCAL" />
+      <updated>1719950069391</updated>
+    </task>
+    <task id="LOCAL-00148" summary="mess fee update">
+      <option name="closed" value="true" />
+      <created>1719950154707</created>
+      <option name="number" value="00148" />
+      <option name="presentableId" value="LOCAL-00148" />
+      <option name="project" value="LOCAL" />
+      <updated>1719950154707</updated>
+    </task>
+    <task id="LOCAL-00149" summary="no dues working fine">
+      <option name="closed" value="true" />
+      <created>1719953463128</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1719953463128</updated>
+    </task>
+    <option name="localTasksCounter" value="150" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -630,7 +629,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="semester-registration" />
     <MESSAGE value="fixed semester-registration" />
     <MESSAGE value="added Hostel allotment" />
     <MESSAGE value="deleted static files" />
@@ -655,7 +653,8 @@
     <MESSAGE value="added changes" />
     <MESSAGE value="notifications done" />
     <MESSAGE value="mess fee update" />
-    <option name="LAST_COMMIT_MESSAGE" value="mess fee update" />
+    <MESSAGE value="no dues working fine" />
+    <option name="LAST_COMMIT_MESSAGE" value="no dues working fine" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />

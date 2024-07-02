@@ -493,7 +493,7 @@ class Departments_for_no_Dues(models.Model):
     approved = models.BooleanField(default=False, verbose_name="approved")
 
     def __str__(self):
-        return f'{self.Department_name}'
+        return f'{self.Department_name} - {self.status}   -- {self.approved}'
 
 
 class No_Dues_list(models.Model):
@@ -510,13 +510,27 @@ class No_Dues_list(models.Model):
 
     def __str__(self):
         department_names = ', '.join([department.Department_name for department in self.departments.all()])
-        return f'Request: {self.request_id} -- Departments: {department_names} --  -- Approved: {self.approved}'
+        return f'Request: {self.request_id} -- Departments: {department_names} -- status{self.status} -- Approved: {self.approved}'
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if not self.departments.exists():
             all_departments = Departments_for_no_Dues.objects.all()
             self.departments.set(all_departments)
+
+        all_approved = all(
+            department.status == 'approved' and department.approved for department in self.departments.all())
+        if all_approved:
+            self.status = 'approved'
+            self.approved = True
+            if not self.approved_date:
+                self.approved_date = timezone.now()
+        else:
+            self.status = 'pending'
+            self.approved_date = None
+            self.approved = False
+
+        super().save(*args, **kwargs)
 
 
 class VerifySemesterRegistration(models.Model):
@@ -526,7 +540,7 @@ class VerifySemesterRegistration(models.Model):
     ]
     registration_details = models.ForeignKey(Semester_Registration, on_delete=models.CASCADE,
                                              related_name='registration_details')
-    remarks = models.CharField(max_length=300, verbose_name="remarks",blank=True,null=True)
+    remarks = models.CharField(max_length=300, verbose_name="remarks", blank=True, null=True)
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
 
     def save(self, *args, **kwargs):
@@ -540,6 +554,6 @@ class VerifySemesterRegistration(models.Model):
 
 @receiver(post_save, sender=User)
 def create_welcome_message(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.role == 'student':
         welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard")
         update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")
