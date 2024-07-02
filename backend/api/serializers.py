@@ -318,7 +318,7 @@ class SemesterRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Semester_Registration
-        fields = ['id', 'semester', 'student', 'student_details', 'applied_date','status']
+        fields = ['id', 'semester', 'student', 'student_details', 'applied_date', 'status']
         read_only_fields = ['id', 'student_details', 'semester']
 
     def create(self, validated_data):
@@ -486,7 +486,7 @@ class MessFeePaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mess_fee_payment
-        fields = ['id', 'registration_details', 'from_date', 'to_date','fee_type', 'total_fees']
+        fields = ['id', 'registration_details', 'from_date', 'to_date', 'fee_type', 'total_fees']
 
     def create(self, validated_data):
         registration_details_data = validated_data.pop('registration_details')
@@ -629,7 +629,18 @@ class SemesterVerificationSerializer(serializers.ModelSerializer):
         fields = ['id', 'registration_details', 'registration_details_info', 'remarks', 'status']
 
     def create(self, validated_data):
-        return VerifySemesterRegistration.objects.create(**validated_data)
+        instance = VerifySemesterRegistration.objects.create(**validated_data)
+        instance.registration_details.status = instance.status()
+        instance.registration_details.save()
+        return instance
+
+    def update(self, instance, validated_data):
+        instance.remarks = validated_data.get('remarks', instance.remarks)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        instance.registration_details.status = instance.status
+        instance.registration_details.save()
+        return instance
 
 
 class NotificationSerializer(serializers.ModelSerializer):

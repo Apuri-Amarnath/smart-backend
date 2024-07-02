@@ -531,7 +531,7 @@ class VerifySemesterRegistration(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.registration_details.status = self.status.capitalize()
+        self.registration_details.status = self.status
         self.registration_details.save()
 
     def __str__(self):
