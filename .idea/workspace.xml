@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="notifications done">
-      <change afterPath="$PROJECT_DIR$/backend/api/notifications.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -28,19 +26,6 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <favorite-branches>
-      <branch-storage>
-        <map>
-          <entry type="LOCAL">
-            <value>
-              <list>
-                <branch-info repo="$PROJECT_DIR$" source="amar-back" />
-              </list>
-            </value>
-          </entry>
-        </map>
-      </branch-storage>
-    </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="main" />
@@ -198,23 +183,7 @@
       <workItem from="1719661812479" duration="6492000" />
       <workItem from="1719668705435" duration="17014000" />
       <workItem from="1719695313240" duration="2394000" />
-      <workItem from="1719897699995" duration="2456000" />
-    </task>
-    <task id="LOCAL-00078" summary="fix guestroom">
-      <option name="closed" value="true" />
-      <created>1718891321015</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
-      <option name="project" value="LOCAL" />
-      <updated>1718891321015</updated>
-    </task>
-    <task id="LOCAL-00079" summary="fix guestroom">
-      <option name="closed" value="true" />
-      <created>1718891553693</created>
-      <option name="number" value="00079" />
-      <option name="presentableId" value="LOCAL-00079" />
-      <option name="project" value="LOCAL" />
-      <updated>1718891553694</updated>
+      <workItem from="1719897699995" duration="6225000" />
     </task>
     <task id="LOCAL-00080" summary="added search filter on guestroom">
       <option name="closed" value="true" />
@@ -592,7 +561,23 @@
       <option name="project" value="LOCAL" />
       <updated>1719695392242</updated>
     </task>
-    <option name="localTasksCounter" value="127" />
+    <task id="LOCAL-00127" summary="notifications done">
+      <option name="closed" value="true" />
+      <created>1719900178244</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1719900178244</updated>
+    </task>
+    <task id="LOCAL-00128" summary="notifications done">
+      <option name="closed" value="true" />
+      <created>1719900272071</created>
+      <option name="number" value="00128" />
+      <option name="presentableId" value="LOCAL-00128" />
+      <option name="project" value="LOCAL" />
+      <updated>1719900272072</updated>
+    </task>
+    <option name="localTasksCounter" value="129" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

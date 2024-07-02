@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
     Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request, No_Dues_list, \
-    VerifySemesterRegistration, Notification
+    VerifySemesterRegistration, Notification, Departments_for_no_Dues
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
@@ -21,7 +21,7 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     SemesterRegistrationSerializer, HostelAllotmentSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
     HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
-    NotificationSerializer
+    NotificationSerializer, Departments_for_no_dueSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -648,8 +648,23 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     queryset = No_Dues_list.objects.all()
     serializer_class = No_Due_ListSerializer
     filter_backends = [filters.SearchFilter]
-    renderer_classes = [UserRenderer]
+    # renderer_classes = [UserRenderer]
     search_fields = ['request_id__user__registration_number']
+
+    @action(detail=True, methods=['patch'], url_path='departments/(?P<department_id>[^/.]+)')
+    def update_department(self, request, pk=None, department_id=None):
+        no_dues_list_instance = self.get_object()
+        department_data = request.data.get('department_data')
+        try:
+            department = Departments_for_no_Dues.objects.get(id=department_id)
+            department_serializer = Departments_for_no_dueSerializer(instance=department, data=department_data,
+                                                                     partial=True)
+            if department_serializer.is_valid():
+                department_serializer.save()
+                return Response(department_serializer.data)
+            return Response(department_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Departments_for_no_dueSerializer.DoesNotExist:
+            return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class SemesterVerificationViewSet(viewsets.ModelViewSet):
@@ -667,10 +682,11 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
 class NotificationsViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    #permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['user__registration_number']
-    #renderer_classes = [UserRenderer]
+
+    # renderer_classes = [UserRenderer]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
