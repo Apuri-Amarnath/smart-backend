@@ -10,6 +10,8 @@ from django.dispatch import receiver
 from datetime import date
 from django.utils import timezone
 
+from .notifications import notify_roles
+
 
 # custom user manager
 class MyUserManager(BaseUserManager):
@@ -206,6 +208,15 @@ def save_related_information(sender, instance, **kwargs):
     instance.profile.save()
 
 
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nofications_user')
+    message = models.TextField(verbose_name="message", max_length=400, blank=True, null=True)
+    time = models.DateTimeField(verbose_name="time", default=timezone.now)
+
+    def __str__(self):
+        return f'Notification for -- {self.user.registration_number} -- {self.time}'
+
+
 def upload_college_logo(instance, filename):
     return upload_path(instance, filename, 'college-logos')
 
@@ -327,6 +338,12 @@ class Hostel_Allotment(models.Model):
         self.save
 
 
+@receiver(post_save, sender=Hostel_Allotment)
+def Hostel_Allotment_Notification(sender, instance, created, **kwargs):
+    if created:
+        notify_roles(["admin", "caretaker"], f"New Allotment received from {instance.user.registration_number}")
+
+
 class Hostel_Room_Allotment(models.Model):
     registration_details = models.OneToOneField(Hostel_Allotment, on_delete=models.CASCADE,
                                                 related_name="hostel_room_allotment")
@@ -346,12 +363,13 @@ class Fees_model(models.Model):
 
 
 class Mess_fee_payment(models.Model):
+    FEE_TYPE = [('mees fee', 'Mees Fee'),
+                ('maintainance fee', 'Maintainance Fees'),
+                ('security fee', 'Security Fee')]
     registration_details = models.ForeignKey(Hostel_Room_Allotment, on_delete=models.CASCADE)
     from_date = models.DateField(null=True, blank=True)
     to_date = models.DateField(null=True, blank=True)
-    mess_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="mess-fee")
-    maintainance_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="maintainance-fee")
-    security_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="security-fee")
+    fee_type = models.CharField(max_length=225, choices=FEE_TYPE, null=True, blank=True, verbose_name="fee_type")
     total_fees = models.DecimalField(max_digits=30, decimal_places=2, default=0, null=True, blank=True)
 
 
@@ -403,6 +421,12 @@ class Guest_room_request(models.Model):
 
     def __str__(self):
         return f'{self.user.registration_number} -- from: {self.from_date} -- to: {self.to_date} no of: {self.no_of_persons}'
+
+
+@receiver(post_save, sender=Guest_room_request)
+def guest_room_notify(sender, instance, created, **kwargs):
+    if created:
+        notify_roles(["admin", "faculty"], f"New guest room request from {instance.user.registration_number}")
 
 
 class Complaint(models.Model):
@@ -503,17 +527,8 @@ class VerifySemesterRegistration(models.Model):
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
 
 
-class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nofications_user')
-    message = models.TextField(verbose_name="message", max_length=400, blank=True, null=True)
-    time = models.DateTimeField(verbose_name="time", default=timezone.now)
-
-    def __str__(self):
-        return f'Notification for -- {self.user.registration_number} -- {self.time}'
-
-
 @receiver(post_save, sender=User)
 def create_welcome_message(sender, instance, created, **kwargs):
     if created:
-        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard", )
-        update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile", )
+        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard")
+        update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")
