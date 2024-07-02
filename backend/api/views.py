@@ -368,10 +368,10 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
 
 class SemesterRegistrationViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['student__user__registration_number']
-    renderer_classes = [UserRenderer]
+    #renderer_classes = [UserRenderer]
     queryset = Semester_Registration.objects.all()
     serializer_class = SemesterRegistrationSerializer
 

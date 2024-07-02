@@ -296,7 +296,7 @@ class Semester(models.Model):
 
 class Semester_Registration(models.Model):
     STATUS_CHOICES = [
-        ('Pending', 'Pending'),
+        ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
@@ -304,7 +304,7 @@ class Semester_Registration(models.Model):
     student = models.ForeignKey(UserProfile, on_delete=models.CASCADE,
                                 related_name="semester_registration_student")
     applied_date = models.DateField(verbose_name="semester_registration_date", null=True, blank=True)
-    status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="Pending")
+    status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="pending")
 
     def save(self, *args, **kwargs):
         if not self.applied_date:
@@ -528,6 +528,14 @@ class VerifySemesterRegistration(models.Model):
                                              related_name='registration_details')
     remarks = models.CharField(max_length=300, verbose_name="remarks")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.registration_details.status = self.status.capitalize()
+        self.registration_details.save()
+
+    def __str__(self):
+        return f'{self.registration_details} - {self.status}'
 
 
 @receiver(post_save, sender=User)
