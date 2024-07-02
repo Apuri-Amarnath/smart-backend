@@ -287,7 +287,7 @@ class Semester(models.Model):
     subjects = models.ManyToManyField(Subject, verbose_name="subjects", related_name="semester_subjects")
 
     def __str__(self):
-        subjects_list = ", ".join([subject.name for subject in self.subjects.all()])
+        subjects_list = ", ".join([Subject.subject_name for subject in self.subjects.all()])
         return f" semester: {self.semester_name} -- subjects: {subjects_list}"
 
     def get_subjects_list(self):
