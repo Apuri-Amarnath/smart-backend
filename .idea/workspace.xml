@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="notifications done">
+      <change afterPath="$PROJECT_DIR$/backend/api/notifications.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +90,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;amar-back&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/smart education/backend&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/assignment&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -194,14 +197,8 @@
       <workItem from="1719422042563" duration="1153000" />
       <workItem from="1719661812479" duration="6492000" />
       <workItem from="1719668705435" duration="17014000" />
-    </task>
-    <task id="LOCAL-00077" summary="fix messfeepayment">
-      <option name="closed" value="true" />
-      <created>1718883932520</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
-      <option name="project" value="LOCAL" />
-      <updated>1718883932521</updated>
+      <workItem from="1719695313240" duration="2394000" />
+      <workItem from="1719897699995" duration="2456000" />
     </task>
     <task id="LOCAL-00078" summary="fix guestroom">
       <option name="closed" value="true" />
@@ -587,7 +584,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719686483274</updated>
     </task>
-    <option name="localTasksCounter" value="126" />
+    <task id="LOCAL-00126" summary="notifications done">
+      <option name="closed" value="true" />
+      <created>1719695392242</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1719695392242</updated>
+    </task>
+    <option name="localTasksCounter" value="127" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

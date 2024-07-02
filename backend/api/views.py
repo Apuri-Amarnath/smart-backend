@@ -667,10 +667,10 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
 class NotificationsViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['user__registration_number']
-    renderer_classes = [UserRenderer]
+    #renderer_classes = [UserRenderer]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
