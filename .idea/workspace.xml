@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="mess fee update">
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0008_alter_mess_fee_payment_fee_type.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/migrations/0008_alter_mess_fee_payment_fee_type.py" afterDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="mess fee update" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -183,14 +181,7 @@
       <workItem from="1719668705435" duration="17014000" />
       <workItem from="1719695313240" duration="2394000" />
       <workItem from="1719897699995" duration="9350000" />
-    </task>
-    <task id="LOCAL-00090" summary="fix subjects add">
-      <option name="closed" value="true" />
-      <created>1719066727706</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1719066727706</updated>
+      <workItem from="1719942699149" duration="299000" />
     </task>
     <task id="LOCAL-00091" summary="fixed mess fee">
       <option name="closed" value="true" />
@@ -576,7 +567,15 @@
       <option name="project" value="LOCAL" />
       <updated>1719908519277</updated>
     </task>
-    <option name="localTasksCounter" value="139" />
+    <task id="LOCAL-00139" summary="mess fee update">
+      <option name="closed" value="true" />
+      <created>1719942806335</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1719942806335</updated>
+    </task>
+    <option name="localTasksCounter" value="140" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
