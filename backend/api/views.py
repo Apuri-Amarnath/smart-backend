@@ -678,6 +678,14 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter]
     search_fields = ['status', 'registration_details__student__user__registration_number']
 
+    def create(self, request, *args, **kwargs):
+        if not (request.user.role == 'admin' or request.user.role == 'faculty'):
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         serializer.save()
 
