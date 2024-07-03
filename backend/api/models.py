@@ -60,7 +60,8 @@ class User(AbstractBaseUser):
         ('faculty', 'Faculty'),
         ('admin', 'Admin'),
         ('principal', 'Principal'),
-        ('caretaker', 'Caretaker')
+        ('caretaker', 'Caretaker'),
+        ('department', 'Department'),
     ]
     registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True,
                                            validators=[MinLengthValidator(6), MaxLengthValidator(11)])

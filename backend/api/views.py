@@ -39,7 +39,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
-from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin
+from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin
 from django.db.models import Case, When, IntegerField
 import logging
 
@@ -650,10 +650,11 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     queryset = No_Dues_list.objects.all()
     serializer_class = No_Due_ListSerializer
     filter_backends = [filters.SearchFilter]
-    #renderer_classes = [UserRenderer]
+    renderer_classes = [UserRenderer]
     search_fields = ['request_id__user__registration_number']
 
-    @action(detail=True, methods=['patch'], url_path='departments/(?P<department_id>[^/.]+)')
+    @action(detail=True, methods=['patch'], url_path='departments/(?P<department_id>[^/.]+)',
+            permission_classes=[IsAuthenticated, IsDepartmentOrAdmin])
     def update_department(self, request, pk=None, department_id=None):
         try:
             no_dues_list_instance = self.get_object()
@@ -663,13 +664,22 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
             department = Departments_for_no_Dues.objects.get(id=department_id)
         except Departments_for_no_Dues.DoesNotExist:
             return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
+        user_registration_number = request.user.registration_number
+        if not user_registration_number.startswith("DEP"):
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        try:
+            user_department_id = int(user_registration_number[3:])
+        except ValueError:
+            return Response({'error': 'Invalid registration number format'}, status=status.HTTP_400_BAD_REQUEST)
+        if user_department_id != int(department_id):
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
         department_data = request.data
         department_serializer = Departments_for_no_dueSerializer(instance=department, data=department_data,
                                                                  partial=True)
         if department_serializer.is_valid():
             updated_department = department_serializer.save()
 
-            # Update No_Dues_list instance based on department status changes
             if updated_department.status == 'approved' and updated_department.approved:
                 no_dues_list_instance.status = 'approved'
                 no_dues_list_instance.approved = True

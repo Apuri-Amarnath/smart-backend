@@ -19,3 +19,8 @@ class IsTeacherOrAdmin(permissions.BasePermission):
 class IsFacultyOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user and (request.user.role == 'faculty' or request.user.role == 'admin')
+
+
+class IsDepartmentOrAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user and (request.user.role == 'department' or request.user.role == 'admin')
