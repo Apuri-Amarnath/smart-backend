@@ -5,11 +5,11 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models import BinaryField
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from datetime import date
 from django.utils import timezone
-
+from django.core.exceptions import ObjectDoesNotExist
 from .notifications import notify_roles
 
 
@@ -372,8 +372,10 @@ class Mess_fee_payment(models.Model):
     from_date = models.DateField(null=True, blank=True)
     to_date = models.DateField(null=True, blank=True)
     fee_type = models.CharField(max_length=225, choices=FEE_TYPE, null=True, blank=True, verbose_name="fee_type")
-    total_fees = models.DecimalField(max_digits=30, decimal_places=2, default=0, null
-    =True, blank=True)
+    total_fees = models.DecimalField(max_digits=30, decimal_places=2, default=0, null=True, blank=True)
+
+    def __str__(self):
+        return f" registration_detaiks : {self.registration_details.user} -- {self.from_date} -- {self.to_date} -- {self.fee_type} -- {self.total_fees}"
 
 
 class Hostel_No_Due_request(models.Model):
@@ -533,6 +535,25 @@ class No_Dues_list(models.Model):
         super().save(*args, **kwargs)
 
 
+@receiver(post_save, sender=Departments_for_no_Dues)
+@receiver(post_delete, sender=Departments_for_no_Dues)
+def update_no_dues_list_status(sender, instance, **kwargs):
+    for no_dues_list in instance.no_due_lists.all():
+        no_dues_list.save()
+
+
+@receiver(post_save, sender=No_Dues_list)
+def update_overall_no_dues_request_status(sender, instance, **kwargs):
+    request = instance.request_id
+    if request:
+        if instance.status == 'approved' and request.status != 'approved':
+            request.status = 'approved'
+            Notification.objects.create(user=request.user, message='You have Overall no dues request has been approved')
+        elif request.status == 'pending' and request.status != 'approved':
+            request.status = 'pending'
+        request.save()
+
+
 class VerifySemesterRegistration(models.Model):
     STATUS_CHOICES = [
         ('approved', 'Approved'),
@@ -544,9 +565,24 @@ class VerifySemesterRegistration(models.Model):
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
 
     def save(self, *args, **kwargs):
+        previous_status = None
+        if self.pk:
+            try:
+                previous_status = VerifySemesterRegistration.objects.get(pk=self.pk).status
+            except ObjectDoesNotExist:
+                pass
+
         super().save(*args, **kwargs)
         self.registration_details.status = self.status
         self.registration_details.save()
+
+        if self.status == 'approved' and previous_status != 'approved':
+            user = self.registration_details.student.user
+            Notification.objects.create(user=user,
+                                        message=f"Your semester registration has been approved")
+        if self.status == 'rejected' and previous_status != 'rejected':
+            user = self.registration_details.student.user
+            Notification.objects.create(user=user, message=f"Your semester registration has been rejected")
 
     def __str__(self):
         return f'{self.registration_details} - {self.status}'
