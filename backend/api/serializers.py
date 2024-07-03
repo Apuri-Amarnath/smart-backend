@@ -7,10 +7,13 @@ from rest_framework import serializers, status
 from django.utils import timezone
 import logging
 
+from rest_framework.exceptions import ValidationError
+
 from .models import User, UserProfile, PersonalInformation, AcademicInformation, ContactInformation, College, Bonafide, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
-    Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification
+    Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification, \
+    Cloned_Departments_for_no_Dues
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -526,14 +529,13 @@ class HostelAllotmentStatusUpdateSerializer(serializers.ModelSerializer):
 class Departments_for_no_dueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departments_for_no_Dues
-        fields = ['id', 'Department_name', 'status', 'approved_date', 'applied_date', 'approved']
+        fields = ['id', 'Department_name', 'status', 'approved_date', 'applied_date']
 
-    def update(self, instance, validated_data):
-        instance.approved_date = validated_data.get('approved_date', instance)
-        instance.approved = validated_data.get('approved', instance)
-        instance.status = validated_data.get('status', instance.status)
-        instance.save()
-        return instance
+
+class Cloned_Departments_for_no_dueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cloned_Departments_for_no_Dues
+        fields = '__all__'
 
 
 class Overall_No_Dues_RequestSerializer(serializers.ModelSerializer):
@@ -544,6 +546,12 @@ class Overall_No_Dues_RequestSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['registration_number', 'user']
 
+    def validate(self, data):
+        user = self.context['request'].user
+        if Overall_No_Dues_Request.objects.filter(user=user).exists():
+            raise ValidationError('A request for no dues already exists for this user.')
+        return data
+
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['user'] = user
@@ -551,38 +559,29 @@ class Overall_No_Dues_RequestSerializer(serializers.ModelSerializer):
 
 
 class No_Due_ListSerializer(serializers.ModelSerializer):
-    departments = Departments_for_no_dueSerializer(many=True, required=False)
-    request_id = Overall_No_Dues_RequestSerializer(read_only=True)
+    cloned_departments = Cloned_Departments_for_no_dueSerializer(many=True, required=False, read_only=True)
 
     class Meta:
         model = No_Dues_list
         fields = '__all__'
 
     def create(self, validated_data):
-        departments_data = validated_data.pop('departments', None)
-        no_due_list_instance = super().create(validated_data)
+        cloned_departments_data = validated_data.pop('cloned_departments', None)
+        instance = super().create(validated_data)
 
-        if departments_data is None:
-            all_departments = Departments_for_no_Dues.objects.all()
-            no_due_list_instance.departments.set(all_departments)
-        else:
-            departments = [Departments_for_no_Dues.objects.get(id=department_data['id']) for department_data in
-                           departments_data]
-            no_due_list_instance.departments.set(departments)
-
-        return no_due_list_instance
+        if cloned_departments_data:
+            for department_data in cloned_departments_data:
+                Cloned_Departments_for_no_Dues.objects.create(no_dues_list=instance, **department_data)
+        return instance
 
     def update(self, instance, validated_data):
-        departments_data = validated_data.pop('departments', None)
-        instance.status = validated_data.get('status', instance.status)
-        instance.approved_date = validated_data.get('approved_date', instance.approved_date)
-        instance.approved = validated_data.get('approved', instance.approved)
-        instance.save()
+        cloned_departments_data = validated_data.pop('cloned_departments', None)
+        instance = super().update(instance, validated_data)
 
-        if departments_data is not None:
-            departments = [Departments_for_no_Dues.objects.get(id=department_data['id']) for department_data in
-                           departments_data]
-            instance.departments.set(departments)
+        if cloned_departments_data:
+            instance.cloned_departments.all().delete()
+            for department_data in cloned_departments_data:
+                Cloned_Departments_for_no_Dues.objects.create(no_dues_list=instance, **department_data)
 
         return instance
 
@@ -595,18 +594,19 @@ class Overall_No_Due_Serializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['registration_number', 'user']
 
+    def validate(self, data):
+        user = self.context['request'].user
+
+        if Overall_No_Dues_Request.objects.filter(user=user).exists():
+            raise ValidationError('A request for no dues already exists for this user.')
+        return data
+
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['user'] = user
 
         overall_no_dues_instance = super().create(validated_data)
-        no_due_list_data = {
-            'request_id': overall_no_dues_instance.id,
-        }
-        no_due_list_instance = No_Dues_list.objects.create(request_id=overall_no_dues_instance)
-
-        overall_no_dues_instance.no_due_list = no_due_list_instance
-        overall_no_dues_instance.save()
+        No_Dues_list.objects.create(request_id=overall_no_dues_instance)
 
         return overall_no_dues_instance
 
