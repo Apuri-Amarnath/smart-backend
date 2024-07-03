@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="add notifications">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/management/commands/adddepartments_for_no_dues.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/management/commands/adddepartments_for_no_dues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/management/commands/create_initial_groups.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/management/commands/create_initial_groups.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/permissions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,15 +190,7 @@
       <workItem from="1719897699995" duration="9350000" />
       <workItem from="1719942699149" duration="2580000" />
       <workItem from="1719948347422" duration="5519000" />
-      <workItem from="1720014140424" duration="3289000" />
-    </task>
-    <task id="LOCAL-00103" summary="multiple fixes">
-      <option name="closed" value="true" />
-      <created>1719260055007</created>
-      <option name="number" value="00103" />
-      <option name="presentableId" value="LOCAL-00103" />
-      <option name="project" value="LOCAL" />
-      <updated>1719260055007</updated>
+      <workItem from="1720014140424" duration="5079000" />
     </task>
     <task id="LOCAL-00104" summary="multiple fixes">
       <option name="closed" value="true" />
@@ -579,7 +576,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720017012813</updated>
     </task>
-    <option name="localTasksCounter" value="152" />
+    <task id="LOCAL-00152" summary="add notifications">
+      <option name="closed" value="true" />
+      <created>1720017576877</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1720017576877</updated>
+    </task>
+    <option name="localTasksCounter" value="153" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

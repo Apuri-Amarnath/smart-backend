@@ -9,8 +9,8 @@ class Command(BaseCommand):
         default_departments = [
             {
                 'Department_name': 'Electrical & Electronics Laboratory',
-                'status': 'pending',  # Default status
-                'approved': False,  # Default approved status
+                'status': 'pending',
+                'approved': False,
             },
             {
                 'Department_name': 'Physics Laboratory',
