@@ -616,6 +616,9 @@ def update_overall_request_status(sender, instance, **kwargs):
     elif instance.status == 'pending':
         instance.request_id.status = 'pending'
         instance.request_id.save()
+    elif instance.status == 'rejected':
+        instance.request_id.status = 'rejected'
+        instance.request_id.save()
 
 
 class VerifySemesterRegistration(models.Model):
