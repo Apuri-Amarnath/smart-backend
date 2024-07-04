@@ -540,7 +540,7 @@ class Cloned_Departments_for_no_dueSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
-        instance.no_dues_list._update_status()
+        instance.no_dues_list.save()
         return instance
 
 

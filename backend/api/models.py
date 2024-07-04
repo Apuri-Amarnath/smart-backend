@@ -540,7 +540,7 @@ class No_Dues_list(models.Model):
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
-            is_new = self._state.adding  # Check if this is a new instance
+            is_new = self._state.adding
             super().save(*args, **kwargs)
 
             if is_new or not self.cloned_departments.exists():
@@ -589,17 +589,27 @@ class Cloned_Departments_for_no_Dues(models.Model):
         return f'{self.Department_name} - {self.status}'
 
 
-@receiver(post_save, sender=No_Dues_list)
+@receiver(post_save, sender=Cloned_Departments_for_no_Dues)
 def update_overall_no_dues_request_status(sender, instance, **kwargs):
-    request = instance.request_id
-    if request:
-        if instance.status == 'approved' and request.status != 'approved':
-            request.status = 'approved'
-            Notification.objects.create(user=request.user, message='You have Overall no dues request has been approved')
-        elif request.status == 'pending' and request.status != 'approved':
-            request.status = 'pending'
-        request.save()
+    no_dues_list = instance.no_dues_list
+    if all(department.status == 'approved' for department in no_dues_list.cloned_departments.all()):
+        no_dues_list.status = 'approved'
+        no_dues_list.approved_date = timezone.now()
+        Notification.objects.create(user=no_dues_list.request_id.user,
+                                    message='Your Overall no dues request has been approved')
+    else:
+        no_dues_list.status = 'pending'
+        no_dues_list.approved_date = None
+    no_dues_list.save()
 
+@receiver(post_save, sender=No_Dues_list)
+def update_overall_request_status(sender, instance, **kwargs):
+    if instance.status == 'approved':
+        instance.request_id.status = 'approved'
+        instance.request_id.save()
+    elif instance.status == 'pending':
+        instance.request_id.status = 'pending'
+        instance.request_id.save()
 
 class VerifySemesterRegistration(models.Model):
     STATUS_CHOICES = [
