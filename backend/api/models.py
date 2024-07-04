@@ -470,6 +470,7 @@ class Overall_No_Dues_Request(models.Model):
         ('applied', 'Applied'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
         ('not_applied', 'Not Applied'),
     ]
 
@@ -494,7 +495,8 @@ def notify_departments(sender, instance, created, **kwargs):
 
 class Departments_for_no_Dues(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'),
-                      ('approved', 'Approved'), ]
+                      ('approved', 'Approved'),
+                      ('rejected', 'Rejected')]
     Department_id = models.IntegerField(verbose_name="Department ID", primary_key=True)
     Department_name = models.CharField(max_length=225, verbose_name="Department")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",
@@ -523,7 +525,8 @@ class No_Dues_list(models.Model):
     request_id = models.OneToOneField(Overall_No_Dues_Request, on_delete=models.CASCADE, related_name='no_dues_list',
                                       null=True, blank=True)
     STATUS_CHOICES = [('pending', 'Pending'),
-                      ('approved', 'Approved'), ]
+                      ('approved', 'Approved'),
+                      ('rejected', 'Rejected')]
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name='status',
                               default='pending')
     approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
@@ -577,7 +580,9 @@ class No_Dues_list(models.Model):
 class Cloned_Departments_for_no_Dues(models.Model):
     id = models.AutoField(primary_key=True)
     STATUS_CHOICES = [('pending', 'Pending'),
-                      ('approved', 'Approved'), ]
+                      ('approved', 'Approved'),
+                      ('rejected', 'Rejected'),
+                      ]
     no_dues_list = models.ForeignKey(No_Dues_list, on_delete=models.CASCADE, related_name="cloned_departments")
     Department_name = models.CharField(max_length=225, verbose_name="Department")
     Department_id = models.IntegerField(verbose_name="Department ID")
@@ -602,6 +607,7 @@ def update_overall_no_dues_request_status(sender, instance, **kwargs):
         no_dues_list.approved_date = None
     no_dues_list.save()
 
+
 @receiver(post_save, sender=No_Dues_list)
 def update_overall_request_status(sender, instance, **kwargs):
     if instance.status == 'approved':
@@ -610,6 +616,7 @@ def update_overall_request_status(sender, instance, **kwargs):
     elif instance.status == 'pending':
         instance.request_id.status = 'pending'
         instance.request_id.save()
+
 
 class VerifySemesterRegistration(models.Model):
     STATUS_CHOICES = [
