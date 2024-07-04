@@ -529,13 +529,19 @@ class HostelAllotmentStatusUpdateSerializer(serializers.ModelSerializer):
 class Departments_for_no_dueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departments_for_no_Dues
-        fields = ['id', 'Department_name', 'status', 'approved_date', 'applied_date']
+        fields = ['id', 'Department_name', 'status', 'approved_date', 'applied_date', 'department_id']
 
 
 class Cloned_Departments_for_no_dueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cloned_Departments_for_no_Dues
         fields = '__all__'
+        read_only_fields = ['no_dues_list', 'Department_name', 'Department_id', 'applied_date']
+
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        instance.no_dues_list._update_status()
+        return instance
 
 
 class Overall_No_Dues_RequestSerializer(serializers.ModelSerializer):

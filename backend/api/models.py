@@ -529,42 +529,53 @@ class No_Dues_list(models.Model):
     approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
     applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['request_id'], name='unique_no_dues_list')
+        ]
+
     def __str__(self):
         department_names = ', '.join([department.Department_name for department in self.cloned_departments.all()])
         return f'Request: {self.request_id} -- Departments: {department_names} -- status: {self.status}'
 
     def save(self, *args, **kwargs):
-        try:
-            with transaction.atomic():
-                super().save(*args, **kwargs)
+        with transaction.atomic():
+            is_new = self._state.adding  # Check if this is a new instance
+            super().save(*args, **kwargs)
 
-                if not self.cloned_departments.exists():
-                    all_departments = Departments_for_no_Dues.objects.all()
-                    for department in all_departments:
-                        Cloned_Departments_for_no_Dues.objects.create(
-                            no_dues_list=self,
-                            Department_name=department.Department_name,
-                            Department_id=department.Department_id,
-                            status=department.status,
-                            approved_date=department.approved_date,
-                            applied_date=department.applied_date
-                        )
+            if is_new or not self.cloned_departments.exists():
+                self._create_cloned_departments()
 
-                all_approved = all(department.status == 'approved' for department in self.cloned_departments.all())
-                if all_approved:
-                    self.status = 'approved'
-                    if not self.approved_date:
-                        self.approved_date = timezone.now()
-                else:
-                    self.status = 'pending'
-                    self.approved_date = None
+            self._update_status()
 
-                super().save(*args, **kwargs)
-        except IntegrityError as e:
-            transaction.rollback()
-            raise e
+    def _create_cloned_departments(self):
+        all_departments = Departments_for_no_Dues.objects.all()
+        cloned_departments = []
+        for department in all_departments:
+            cloned_departments.append(
+                Cloned_Departments_for_no_Dues(
+                    no_dues_list=self,
+                    Department_name=department.Department_name,
+                    Department_id=department.Department_id,
+                    status='pending',
+                    applied_date=timezone.now()
+                )
+            )
+        Cloned_Departments_for_no_Dues.objects.bulk_create(cloned_departments)
+
+    def _update_status(self):
+        all_approved = all(department.status == 'approved' for department in self.cloned_departments.all())
+        if all_approved:
+            self.status = 'approved'
+            self.approved_date = timezone.now() if not self.approved_date else self.approved_date
+        else:
+            self.status = 'pending'
+            self.approved_date = None
+        super().save(update_fields=['status', 'approved_date'])
+
 
 class Cloned_Departments_for_no_Dues(models.Model):
+    id = models.AutoField(primary_key=True)
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'), ]
     no_dues_list = models.ForeignKey(No_Dues_list, on_delete=models.CASCADE, related_name="cloned_departments")
