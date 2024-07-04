@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed Overall nodues">
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0002_alter_no_dues_list_id.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0003_alter_cloned_departments_for_no_dues_id.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0004_alter_no_dues_list_id.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/17db8717-027a-40c2-806d-e134de555165.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/17db8717-027a-40c2-806d-e134de555165.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed Overall nodues" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -192,15 +184,7 @@
       <workItem from="1719942699149" duration="2580000" />
       <workItem from="1719948347422" duration="5519000" />
       <workItem from="1720014140424" duration="22897000" />
-      <workItem from="1720092043293" duration="5984000" />
-    </task>
-    <task id="LOCAL-00108" summary="added verify semester-registration">
-      <option name="closed" value="true" />
-      <created>1719413098995</created>
-      <option name="number" value="00108" />
-      <option name="presentableId" value="LOCAL-00108" />
-      <option name="project" value="LOCAL" />
-      <updated>1719413098995</updated>
+      <workItem from="1720092043293" duration="6313000" />
     </task>
     <task id="LOCAL-00109" summary="added verify semester-registration">
       <option name="closed" value="true" />
@@ -586,7 +570,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720043525624</updated>
     </task>
-    <option name="localTasksCounter" value="157" />
+    <task id="LOCAL-00157" summary="fixed Overall nodues">
+      <option name="closed" value="true" />
+      <created>1720099897590</created>
+      <option name="number" value="00157" />
+      <option name="presentableId" value="LOCAL-00157" />
+      <option name="project" value="LOCAL" />
+      <updated>1720099897591</updated>
+    </task>
+    <option name="localTasksCounter" value="158" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
