@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed Overall nodues">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed notifications">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,15 +186,7 @@
       <workItem from="1719942699149" duration="2580000" />
       <workItem from="1719948347422" duration="5519000" />
       <workItem from="1720014140424" duration="22897000" />
-      <workItem from="1720092043293" duration="9355000" />
-    </task>
-    <task id="LOCAL-00110" summary="added verify semester-registration">
-      <option name="closed" value="true" />
-      <created>1719422172746</created>
-      <option name="number" value="00110" />
-      <option name="presentableId" value="LOCAL-00110" />
-      <option name="project" value="LOCAL" />
-      <updated>1719422172747</updated>
+      <workItem from="1720092043293" duration="10800000" />
     </task>
     <task id="LOCAL-00111" summary="added verify semester-registration">
       <option name="closed" value="true" />
@@ -582,7 +572,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720100187719</updated>
     </task>
-    <option name="localTasksCounter" value="159" />
+    <task id="LOCAL-00159" summary="fixed notifications">
+      <option name="closed" value="true" />
+      <created>1720103285449</created>
+      <option name="number" value="00159" />
+      <option name="presentableId" value="LOCAL-00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1720103285449</updated>
+    </task>
+    <option name="localTasksCounter" value="160" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -633,7 +631,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="deleted static files" />
     <MESSAGE value="added cmd to delete Sql file." />
     <MESSAGE value="updated user based roles." />
     <MESSAGE value="test" />
@@ -658,7 +655,8 @@
     <MESSAGE value="no dues working fine" />
     <MESSAGE value="add notifications" />
     <MESSAGE value="fixed Overall nodues" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed Overall nodues" />
+    <MESSAGE value="fixed notifications" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed notifications" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />

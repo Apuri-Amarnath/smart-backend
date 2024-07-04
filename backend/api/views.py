@@ -603,7 +603,7 @@ class ComplaintViewSet(viewsets.ModelViewSet):
 class Overall_no_duesViewSet(viewsets.ModelViewSet):
     serializer_class = Overall_No_Due_Serializer
     queryset = Overall_No_Dues_Request.objects.all()
-    permission_classes = [IsAuthenticated, IsStudentOrAdmin]
+    permission_classes = [IsAuthenticated, IsStudentOrAdmin | IsDepartmentOrAdmin]
     renderer_classes = [UserRenderer]
 
     def perform_create(self, serializer):
