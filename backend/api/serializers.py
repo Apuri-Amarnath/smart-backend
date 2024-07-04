@@ -566,10 +566,25 @@ class Overall_No_Dues_RequestSerializer(serializers.ModelSerializer):
 
 class No_Due_ListSerializer(serializers.ModelSerializer):
     cloned_departments = Cloned_Departments_for_no_dueSerializer(many=True, required=False, read_only=True)
+    requested_data = serializers.SerializerMethodField()
 
     class Meta:
         model = No_Dues_list
         fields = '__all__'
+
+    def get_requested_data(self, instance):
+        request_id = instance.request_id
+        return {
+            'id': request_id.id,
+            'registration_number': request_id.user.registration_number,
+            'name': request_id.name,
+            'branch': request_id.branch,
+            "father_name": request_id.father_name,
+            "category": request_id.category,
+            "self_declaration": request_id.self_declaration,
+            "status": request_id.status,
+            "session": request_id.session,
+        }
 
     def create(self, validated_data):
         cloned_departments_data = validated_data.pop('cloned_departments', None)
