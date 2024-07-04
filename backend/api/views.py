@@ -650,6 +650,7 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     queryset = No_Dues_list.objects.all()
     serializer_class = No_Due_ListSerializer
     filter_backends = [filters.SearchFilter]
+    permission_classes = [IsAuthenticated]
     renderer_classes = [UserRenderer]
     search_fields = ['request_id__user__registration_number']
 
