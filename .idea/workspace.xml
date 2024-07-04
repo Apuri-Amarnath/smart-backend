@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed notifications">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,15 +187,7 @@
       <workItem from="1719942699149" duration="2580000" />
       <workItem from="1719948347422" duration="5519000" />
       <workItem from="1720014140424" duration="22897000" />
-      <workItem from="1720092043293" duration="10800000" />
-    </task>
-    <task id="LOCAL-00111" summary="added verify semester-registration">
-      <option name="closed" value="true" />
-      <created>1719422560430</created>
-      <option name="number" value="00111" />
-      <option name="presentableId" value="LOCAL-00111" />
-      <option name="project" value="LOCAL" />
-      <updated>1719422560430</updated>
+      <workItem from="1720092043293" duration="13218000" />
     </task>
     <task id="LOCAL-00112" summary="added verify semester-registration">
       <option name="closed" value="true" />
@@ -580,11 +573,30 @@
       <option name="project" value="LOCAL" />
       <updated>1720103285449</updated>
     </task>
-    <option name="localTasksCounter" value="160" />
+    <task id="LOCAL-00160" summary="fixed notifications">
+      <option name="closed" value="true" />
+      <created>1720104465539</created>
+      <option name="number" value="00160" />
+      <option name="presentableId" value="LOCAL-00160" />
+      <option name="project" value="LOCAL" />
+      <updated>1720104465539</updated>
+    </task>
+    <option name="localTasksCounter" value="161" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="RECENT_FILTERS">
