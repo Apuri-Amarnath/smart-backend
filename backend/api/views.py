@@ -23,7 +23,7 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     SemesterRegistrationSerializer, HostelAllotmentSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
     HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
-    NotificationSerializer, Departments_for_no_dueSerializer
+    NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -661,7 +661,7 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
         except No_Dues_list.DoesNotExist:
             return Response({'error': 'No Due_list not found'}, status=status.HTTP_404_NOT_FOUND)
         try:
-            department = Departments_for_no_Dues.objects.get(id=department_id)
+            department = no_dues_list_instance.cloned_departments.get(Department_id=department_id)
         except Departments_for_no_Dues.DoesNotExist:
             return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
         user_registration_number = request.user.registration_number
@@ -675,31 +675,25 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
 
         department_data = request.data
-        department_serializer = Departments_for_no_dueSerializer(instance=department, data=department_data,
-                                                                 partial=True)
+        department_serializer = Cloned_Departments_for_no_dueSerializer(instance=department, data=department_data,
+                                                                        partial=True)
         if department_serializer.is_valid():
-            updated_department = department_serializer.save()
+            department_serializer.save()
 
-            if updated_department.status == 'approved' and updated_department.approved:
+            all_approved = all(
+                dep.status == 'approved' for dep in no_dues_list_instance.cloned_departments.all()
+            )
+            if all_approved:
                 no_dues_list_instance.status = 'approved'
-                no_dues_list_instance.approved = True
                 no_dues_list_instance.approved_date = timezone.now()
             else:
-                all_approved = all(
-                    dep.status == 'approved' and dep.approved for dep in no_dues_list_instance.departments.all()
-                )
-                if all_approved:
-                    no_dues_list_instance.status = 'approved'
-                    no_dues_list_instance.approved = True
-                    no_dues_list_instance.approved_date = timezone.now()
-                else:
-                    no_dues_list_instance.status = 'pending'
-                    no_dues_list_instance.approved = False
-                    no_dues_list_instance.approved_date = None
+                no_dues_list_instance.status = 'pending'
+                no_dues_list_instance.approved_date = None
 
             no_dues_list_instance.save()
 
             return Response(department_serializer.data)
+
         return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
 
 

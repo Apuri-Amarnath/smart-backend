@@ -9,7 +9,8 @@ from django.utils.html import format_html
 from .models import Semester, Subject, User, UserProfile, PersonalInformation, ContactInformation, AcademicInformation, \
     College, Bonafide, Semester_Registration, Hostel_Allotment, Hostel_Room_Allotment, Hostel_No_Due_request, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
-    Departments_for_no_Dues, Notification, TransferCertificateInformation, VerifySemesterRegistration
+    Departments_for_no_Dues, Notification, TransferCertificateInformation, VerifySemesterRegistration, \
+    Cloned_Departments_for_no_Dues
 
 
 class UserCreationForm(forms.ModelForm):
@@ -139,3 +140,4 @@ admin.site.register(Mess_fee_payment)
 admin.site.register(TransferCertificateInformation)
 admin.site.register(Notification)
 admin.site.register(VerifySemesterRegistration)
+admin.site.register(Cloned_Departments_for_no_Dues)

@@ -2,7 +2,7 @@ import uuid
 
 import pytz
 from django.core.validators import MinLengthValidator, MaxLengthValidator
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db.models import BinaryField
 from django.db.models.signals import post_save, post_delete
@@ -11,6 +11,7 @@ from datetime import date
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from .notifications import notify_roles
+from django.db.utils import IntegrityError
 
 
 # custom user manager
@@ -485,18 +486,37 @@ class Overall_No_Dues_Request(models.Model):
         return f'{self.user.registration_number} -- Name: {self.name} -- Branch: {self.branch} -- Category: {self.category} --session {self.session}'
 
 
+@receiver(post_save, sender=Overall_No_Dues_Request)
+def notify_departments(sender, instance, created, **kwargs):
+    if created:
+        notify_roles(["admin", "department"], f"New Overall No dues Request by {instance.user.registration_number}")
+
+
 class Departments_for_no_Dues(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'), ]
+    Department_id = models.IntegerField(verbose_name="Department ID", primary_key=True)
     Department_name = models.CharField(max_length=225, verbose_name="Department")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",
                               default='pending')
     approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
     applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
-    approved = models.BooleanField(default=False, verbose_name="approved")
 
     def __str__(self):
-        return f'{self.Department_name} - {self.status}   -- {self.approved}'
+        return f'{self.Department_name} - {self.status} '
+
+    @classmethod
+    def generate_unique_department_id(cls):
+        last_department = cls.objects.order_by('-Department_id').first()
+        if last_department:
+            return last_department.Department_id + 1
+        else:
+            return 1
+
+    def save(self, *args, **kwargs):
+        if not self.Department_id:
+            self.Department_id = self.generate_unique_department_id()
+        super().save(*args, **kwargs)
 
 
 class No_Dues_list(models.Model):
@@ -508,39 +528,65 @@ class No_Dues_list(models.Model):
                               default='pending')
     approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
     applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
-    approved = models.BooleanField(default=False, verbose_name="approved")
-    departments = models.ManyToManyField(Departments_for_no_Dues, related_name='no_due_lists')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['request_id'], name='unique_no_dues_list')
+        ]
 
     def __str__(self):
-        department_names = ', '.join([department.Department_name for department in self.departments.all()])
-        return f'Request: {self.request_id} -- Departments: {department_names} -- status{self.status} -- Approved: {self.approved}'
+        department_names = ', '.join([department.Department_name for department in self.cloned_departments.all()])
+        return f'Request: {self.request_id} -- Departments: {department_names} -- status: {self.status}'
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if not self.departments.exists():
-            all_departments = Departments_for_no_Dues.objects.all()
-            self.departments.set(all_departments)
+        with transaction.atomic():
+            is_new = self._state.adding  # Check if this is a new instance
+            super().save(*args, **kwargs)
 
-        all_approved = all(
-            department.status == 'approved' and department.approved for department in self.departments.all())
+            if is_new or not self.cloned_departments.exists():
+                self._create_cloned_departments()
+
+            self._update_status()
+
+    def _create_cloned_departments(self):
+        all_departments = Departments_for_no_Dues.objects.all()
+        cloned_departments = []
+        for department in all_departments:
+            cloned_departments.append(
+                Cloned_Departments_for_no_Dues(
+                    no_dues_list=self,
+                    Department_name=department.Department_name,
+                    Department_id=department.Department_id,
+                    status='pending',
+                    applied_date=timezone.now()
+                )
+            )
+        Cloned_Departments_for_no_Dues.objects.bulk_create(cloned_departments)
+
+    def _update_status(self):
+        all_approved = all(department.status == 'approved' for department in self.cloned_departments.all())
         if all_approved:
             self.status = 'approved'
-            self.approved = True
-            if not self.approved_date:
-                self.approved_date = timezone.now()
+            self.approved_date = timezone.now() if not self.approved_date else self.approved_date
         else:
             self.status = 'pending'
             self.approved_date = None
-            self.approved = False
-
-        super().save(*args, **kwargs)
+        super().save(update_fields=['status', 'approved_date'])
 
 
-@receiver(post_save, sender=Departments_for_no_Dues)
-@receiver(post_delete, sender=Departments_for_no_Dues)
-def update_no_dues_list_status(sender, instance, **kwargs):
-    for no_dues_list in instance.no_due_lists.all():
-        no_dues_list.save()
+class Cloned_Departments_for_no_Dues(models.Model):
+    id = models.AutoField(primary_key=True)
+    STATUS_CHOICES = [('pending', 'Pending'),
+                      ('approved', 'Approved'), ]
+    no_dues_list = models.ForeignKey(No_Dues_list, on_delete=models.CASCADE, related_name="cloned_departments")
+    Department_name = models.CharField(max_length=225, verbose_name="Department")
+    Department_id = models.IntegerField(verbose_name="Department ID")
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
+    approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
+    applied_date = models.DateField(auto_now=True, verbose_name="applied_date")
+
+    def __str__(self):
+        return f'{self.Department_name} - {self.status}'
 
 
 @receiver(post_save, sender=No_Dues_list)
