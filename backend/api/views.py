@@ -10,6 +10,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions, viewsets
 from rest_framework.views import APIView
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
@@ -89,13 +90,13 @@ class TokenRefresh(APIView):
 
     def post(self, request):
         refresh_token = request.data.get('refresh')
-        serializer = TokenRefreshView().get_serializer(data={'refresh': refresh_token})
+        serializer = TokenRefreshSerializer(data={'refresh': refresh_token})
         serializer.is_valid(raise_exception=True)
         access_token = serializer.validated_data['access']
         return Response({'access': str(access_token)}, status=status.HTTP_200_OK)
 
 
-# Create your views here.
+
 class UserRegistrationView(APIView):
     renderer_classes = [UserRenderer]
 
