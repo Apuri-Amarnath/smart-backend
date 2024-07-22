@@ -1,3 +1,5 @@
+import secrets
+import string
 import uuid
 
 import pytz
@@ -10,13 +12,41 @@ from django.dispatch import receiver
 from datetime import date
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.text import slugify
+
+from .emails import send_login_credentials
 from .notifications import notify_roles
 from django.db.utils import IntegrityError
 
 
+def upload_college_logo(instance, filename):
+    return upload_path(instance, filename, 'college-logos')
+
+
+class College(models.Model):
+    college_code = models.CharField(max_length=10, unique=True, null=True, blank=True)
+    college_name = models.CharField(verbose_name="college_name", max_length=255, unique=True, null=True, blank=True)
+    college_address = models.TextField(verbose_name="college_address", max_length=500, null=True, blank=True)
+    established_date = models.DateField(verbose_name="established_date", null=True, blank=True)
+    principal_name = models.CharField(verbose_name="principal_name", null=True, max_length=255, blank=True)
+    phone_number = models.CharField(verbose_name="phone_number", null=True, max_length=15)
+    college_email = models.EmailField(verbose_name="email", null=True, max_length=225)
+    college_logo = models.ImageField(verbose_name="college_logo", upload_to=upload_college_logo, null=True, blank=True)
+    college_id = models.UUIDField(verbose_name="college_id", default=uuid.uuid4, editable=False)
+    slug = models.SlugField(unique=True, max_length=225, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.college_name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.college_name}'
+
+
 # custom user manager
 class MyUserManager(BaseUserManager):
-    def create_user(self, registration_number, password=None, password2=None, role=None):
+    def create_user(self, registration_number, password=None, password2=None, **extra_fields):
         """
         Creates and saves a User with the given registration
         number and password.
@@ -26,30 +56,23 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             registration_number=self.normalize_registration_number(registration_number),
-            role=role
+            **extra_fields
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, registration_number, password=None, ):
+    def create_superuser(self, registration_number, password=None, **extra_fields):
         """
         Creates and saves a superuser with the given registration
         number and password.
         """
-        user = self.create_user(
-            registration_number,
-            password=password,
-            role='Admin',
-        )
-        user.is_admin = True
-        user.role = "admin"
-        user.save(using=self._db)
-        return user
+        extra_fields.setdefault("is_admin", True)
+        extra_fields.setdefault("role", "super-admin")
+        return self.create_user(registration_number, password, **extra_fields)
 
     def normalize_registration_number(self, registration_number):
-        # Normalization logic here
         return registration_number.strip().upper()
 
 
@@ -57,16 +80,17 @@ class MyUserManager(BaseUserManager):
 class User(AbstractBaseUser):
     ROLE_CHOICES = [
         ('student', 'Student'),
-        ('office', 'Office'),
+        ('clerk', 'Clerk'),
         ('faculty', 'Faculty'),
-        ('admin', 'Admin'),
+        ('super-admin', 'Super-Admin'),
         ('principal', 'Principal'),
         ('caretaker', 'Caretaker'),
         ('department', 'Department'),
     ]
-    registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True,
+    registration_number = models.CharField(verbose_name="registration number", max_length=20,
                                            validators=[MinLengthValidator(6), MaxLengthValidator(11)])
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="users", null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -76,6 +100,11 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = "registration_number"
     REQUIRED_FIELDS = []
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['registration_number', 'college'],
+                                    name='unique_registration_number_per_college')]
 
     def __str__(self):
         return self.registration_number
@@ -98,12 +127,11 @@ class User(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
-        return self.is_admin or self.role in ['faculty', 'principal', 'office', 'caretaker']
+        return self.is_admin or self.role in ['faculty', 'principal', 'clerk', 'caretaker']
 
 
 def upload_path(instance, filename, folder):
-    # Customize this function as per your requirement
-    return f"{folder}/{filename}"
+    return f"{folder}/{instance.college_name}/{filename}"
 
 
 def upload_to_profile_pictures(instance, filename):
@@ -219,26 +247,7 @@ class Notification(models.Model):
         return f'Notification for -- {self.user.registration_number} -- {self.time}'
 
 
-def upload_college_logo(instance, filename):
-    return upload_path(instance, filename, 'college-logos')
-
-
-class College(models.Model):
-    college_code = models.CharField(max_length=10, unique=True, null=True, blank=True)
-    college_name = models.CharField(verbose_name="college_name", max_length=255, unique=True, null=True, blank=True)
-    college_address = models.TextField(verbose_name="college_address", max_length=500, null=True, blank=True)
-    established_date = models.DateField(verbose_name="established_date", null=True, blank=True)
-    principal_name = models.CharField(verbose_name="principal_name", null=True, max_length=255, blank=True)
-    phone_number = models.CharField(verbose_name="phone_number", null=True, max_length=15)
-    email = models.EmailField(verbose_name="email", null=True, max_length=225)
-    college_logo = models.ImageField(verbose_name="college_logo", upload_to=upload_college_logo, null=True, blank=True)
-
-    def __str__(self):
-        return self.college_name
-
-
 def generate_bonafide_number():
-    # Generate a unique bonafide number
     return str(uuid.uuid4().hex[:10])
 
 
@@ -284,6 +293,7 @@ class Subject(models.Model):
 
 
 class Semester(models.Model):
+    college = models.ForeignKey(College, on_delete=models.CASCADE)
     branch = models.CharField(verbose_name="branch", max_length=225, null=True, blank=True)
     semester_name = models.CharField(verbose_name="semester_name", max_length=225)
     subjects = models.ManyToManyField(Subject, verbose_name="subjects", related_name="semester_subjects")
@@ -497,6 +507,7 @@ class Departments_for_no_Dues(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'),
                       ('rejected', 'Rejected')]
+    college = models.ForeignKey(College, on_delete=models.CASCADE)
     Department_id = models.IntegerField(verbose_name="Department ID", primary_key=True)
     Department_name = models.CharField(max_length=225, verbose_name="Department")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",
@@ -522,6 +533,7 @@ class Departments_for_no_Dues(models.Model):
 
 
 class No_Dues_list(models.Model):
+    college = models.ForeignKey(College, on_delete=models.CASCADE)
     request_id = models.OneToOneField(Overall_No_Dues_Request, on_delete=models.CASCADE, related_name='no_dues_list',
                                       null=True, blank=True)
     STATUS_CHOICES = [('pending', 'Pending'),
@@ -558,6 +570,7 @@ class No_Dues_list(models.Model):
             cloned_departments.append(
                 Cloned_Departments_for_no_Dues(
                     no_dues_list=self,
+                    college=department.college,
                     Department_name=department.Department_name,
                     Department_id=department.Department_id,
                     status='pending',
@@ -578,6 +591,7 @@ class No_Dues_list(models.Model):
 
 
 class Cloned_Departments_for_no_Dues(models.Model):
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     id = models.AutoField(primary_key=True)
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'),
@@ -660,3 +674,65 @@ def create_welcome_message(sender, instance, created, **kwargs):
     if created and instance.role == 'student':
         welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard")
         update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")
+
+
+def upload_college_requests(instance, filename):
+    return upload_path(instance, filename, 'college-requests')
+
+
+class CollegeRequest(models.Model):
+    name = models.CharField(max_length=225, blank=True, null=True, verbose_name="name")
+    email = models.EmailField(max_length=254, blank=True, null=True, verbose_name="email address")
+    college_name = models.CharField(max_length=225, blank=True, null=True, verbose_name="college name")
+    college_address = models.TextField(max_length=550, blank=True, null=True, verbose_name="college address")
+    established_date = models.DateField(verbose_name="established date", blank=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True, verbose_name="phone")
+    principal_name = models.CharField(verbose_name="principal_name", null=True, max_length=255, blank=True)
+    college_logo = models.ImageField(verbose_name="college_logo", upload_to=upload_college_requests, null=True,
+                                     blank=True)
+    id_count = models.IntegerField(verbose_name="id_count", default=0)
+    is_verified = models.BooleanField(verbose_name="verified", default=False)
+
+    def save(self, *args, **kwargs):
+        is_new = not self.pk is None
+        super().save(args, kwargs)
+        if self.is_verified and is_new:
+            self.copy_to_college()
+            registration_number = self.generate_registration_number()
+            Temparory_password = self.generate_password()
+            college = College.objects.get(college_name=self.college_name)
+            user = User.objects.create_user(
+                registration_number=registration_number,
+                password=Temparory_password,
+                college=college
+            )
+            send_login_credentials(registration_number=registration_number, password=Temparory_password,
+                                   to_email=self.email)
+
+    def generate_registration_number(self):
+        prefix = 'CLERK-'
+        college_name = slugify(College.objects.get(college_name=self.college_name)[:7])
+        registration_number = f'{prefix}{college_name}'.upper
+        return registration_number[:11]
+
+    def generate_password(self, length=10):
+        alphabet = string.ascii_letters + string.digits + string.punctuation
+        password = ''.join(secrets.choice(alphabet) for i in range(length))
+        return password
+
+    def copy_to_college(self):
+        if not College.objects.filter(college_name=self.college_name).exists():
+            College.objects.create(college_name=self.college_name, college_address=self.college_address,
+                                   established_date=self.established_date, phone_number=self.phone_number,
+                                   principal_name=self.principal_name, college_logo=self.college_logo,
+                                   college_email=self.email)
+            notify_roles("super-admin", f"New college is added to the site")
+
+    def __str__(self):
+        return f'{self.name} - {self.email} - {self.college_name} - {self.id_count}'
+
+
+@receiver(post_save, sender=CollegeRequest)
+def College_request_Notification(sender, instance, created, **kwargs):
+    if created:
+        notify_roles("super-admin", f"New request received from {instance.college_name} --- {instance.id_count}")

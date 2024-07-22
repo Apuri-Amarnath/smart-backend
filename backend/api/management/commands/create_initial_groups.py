@@ -14,6 +14,7 @@ class Command(BaseCommand):
         student_group, _ = Group.objects.get_or_create(name='Student')
         faculty_group, _ = Group.objects.get_or_create(name='Faculty')
         department_group, _ = Group.objects.get_or_create(name='Department')
+        office_group, _ = Group.objects.get_or_create(name='Office')
 
         content_type = ContentType.objects.get_for_model(Fees_model)
         can_view_caretaker, _ = Permission.objects.get_or_create(
@@ -45,11 +46,17 @@ class Command(BaseCommand):
             name='Can view department content',
             content_type=content_type_Department,
         )
+        can_view_Office, _ = Permission.objects.get_or_create(
+            codename='can_view_Office',
+            name='Can view office content',
+            content_type=content_type,
+        )
 
         caretaker_group.permissions.add(can_view_caretaker)
         admin_group.permissions.add(can_view_admin)
         student_group.permissions.add(can_view_student)
         faculty_group.permissions.add(can_view_faculty)
         department_group.permissions.add(can_view_department)
+        office_group.permissions.add(can_view_Office)
 
         self.stdout.write(self.style.SUCCESS('Successfully created initial groups and permissions'))

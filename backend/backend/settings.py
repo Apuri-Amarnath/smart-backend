@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.middleware.CollegeContextMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -163,3 +164,16 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 AUTH_USER_MODEL = 'api.User'
+
+AUTHENTICATION_BACKENDS = [
+    'api.backends.RegistrationNumberBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-relay.brevo.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = '78ae4e001@smtp-brevo.com'
+EMAIL_HOST_PASSWORD = 'AGk7gx9dE4SHYZUD'
+DEFAULT_FROM_EMAIL = '78ae4e001@smtp-brevo.com'

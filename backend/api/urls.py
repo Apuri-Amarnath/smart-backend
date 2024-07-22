@@ -7,10 +7,10 @@ from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLog
     HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, MessFeeCreateSet, \
     UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
     GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset, NoDuesListViewSet, \
-    SemesterVerificationViewSet, NotificationsViewSet
+    SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView
 
 router = DefaultRouter()
-router.register(r'college', CollegeViewSet, basename='college-details')
+router.register(r'colleges', CollegeViewSet, basename='college-details')
 router.register(r'bonafide', BonafideViewSet, basename='bonafide-details')
 router.register(r'semester', SemesterViewSet, basename='semester')
 router.register(r'subject', SubjectViewSet, basename='subjects')
@@ -25,13 +25,14 @@ router.register(r'No-dues-list', NoDuesListViewSet, basename='no_dues_list')
 router.register(r'mess-fees-payment', MessFeePaymentCreateViewset, basename='mess_fee_payment')
 router.register(r'verify-semester-registration', SemesterVerificationViewSet, basename='verify_semester')
 router.register(r'notification', NotificationsViewSet, basename='notifications')
+router.register(r'college-requests', CollegeRequestViewSet, basename='college_requests')
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),
     path('login/', UserLoginView.as_view(), name='login'),
     path('logout/', UserLogoutView.as_view(), name='logout'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
-    path('profile/', UserProfileView.as_view(), name='profile'),
+    path('<slug:slug>/profile/', UserProfileView.as_view(), name='profile-college-wise'),
     path('update_server/', update, name='update'),
     path('token/refresh/', TokenRefresh.as_view(), name='token_refresh'),
     path('fees/create/', MessFeeCreateSet.as_view(), name='create_fee'),
@@ -40,5 +41,8 @@ urlpatterns = [
     path('fees/', GetMessFeeViewset.as_view(), name='fees-list'),
     path('hostel-allotments/<int:pk>/update-status/', HostelAllotmentStatusUpdateView.as_view(),
          name='host_allotments_status_update'),
-    path('', include(router.urls), )
+    path('', include(router.urls), ),
+    path('college/<slug:slug>/', CollegeViewSet.as_view({'get': 'retrieve'}), name='college'),
+    path('<slug:slug>/register/', UserRegistrationView.as_view(), name='register-college-wise'),
+    path('colleges-slugs/', CollegeSlugListView.as_view(), name='college-slug-list')
 ]
