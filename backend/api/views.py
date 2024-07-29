@@ -1,8 +1,11 @@
 import os.path
+import smtplib
+from email.mime.text import MIMEText
 
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.core.mail import send_mail
 from django.db import transaction
 from django.utils import timezone
 from rest_framework.decorators import action
@@ -13,6 +16,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
+
+from .emails import send_login_credentials
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
     Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request, No_Dues_list, \
@@ -25,7 +30,7 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
     NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer, \
-    CollegeRequestSerializer, CollegeSlugSerializer
+    CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -41,7 +46,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
-from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsClerkOrAdmin
+from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsClerkOrAdmin, \
+    IsAdmin
 from django.db.models import Case, When, IntegerField
 import logging
 
@@ -78,6 +84,7 @@ def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     refresh['role'] = user.role
     refresh['registration_number'] = user.registration_number
+    refresh['college'] = user.college.college_name
 
     return {
         'refresh': str(refresh),
@@ -109,7 +116,7 @@ class UserRegistrationView(APIView):
             if file_serializer.is_valid(raise_exception=True):
                 csv_file = file_serializer.validated_data['file']
                 file_path = self.save_uploaded_file(csv_file)
-                response = self.handle_csv_user_creation(file_path)
+                response = self.handle_csv_user_creation(file_path,slug)
                 return response
         else:
             if not slug:
@@ -140,24 +147,36 @@ class UserRegistrationView(APIView):
                 destination.write(chunk)
         return file_path
 
-    def handle_csv_user_creation(self, csv_file_path):
+    @transaction.atomic
+    def handle_csv_user_creation(self, csv_file_path, slug):
         if not os.path.exists(csv_file_path):
             return Response({'message': 'csv file not found'}, status=status.HTTP_400_BAD_REQUEST)
         user_created = []
         user_existing = []
         errors = []
+        try:
+            college = College.objects.get(slug=slug)
+            college_request = CollegeRequest.objects.get(college_name=college.college_name)
+        except College.DoesNotExist:
+            return Response({'error': 'College not found'}, status=status.HTTP_404_NOT_FOUND)
+        except CollegeRequest.DoesNotExist:
+            return Response({'error': 'College request not found'}, status=status.HTTP_404_NOT_FOUND)
+
         with open(csv_file_path, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
 
             for row in reader:
+                row['college'] = college.id
                 registration_number = row.get('registration_number')
-                if User.objects.filter(registration_number=registration_number).exists():
+                if User.objects.filter(registration_number=registration_number,college=college).exists():
                     user_existing.append(registration_number)
                 else:
                     serializer = UserRegistrationSerializer(data=row)
                     if serializer.is_valid():
                         user = serializer.save()
                         user_created.append(user.registration_number)
+                        college_request.id_count += 1
+                        college_request.save()
                     else:
                         errors.append(serializer.errors)
 
@@ -250,8 +269,7 @@ class CollegeViewSet(viewsets.ModelViewSet):
     queryset = College.objects.all()
     serializer_class = CollegeSerializer
     renderer_classes = [UserRenderer]
-
-    # permission_classes = [IsClerkOrAdmin | IsStudentOrAdmin]
+    permission_classes = [IsClerkOrAdmin | IsStudentOrAdmin]
 
     def retrieve(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
@@ -782,6 +800,22 @@ class CollegeRequestViewSet(viewsets.ModelViewSet):
 class CollegeSlugListView(generics.ListAPIView):
     queryset = College.objects.all()
     serializer_class = CollegeSlugSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['college_name']
+    search_fields = ['id']
+
+
+class CollegeRequestVerificationView(generics.RetrieveAPIView):
+    permission_classes = [IsAdmin]
+    queryset = CollegeRequest.objects.all()
+    serializer_class = CollegeRequestVerificationSerializer
+    lookup_field = 'pk'
+
+    def partial_update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response({'message': 'Request was successfully verified'}, status.HTTP_200_OK)

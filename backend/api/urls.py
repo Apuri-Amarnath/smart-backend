@@ -7,7 +7,7 @@ from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLog
     HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, MessFeeCreateSet, \
     UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
     GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset, NoDuesListViewSet, \
-    SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView
+    SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView, CollegeRequestVerificationView
 
 router = DefaultRouter()
 router.register(r'colleges', CollegeViewSet, basename='college-details')
@@ -44,5 +44,6 @@ urlpatterns = [
     path('', include(router.urls), ),
     path('college/<slug:slug>/', CollegeViewSet.as_view({'get': 'retrieve'}), name='college'),
     path('<slug:slug>/register/', UserRegistrationView.as_view(), name='register-college-wise'),
-    path('colleges-slugs/', CollegeSlugListView.as_view(), name='college-slug-list')
+    path('colleges-slugs/', CollegeSlugListView.as_view(), name='college-slug-list'),
+    path('college-requests/<int:pk>/verify/',CollegeRequestVerificationView.as_view(), name='college-request-verify'),
 ]

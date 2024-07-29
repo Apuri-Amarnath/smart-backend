@@ -7,7 +7,7 @@ class IsCollegeMember(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
-        college_id = view.kwargs['college_id']
+        college_id = view.kwargs['college']
         return request.user.college.id == int(college_id)
 
 
@@ -53,3 +53,10 @@ class IsClerkOrAdmin(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
         return request.user.role in ['clerk', 'super-admin']
+
+
+class IsAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        return request.user.role == 'super-admin'

@@ -171,9 +171,10 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-relay.brevo.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = '78ae4e001@smtp-brevo.com'
-EMAIL_HOST_PASSWORD = 'AGk7gx9dE4SHYZUD'
-DEFAULT_FROM_EMAIL = '78ae4e001@smtp-brevo.com'
+EMAIL_HOST = 'mail.smtp2go.com'
+EMAIL_PORT = 2525  # Use the appropriate port: 2525, 8025, 587, 80, or 25
+EMAIL_USE_TLS = True  # Use TLS
+EMAIL_USE_SSL = False  # Set to True if using SSL ports
+EMAIL_HOST_USER = 'josephscollege.ac.in'
+EMAIL_HOST_PASSWORD = '1upmTjQr7WWDiP1w'
+DEFAULT_FROM_EMAIL = '121420474013@josephscollege.ac.in'

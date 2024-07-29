@@ -685,7 +685,13 @@ class CollegeRequestSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CollegeRequestVerificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollegeRequest
+        fields = ['is_verified']
+
+
 class CollegeSlugSerializer(serializers.ModelSerializer):
     class Meta:
         model = College
-        fields = ['slug','college_name']
+        fields = ['slug', 'id']

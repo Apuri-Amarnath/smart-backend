@@ -694,9 +694,9 @@ class CollegeRequest(models.Model):
     is_verified = models.BooleanField(verbose_name="verified", default=False)
 
     def save(self, *args, **kwargs):
-        is_new = not self.pk is None
-        super().save(args, kwargs)
-        if self.is_verified and is_new:
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if self.is_verified:
             self.copy_to_college()
             registration_number = self.generate_registration_number()
             Temparory_password = self.generate_password()
@@ -704,15 +704,17 @@ class CollegeRequest(models.Model):
             user = User.objects.create_user(
                 registration_number=registration_number,
                 password=Temparory_password,
-                college=college
+                college=college,
+                role='clerk',
             )
             send_login_credentials(registration_number=registration_number, password=Temparory_password,
                                    to_email=self.email)
 
     def generate_registration_number(self):
         prefix = 'CLERK-'
-        college_name = slugify(College.objects.get(college_name=self.college_name)[:7])
-        registration_number = f'{prefix}{college_name}'.upper
+        college = College.objects.get(college_name=self.college_name)
+        college_name = slugify(college.college_name[:7])
+        registration_number = f'{prefix}{college_name}'.upper()
         return registration_number[:11]
 
     def generate_password(self, length=10):
