@@ -84,7 +84,7 @@ def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     refresh['role'] = user.role
     refresh['registration_number'] = user.registration_number
-    refresh['college'] = user.college.college_name
+    refresh['college'] = user.college.id if user.college else None
 
     return {
         'refresh': str(refresh),
