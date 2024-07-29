@@ -10,7 +10,7 @@ from .models import Semester, Subject, User, UserProfile, PersonalInformation, C
     College, Bonafide, Semester_Registration, Hostel_Allotment, Hostel_Room_Allotment, Hostel_No_Due_request, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
     Departments_for_no_Dues, Notification, TransferCertificateInformation, VerifySemesterRegistration, \
-    Cloned_Departments_for_no_Dues
+    Cloned_Departments_for_no_Dues,CollegeRequest
 
 
 class UserCreationForm(forms.ModelForm):
@@ -59,8 +59,8 @@ class UserModelAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('registration_number', 'role', 'is_admin')
-    list_filter = ('is_admin', 'role')
+    list_display = ('registration_number', 'role', 'college', 'is_admin')
+    list_filter = ('is_admin', 'role', 'college')
     fieldsets = (
         (None, {'fields': ('registration_number', 'password')}),
         ('Personal info', {'fields': ('role',)}),
@@ -141,3 +141,4 @@ admin.site.register(TransferCertificateInformation)
 admin.site.register(Notification)
 admin.site.register(VerifySemesterRegistration)
 admin.site.register(Cloned_Departments_for_no_Dues)
+admin.site.register(CollegeRequest)

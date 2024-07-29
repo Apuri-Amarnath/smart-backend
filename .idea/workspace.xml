@@ -4,8 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed notifications">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="some modifications">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/17db8717-027a-40c2-806d-e134de555165.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/17db8717-027a-40c2-806d-e134de555165.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/emails.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/emails.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/management/commands/create_initial_groups.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/management/commands/create_initial_groups.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/permissions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +81,7 @@
   &quot;keyToString&quot;: {
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Python.emails.executor&quot;: &quot;Run&quot;,
     &quot;Python.serializers.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -188,23 +201,16 @@
       <workItem from="1720014140424" duration="22897000" />
       <workItem from="1720092043293" duration="13372000" />
       <workItem from="1720116178488" duration="1060000" />
-      <workItem from="1720364716501" duration="316000" />
-    </task>
-    <task id="LOCAL-00115" summary="added changes">
-      <option name="closed" value="true" />
-      <created>1719671226741</created>
-      <option name="number" value="00115" />
-      <option name="presentableId" value="LOCAL-00115" />
-      <option name="project" value="LOCAL" />
-      <updated>1719671226742</updated>
-    </task>
-    <task id="LOCAL-00116" summary="added changes">
-      <option name="closed" value="true" />
-      <created>1719676966948</created>
-      <option name="number" value="00116" />
-      <option name="presentableId" value="LOCAL-00116" />
-      <option name="project" value="LOCAL" />
-      <updated>1719676966948</updated>
+      <workItem from="1720364716501" duration="714000" />
+      <workItem from="1721043970171" duration="91000" />
+      <workItem from="1721223258957" duration="8096000" />
+      <workItem from="1721488063314" duration="3975000" />
+      <workItem from="1721606458730" duration="13599000" />
+      <workItem from="1721670964735" duration="29000" />
+      <workItem from="1721820246397" duration="5805000" />
+      <workItem from="1722136028646" duration="72000" />
+      <workItem from="1722222249012" duration="6190000" />
+      <workItem from="1722262001037" duration="6284000" />
     </task>
     <task id="LOCAL-00117" summary="added changes">
       <option name="closed" value="true" />
@@ -582,7 +588,23 @@
       <option name="project" value="LOCAL" />
       <updated>1720116635370</updated>
     </task>
-    <option name="localTasksCounter" value="164" />
+    <task id="LOCAL-00164" summary="fixed refresh token">
+      <option name="closed" value="true" />
+      <created>1720365345566</created>
+      <option name="number" value="00164" />
+      <option name="presentableId" value="LOCAL-00164" />
+      <option name="project" value="LOCAL" />
+      <updated>1720365345566</updated>
+    </task>
+    <task id="LOCAL-00165" summary="some modifications">
+      <option name="closed" value="true" />
+      <created>1721622724429</created>
+      <option name="number" value="00165" />
+      <option name="presentableId" value="LOCAL-00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1721622724430</updated>
+    </task>
+    <option name="localTasksCounter" value="166" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -644,8 +666,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="added cmd to delete Sql file." />
-    <MESSAGE value="updated user based roles." />
     <MESSAGE value="test" />
     <MESSAGE value="added cgpa field" />
     <MESSAGE value="fix messfeepayment" />
@@ -669,9 +689,12 @@
     <MESSAGE value="add notifications" />
     <MESSAGE value="fixed Overall nodues" />
     <MESSAGE value="fixed notifications" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed notifications" />
+    <MESSAGE value="fixed refresh token" />
+    <MESSAGE value="some modifications" />
+    <option name="LAST_COMMIT_MESSAGE" value="some modifications" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
+    <SUITE FILE_PATH="coverage/smart_education$emails.coverage" NAME="emails Coverage Results" MODIFIED="1722224466417" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
   </component>
 </project>

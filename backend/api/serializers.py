@@ -13,7 +13,7 @@ from .models import User, UserProfile, PersonalInformation, AcademicInformation,
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
     Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification, \
-    Cloned_Departments_for_no_Dues
+    Cloned_Departments_for_no_Dues, CollegeRequest
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -86,7 +86,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('registration_number', 'role', 'password', 'password2',)
+        fields = ('registration_number', 'role', 'college', 'password', 'password2')
         extra_kwargs = {'password': {'write_only': True}}
 
     # validate password
@@ -677,3 +677,21 @@ class NotificationSerializer(serializers.ModelSerializer):
         local_time = timezone.localtime(instance.time, timezone=timezone.get_fixed_timezone(330))
         data['time'] = local_time.strftime('%Y-%m-%d %H:%M:%S')
         return data
+
+
+class CollegeRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollegeRequest
+        fields = '__all__'
+
+
+class CollegeRequestVerificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CollegeRequest
+        fields = ['is_verified']
+
+
+class CollegeSlugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = College
+        fields = ['slug', 'id']

@@ -1,4 +1,3 @@
-# your_app_name/management/commands/create_initial_groups.py
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -14,6 +13,7 @@ class Command(BaseCommand):
         student_group, _ = Group.objects.get_or_create(name='Student')
         faculty_group, _ = Group.objects.get_or_create(name='Faculty')
         department_group, _ = Group.objects.get_or_create(name='Department')
+        clerk_group, _ = Group.objects.get_or_create(name='Clerk')
 
         content_type = ContentType.objects.get_for_model(Fees_model)
         can_view_caretaker, _ = Permission.objects.get_or_create(
@@ -45,11 +45,17 @@ class Command(BaseCommand):
             name='Can view department content',
             content_type=content_type_Department,
         )
+        can_view_Office, _ = Permission.objects.get_or_create(
+            codename='can_view_Office',
+            name='Can view clerk content',
+            content_type=content_type,
+        )
 
         caretaker_group.permissions.add(can_view_caretaker)
         admin_group.permissions.add(can_view_admin)
         student_group.permissions.add(can_view_student)
         faculty_group.permissions.add(can_view_faculty)
         department_group.permissions.add(can_view_department)
+        clerk_group.permissions.add(can_view_Office)
 
         self.stdout.write(self.style.SUCCESS('Successfully created initial groups and permissions'))
