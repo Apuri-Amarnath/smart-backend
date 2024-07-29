@@ -80,7 +80,7 @@ class MyUserManager(BaseUserManager):
 class User(AbstractBaseUser):
     ROLE_CHOICES = [
         ('student', 'Student'),
-        ('clerk', 'Clerk'),
+        ('office', 'Office'),
         ('faculty', 'Faculty'),
         ('super-admin', 'Super-Admin'),
         ('principal', 'Principal'),
@@ -127,7 +127,7 @@ class User(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
-        return self.is_admin or self.role in ['faculty', 'principal', 'clerk', 'caretaker']
+        return self.is_admin or self.role in ['faculty', 'principal', 'office', 'caretaker']
 
 
 def upload_path(instance, filename, folder):
@@ -705,15 +705,15 @@ class CollegeRequest(models.Model):
                 registration_number=registration_number,
                 password=Temparory_password,
                 college=college,
-                role='clerk',
+                role='office',
             )
             send_login_credentials(registration_number=registration_number, password=Temparory_password,
                                    to_email=self.email)
 
     def generate_registration_number(self):
-        prefix = 'CLERK-'
+        prefix = 'OFFICE-'
         college = College.objects.get(college_name=self.college_name)
-        college_name = slugify(college.college_name[:7])
+        college_name = slugify(college.college_name[:4])
         registration_number = f'{prefix}{college_name}'.upper()
         return registration_number[:11]
 

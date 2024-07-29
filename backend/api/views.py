@@ -46,7 +46,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
-from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsClerkOrAdmin, \
+from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsOfficeOrAdmin, \
     IsAdmin
 from django.db.models import Case, When, IntegerField
 import logging
@@ -84,7 +84,7 @@ def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     refresh['role'] = user.role
     refresh['registration_number'] = user.registration_number
-    refresh['college'] = user.college.college_name
+    refresh['college'] = user.college.id if user.college else None
 
     return {
         'refresh': str(refresh),
@@ -106,7 +106,7 @@ class TokenRefresh(APIView):
 
 class UserRegistrationView(APIView):
     renderer_classes = [UserRenderer]
-    permission_classes = [IsClerkOrAdmin]
+    permission_classes = [IsOfficeOrAdmin]
 
     def post(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
@@ -269,7 +269,7 @@ class CollegeViewSet(viewsets.ModelViewSet):
     queryset = College.objects.all()
     serializer_class = CollegeSerializer
     renderer_classes = [UserRenderer]
-    permission_classes = [IsClerkOrAdmin | IsStudentOrAdmin]
+    permission_classes = [IsOfficeOrAdmin | IsStudentOrAdmin]
 
     def retrieve(self, request, *args, **kwargs):
         slug = kwargs.get('slug')

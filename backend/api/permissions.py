@@ -48,11 +48,11 @@ class IsDepartmentOrAdmin(permissions.BasePermission):
         return request.user.role in ['department', 'super-admin']
 
 
-class IsClerkOrAdmin(permissions.BasePermission):
+class IsOfficeOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
             return False
-        return request.user.role in ['clerk', 'super-admin']
+        return request.user.role in ['office', 'super-admin']
 
 
 class IsAdmin(permissions.BasePermission):
