@@ -786,6 +786,7 @@ class NotificationsViewSet(viewsets.ModelViewSet):
 class CollegeRequestViewSet(viewsets.ModelViewSet):
     queryset = CollegeRequest.objects.all()
     serializer_class = CollegeRequestSerializer
+    renderer_classes = [UserRenderer]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -812,6 +813,7 @@ class CollegeSlugListView(generics.ListAPIView):
     queryset = College.objects.all()
     serializer_class = CollegeSlugSerializer
     permission_classes = [IsAuthenticated]
+    renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter]
     search_fields = ['id']
 
@@ -820,6 +822,7 @@ class CollegeRequestVerificationView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAdmin]
     queryset = CollegeRequest.objects.all()
     serializer_class = CollegeRequestVerificationSerializer
+    renderer_classes = [UserRenderer]
     lookup_field = 'pk'
 
     def update(self, request, *args, **kwargs):
