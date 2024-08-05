@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Ensure the script is being run from the correct directory
-cd "$(dirname "$0")"
-
+cd smart-backend/backend
 # Optional: Remove old SQLite database if it exists
 if [ -f db.sqlite3 ]; then
     rm db.sqlite3
