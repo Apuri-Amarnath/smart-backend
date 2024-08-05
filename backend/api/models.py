@@ -672,13 +672,13 @@ class VerifySemesterRegistration(models.Model):
 
 @receiver(post_save, sender=User)
 def create_welcome_message(sender, instance, created, **kwargs):
-    if created and instance.role == 'student':
-        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the SmartOne. - ")
-        update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")
-    else:
-        welcome_notification = Notification.objects.create(user=instance, message="Welcome to SmartOne.")
-        reset_password_notification = Notification.objects.create(user=instance, message="please reset your password")
-
+    if created:
+        if instance.role == 'student':
+            Notification.objects.create(user=instance, message="Welcome to the SmartOne.")
+            Notification.objects.create(user=instance, message="Please update your profile.")
+        else:
+            Notification.objects.create(user=instance, message="Welcome to SmartOne.")
+            Notification.objects.create(user=instance, message="Please reset your password.")
 
 
 

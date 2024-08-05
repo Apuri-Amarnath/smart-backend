@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added some validators">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,15 +204,7 @@
       <workItem from="1722747943491" duration="60000" />
       <workItem from="1722834587318" duration="8820000" />
       <workItem from="1722844898237" duration="72000" />
-      <workItem from="1722845285608" duration="2436000" />
-    </task>
-    <task id="LOCAL-00131" summary="notifications done">
-      <option name="closed" value="true" />
-      <created>1719907456405</created>
-      <option name="number" value="00131" />
-      <option name="presentableId" value="LOCAL-00131" />
-      <option name="project" value="LOCAL" />
-      <updated>1719907456405</updated>
+      <workItem from="1722845285608" duration="3048000" />
     </task>
     <task id="LOCAL-00132" summary="mess fee update">
       <option name="closed" value="true" />
@@ -599,7 +590,15 @@
       <option name="project" value="LOCAL" />
       <updated>1722846034160</updated>
     </task>
-    <option name="localTasksCounter" value="180" />
+    <task id="LOCAL-00180" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722850562929</created>
+      <option name="number" value="00180" />
+      <option name="presentableId" value="LOCAL-00180" />
+      <option name="project" value="LOCAL" />
+      <updated>1722850562929</updated>
+    </task>
+    <option name="localTasksCounter" value="181" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
