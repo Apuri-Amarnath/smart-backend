@@ -21,28 +21,6 @@ pwd
 python manage.py makemigrations
 python manage.py collectstatic --noinput
 python manage.py migrate
-python manage.py create_initial_groups
-
-echo "groups created "
-
-python manage.py adddepartments_for_no_dues
-
-echo "added departments"
-
-#!/bin/bash
-
-# Load environment variables from .env file
-load_env() {
-  export $(grep -v '^#' .env | xargs)
-}
-
-# Load environment variables
-load_env
-
-# Output loaded environment variables (optional)
-echo "ADMIN_REGISTRATION_NUMBER: $ADMIN_REGISTRATION_NUMBER"
-echo "ADMIN_PASS: $ADMIN_PASS"
-
 
 
 export $(grep -v '^#' .env | xargs)
@@ -69,5 +47,3 @@ if not User.objects.filter(registration_number='$ADMIN_REGISTRATION_NUMBER').exi
 else:
     print('Superuser already exists.')
 END
-
-python manage.py runserver 0.0.0.0:$PORT
