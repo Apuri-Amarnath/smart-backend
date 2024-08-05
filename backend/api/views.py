@@ -116,13 +116,14 @@ class UserRegistrationView(APIView):
             if file_serializer.is_valid(raise_exception=True):
                 csv_file = file_serializer.validated_data['file']
                 file_path = self.save_uploaded_file(csv_file)
-                response = self.handle_csv_user_creation(file_path,slug)
+                response = self.handle_csv_user_creation(file_path, slug)
                 return response
         else:
             if not slug:
                 return Response({'error': 'Not a valid slug'}, status=status.HTTP_400_BAD_REQUEST)
             try:
                 college = College.objects.get(slug=slug)
+                college_request = CollegeRequest.objects.get(college_name=college.college_name)
             except College.DoesNotExist:
                 return Response({'error': 'College not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -132,6 +133,8 @@ class UserRegistrationView(APIView):
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
                 token = get_tokens_for_user(user)
+                college_request.id_count += 1
+                college_request.save()
                 return Response({'token': token, 'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
             return Response({'message': 'user already exits', "error": serializer.errors},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -168,7 +171,7 @@ class UserRegistrationView(APIView):
             for row in reader:
                 row['college'] = college.id
                 registration_number = row.get('registration_number')
-                if User.objects.filter(registration_number=registration_number,college=college).exists():
+                if User.objects.filter(registration_number=registration_number, college=college).exists():
                     user_existing.append(registration_number)
                 else:
                     serializer = UserRegistrationSerializer(data=row)
@@ -798,15 +801,14 @@ class CollegeRequestViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def list(self, request, *args, **kwargs):
-        self.permission_classes =[IsAuthenticated]
+        self.permission_classes = [IsAuthenticated]
         self.check_permissions(request)
         return super().list(request, args, kwargs)
 
     def retrieve(self, request, *args, **kwargs):
-        self.permission_classes =[IsAuthenticated]
+        self.permission_classes = [IsAuthenticated]
         self.check_permissions(request)
         return super().retrieve(request, args, kwargs)
-
 
 
 class CollegeSlugListView(generics.ListAPIView):
