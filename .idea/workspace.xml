@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added some validators" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added some validators">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/settings.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -200,63 +203,9 @@
       <workItem from="1722262001037" duration="8160000" />
       <workItem from="1722274591872" duration="305000" />
       <workItem from="1722747943491" duration="60000" />
-      <workItem from="1722834587318" duration="5240000" />
-    </task>
-    <task id="LOCAL-00123" summary="notifications done">
-      <option name="closed" value="true" />
-      <created>1719685443601</created>
-      <option name="number" value="00123" />
-      <option name="presentableId" value="LOCAL-00123" />
-      <option name="project" value="LOCAL" />
-      <updated>1719685443601</updated>
-    </task>
-    <task id="LOCAL-00124" summary="notifications done">
-      <option name="closed" value="true" />
-      <created>1719685566947</created>
-      <option name="number" value="00124" />
-      <option name="presentableId" value="LOCAL-00124" />
-      <option name="project" value="LOCAL" />
-      <updated>1719685566947</updated>
-    </task>
-    <task id="LOCAL-00125" summary="notifications done">
-      <option name="closed" value="true" />
-      <created>1719686483274</created>
-      <option name="number" value="00125" />
-      <option name="presentableId" value="LOCAL-00125" />
-      <option name="project" value="LOCAL" />
-      <updated>1719686483274</updated>
-    </task>
-    <task id="LOCAL-00126" summary="notifications done">
-      <option name="closed" value="true" />
-      <created>1719695392242</created>
-      <option name="number" value="00126" />
-      <option name="presentableId" value="LOCAL-00126" />
-      <option name="project" value="LOCAL" />
-      <updated>1719695392242</updated>
-    </task>
-    <task id="LOCAL-00127" summary="notifications done">
-      <option name="closed" value="true" />
-      <created>1719900178244</created>
-      <option name="number" value="00127" />
-      <option name="presentableId" value="LOCAL-00127" />
-      <option name="project" value="LOCAL" />
-      <updated>1719900178244</updated>
-    </task>
-    <task id="LOCAL-00128" summary="notifications done">
-      <option name="closed" value="true" />
-      <created>1719900272071</created>
-      <option name="number" value="00128" />
-      <option name="presentableId" value="LOCAL-00128" />
-      <option name="project" value="LOCAL" />
-      <updated>1719900272072</updated>
-    </task>
-    <task id="LOCAL-00129" summary="notifications done">
-      <option name="closed" value="true" />
-      <created>1719906345148</created>
-      <option name="number" value="00129" />
-      <option name="presentableId" value="LOCAL-00129" />
-      <option name="project" value="LOCAL" />
-      <updated>1719906345148</updated>
+      <workItem from="1722834587318" duration="8820000" />
+      <workItem from="1722844898237" duration="72000" />
+      <workItem from="1722845285608" duration="498000" />
     </task>
     <task id="LOCAL-00130" summary="notifications done">
       <option name="closed" value="true" />
@@ -594,7 +543,63 @@
       <option name="project" value="LOCAL" />
       <updated>1722839801523</updated>
     </task>
-    <option name="localTasksCounter" value="172" />
+    <task id="LOCAL-00172" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722840719451</created>
+      <option name="number" value="00172" />
+      <option name="presentableId" value="LOCAL-00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1722840719451</updated>
+    </task>
+    <task id="LOCAL-00173" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722840798687</created>
+      <option name="number" value="00173" />
+      <option name="presentableId" value="LOCAL-00173" />
+      <option name="project" value="LOCAL" />
+      <updated>1722840798687</updated>
+    </task>
+    <task id="LOCAL-00174" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722842480445</created>
+      <option name="number" value="00174" />
+      <option name="presentableId" value="LOCAL-00174" />
+      <option name="project" value="LOCAL" />
+      <updated>1722842480445</updated>
+    </task>
+    <task id="LOCAL-00175" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722842821074</created>
+      <option name="number" value="00175" />
+      <option name="presentableId" value="LOCAL-00175" />
+      <option name="project" value="LOCAL" />
+      <updated>1722842821074</updated>
+    </task>
+    <task id="LOCAL-00176" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722842958106</created>
+      <option name="number" value="00176" />
+      <option name="presentableId" value="LOCAL-00176" />
+      <option name="project" value="LOCAL" />
+      <updated>1722842958106</updated>
+    </task>
+    <task id="LOCAL-00177" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722843627384</created>
+      <option name="number" value="00177" />
+      <option name="presentableId" value="LOCAL-00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1722843627384</updated>
+    </task>
+    <task id="LOCAL-00178" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722843656292</created>
+      <option name="number" value="00178" />
+      <option name="presentableId" value="LOCAL-00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1722843656292</updated>
+    </task>
+    <option name="localTasksCounter" value="179" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
