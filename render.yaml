@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: django-app
+    env: python
+    buildCommand: |
+      # Install dependencies from requirements.txt
+      pip install -r requirements.txt
+    startCommand: |
+      # Run the custom configuration script
+      chmod +x config.sh && ./config.sh
+      # Start the Django server using Gunicorn
+      gunicorn backend.wsgi --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: backend.settings
+      - key: DATABASE_URL
+        value: sqlite:///db.sqlite3
+      - key: ADMIN_REGISTRATION_NUMBER
+        value: 12345678912
+      - key: ADMIN_PASS
+        value: 1234
+    plan: free
+    healthCheck:
+      path: /health/
+      interval: 10s
+      timeout: 5s
