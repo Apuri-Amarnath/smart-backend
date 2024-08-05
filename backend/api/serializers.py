@@ -13,7 +13,7 @@ from .models import User, UserProfile, PersonalInformation, AcademicInformation,
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
     Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification, \
-    Cloned_Departments_for_no_Dues, CollegeRequest
+    Cloned_Departments_for_no_Dues, CollegeRequest, College_with_Ids
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -707,3 +707,7 @@ class CollegeSlugSerializer(serializers.ModelSerializer):
     class Meta:
         model = College
         fields = ['slug', 'id']
+class College_idsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = College_with_Ids
+        fields = '__all__'

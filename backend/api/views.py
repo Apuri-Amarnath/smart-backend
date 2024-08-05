@@ -21,7 +21,7 @@ from .emails import send_login_credentials
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
     Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request, No_Dues_list, \
-    VerifySemesterRegistration, Notification, Departments_for_no_Dues, CollegeRequest
+    VerifySemesterRegistration, Notification, Departments_for_no_Dues, CollegeRequest, College_with_Ids
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
@@ -110,6 +110,7 @@ class UserRegistrationView(APIView):
 
     def post(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
+        print(request.user.college.id)
 
         if 'file' in request.data:
             file_serializer = Csv_RegistrationSerializer(data=request.data)
@@ -124,7 +125,7 @@ class UserRegistrationView(APIView):
             try:
                 with transaction.atomic():
                     college = College.objects.get(slug=slug)
-                    college_request = CollegeRequest.objects.get(college_name=college.college_name)
+                    college_with_ids = College_with_Ids.objects.get(college_name=college.college_name)
                     user_data = request.data.copy()
                     user_data['college'] = college.id
                     registration_number = user_data.get('registration_number')
@@ -135,9 +136,8 @@ class UserRegistrationView(APIView):
                     if serializer.is_valid(raise_exception=True):
                         user = serializer.save()
                         token = get_tokens_for_user(user)
-                        college_request.id_count += 1
-                        college_request.save()
-                        user_data.clear()
+                        college_with_ids.id_count += 1
+                        college_with_ids.save()
                         return Response({'token': token, 'message': 'User creation successful'},
                                         status=status.HTTP_201_CREATED)
             except College.DoesNotExist:
@@ -192,7 +192,7 @@ class UserRegistrationView(APIView):
                     else:
                         errors.append({'registration_number': registration_number, 'error': serializer.errors})
 
-        response_data={'message': 'user creation process completed', 'users_created': user_created,
+        response_data = {'message': 'user creation process completed', 'users_created': user_created,
                          'user_existing': user_existing, 'errors': errors}
         return Response(response_data,
                         status=status.HTTP_200_OK if not errors else status.HTTP_400_BAD_REQUEST)
@@ -799,8 +799,7 @@ class NotificationsViewSet(viewsets.ModelViewSet):
 class CollegeRequestViewSet(viewsets.ModelViewSet):
     queryset = CollegeRequest.objects.all()
     serializer_class = CollegeRequestSerializer
-
-    # renderer_classes = [UserRenderer]
+    renderer_classes = [UserRenderer]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
