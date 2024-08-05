@@ -12,7 +12,7 @@ class IsCollegeMember(permissions.BasePermission):
             college = College.objects.get(slug=college_slug)
         except College.DoesNotExist:
             return False
-        print(f"User College ID: {request.user.college.id}, Requested College ID: {college.id}")
+        #print(f"User College ID: {request.user.college.id}, Requested College ID: {college.id}")
         return request.user.college.id == college.id
 
 

@@ -5,16 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added some validators">
-      <change beforePath="$PROJECT_DIR$/.idea/smart education.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/smart education.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0002_remove_user_unique_registration_number_per_college_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/permissions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,15 +238,7 @@
       <workItem from="1722844898237" duration="72000" />
       <workItem from="1722845285608" duration="3048000" />
       <workItem from="1722851120110" duration="286000" />
-      <workItem from="1722867199933" duration="8955000" />
-    </task>
-    <task id="LOCAL-00136" summary="mess fee update">
-      <option name="closed" value="true" />
-      <created>1719908332876</created>
-      <option name="number" value="00136" />
-      <option name="presentableId" value="LOCAL-00136" />
-      <option name="project" value="LOCAL" />
-      <updated>1719908332876</updated>
+      <workItem from="1722867199933" duration="10124000" />
     </task>
     <task id="LOCAL-00137" summary="mess fee update">
       <option name="closed" value="true" />
@@ -640,7 +624,15 @@
       <option name="project" value="LOCAL" />
       <updated>1722871407099</updated>
     </task>
-    <option name="localTasksCounter" value="185" />
+    <task id="LOCAL-00185" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722876509153</created>
+      <option name="number" value="00185" />
+      <option name="presentableId" value="LOCAL-00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1722876509153</updated>
+    </task>
+    <option name="localTasksCounter" value="186" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
