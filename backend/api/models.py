@@ -103,9 +103,7 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['registration_number', 'college'],
-                                    name='unique_registration_number_per_college')]
+        unique_together = ("registration_number", "college")
 
     def __str__(self):
         return self.registration_number

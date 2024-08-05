@@ -6,6 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added some validators">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0002_rename_email_college_college_email_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0003_alter_user_role.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0004_alter_user_registration_number.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/migrations/0005_collegerequest_college_code.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,22 +213,8 @@
       <workItem from="1722834587318" duration="8820000" />
       <workItem from="1722844898237" duration="72000" />
       <workItem from="1722845285608" duration="3048000" />
-    </task>
-    <task id="LOCAL-00132" summary="mess fee update">
-      <option name="closed" value="true" />
-      <created>1719907713947</created>
-      <option name="number" value="00132" />
-      <option name="presentableId" value="LOCAL-00132" />
-      <option name="project" value="LOCAL" />
-      <updated>1719907713947</updated>
-    </task>
-    <task id="LOCAL-00133" summary="mess fee update">
-      <option name="closed" value="true" />
-      <created>1719907831568</created>
-      <option name="number" value="00133" />
-      <option name="presentableId" value="LOCAL-00133" />
-      <option name="project" value="LOCAL" />
-      <updated>1719907831568</updated>
+      <workItem from="1722851120110" duration="286000" />
+      <workItem from="1722867199933" duration="4044000" />
     </task>
     <task id="LOCAL-00134" summary="mess fee update">
       <option name="closed" value="true" />
@@ -598,7 +592,23 @@
       <option name="project" value="LOCAL" />
       <updated>1722850562929</updated>
     </task>
-    <option name="localTasksCounter" value="181" />
+    <task id="LOCAL-00181" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722851323443</created>
+      <option name="number" value="00181" />
+      <option name="presentableId" value="LOCAL-00181" />
+      <option name="project" value="LOCAL" />
+      <updated>1722851323444</updated>
+    </task>
+    <task id="LOCAL-00182" summary="added some validators">
+      <option name="closed" value="true" />
+      <created>1722851402527</created>
+      <option name="number" value="00182" />
+      <option name="presentableId" value="LOCAL-00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1722851402527</updated>
+    </task>
+    <option name="localTasksCounter" value="183" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
