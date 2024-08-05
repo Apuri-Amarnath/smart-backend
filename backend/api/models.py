@@ -715,7 +715,7 @@ class CollegeRequest(models.Model):
                     role='office',
                 )
                 send_login_credentials(registration_number=registration_number, password=Temparory_password,
-                                       to_email=self.email, college=self.college_name)
+                                       to_email=self.email, college_name=self.college_name)
             except College.DoesNotExist:
                 raise ValidationError("college Does not exist")
     def generate_registration_number(self):
