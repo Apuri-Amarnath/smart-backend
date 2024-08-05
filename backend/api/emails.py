@@ -6,15 +6,25 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
-def send_login_credentials(registration_number, password, to_email):
+def send_login_credentials(registration_number, password, to_email, college_name):
     url = f'http://127.0.0.1:8000/api/user/login/'
     subject = 'Your Login Credentials for Smartone'
-    message = f'Your account has been created with the following credentials:\n\n' \
-              f'Registration Number: {registration_number}\n' \
-              f'Password: {password}\n' \
-              f'Login URL: {url}\n' \
-              f'Please change your password after logging in.'
+    message = f"""
+        Dear {college_name},
 
+        Your account has been created with the following credentials:
+
+        Registration Number: {registration_number}
+        Password: {password}
+        Login URL: {url}
+
+        Please log in using the above credentials and change your password immediately.
+
+        If you have any questions, please contact support.
+
+        Best regards,
+        The Smartone Team
+        """
     from_email = settings.DEFAULT_FROM_EMAIL
     to_email = to_email
     try:

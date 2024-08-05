@@ -796,17 +796,28 @@ class CollegeRequestViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
+    def list(self, request, *args, **kwargs):
+        self.permission_classes =[IsAuthenticated]
+        self.check_permissions(request)
+        return super().list(request, args, kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        self.permission_classes =[IsAuthenticated]
+        self.check_permissions(request)
+        return super().retrieve(request, args, kwargs)
+
+
 
 class CollegeSlugListView(generics.ListAPIView):
     queryset = College.objects.all()
     serializer_class = CollegeSlugSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['id']
 
 
 class CollegeRequestVerificationView(generics.RetrieveUpdateAPIView):
-    #permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin]
     queryset = CollegeRequest.objects.all()
     serializer_class = CollegeRequestVerificationSerializer
     lookup_field = 'pk'
