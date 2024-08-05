@@ -7,8 +7,13 @@ class IsCollegeMember(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
-        college_id = view.kwargs['college']
-        return request.user.college.id == int(college_id)
+        college_slug = view.kwargs.get('slug')
+        try:
+            college = College.objects.get(slug=college_slug)
+        except College.DoesNotExist:
+            return False
+        print(f"User College ID: {request.user.college.id}, Requested College ID: {college.id}")
+        return request.user.college.id == college.id
 
 
 class IsCaretakerOrAdmin(permissions.BasePermission):
@@ -16,6 +21,8 @@ class IsCaretakerOrAdmin(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
         is_same_college = IsCollegeMember().has_permission(request, view)
+        if not is_same_college:
+            return False
         return is_same_college and (request.user.role in ['caretaker', 'super-admin'])
 
 
@@ -24,6 +31,8 @@ class IsStudentOrAdmin(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
         is_same_college = IsCollegeMember().has_permission(request, view)
+        if not is_same_college:
+            return False
         return is_same_college and (request.user.role in ['student', 'super-admin'])
 
 
@@ -31,6 +40,7 @@ class IsTeacherOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
             return False
+
         return request.user.role in ['teacher', 'super-admin']
 
 
@@ -51,6 +61,9 @@ class IsDepartmentOrAdmin(permissions.BasePermission):
 class IsOfficeOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
+            return False
+        is_same_college = IsCollegeMember().has_permission(request, view)
+        if not is_same_college:
             return False
         return request.user.role in ['office', 'super-admin']
 

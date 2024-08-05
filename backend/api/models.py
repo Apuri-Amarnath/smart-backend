@@ -33,7 +33,6 @@ class College(models.Model):
     phone_number = models.CharField(verbose_name="phone_number", null=True, max_length=15)
     college_email = models.EmailField(verbose_name="email", null=True, max_length=225)
     college_logo = models.ImageField(verbose_name="college_logo", upload_to=upload_college_logo, null=True, blank=True)
-    college_id = models.UUIDField(verbose_name="college_id", default=uuid.uuid4, editable=False)
     slug = models.SlugField(unique=True, max_length=225, null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -88,7 +87,7 @@ class User(AbstractBaseUser):
         ('caretaker', 'Caretaker'),
         ('department', 'Department'),
     ]
-    registration_number = models.CharField(verbose_name="registration number", max_length=20,unique=True,
+    registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True,
                                            validators=[MinLengthValidator(6), MaxLengthValidator(11)])
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="users", null=True, blank=True)
@@ -679,9 +678,16 @@ def create_welcome_message(sender, instance, created, **kwargs):
             Notification.objects.create(user=instance, message="Please reset your password.")
 
 
-
 def upload_college_requests(instance, filename):
     return upload_path(instance, filename, 'college-requests')
+
+
+class College_with_Ids(models.Model):
+    id_count = models.IntegerField(verbose_name="id_count", default=0)
+    college_name = models.CharField(verbose_name="college_name", max_length=255)
+
+    def __str__(self):
+        return f"{self.college_name} -- {self.id_count}"
 
 
 class CollegeRequest(models.Model):
@@ -689,13 +695,12 @@ class CollegeRequest(models.Model):
     email = models.EmailField(max_length=254, blank=True, null=True, verbose_name="email address")
     college_name = models.CharField(max_length=225, blank=True, null=True, verbose_name="college name")
     college_address = models.TextField(max_length=550, blank=True, null=True, verbose_name="college address")
-    college_code = models.CharField(max_length=10,blank=True, null=True, verbose_name="college code")
+    college_code = models.CharField(max_length=10, blank=True, null=True, verbose_name="college code")
     established_date = models.DateField(verbose_name="established date", blank=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True, verbose_name="phone")
     principal_name = models.CharField(verbose_name="principal_name", null=True, max_length=255, blank=True)
     college_logo = models.ImageField(verbose_name="college_logo", upload_to=upload_college_requests, null=True,
                                      blank=True)
-    id_count = models.IntegerField(verbose_name="id_count", default=0)
     is_verified = models.BooleanField(verbose_name="verified", default=False)
 
     def save(self, *args, **kwargs):
@@ -714,8 +719,13 @@ class CollegeRequest(models.Model):
                 )
                 send_login_credentials(registration_number=registration_number, password=Temparory_password,
                                        to_email=self.email, college_name=self.college_name)
+                College_with_Ids.objects.update_or_create(
+                    college_name=self.college_name,
+                    defaults={'id_count': 0}
+                )
             except College.DoesNotExist:
                 raise ValidationError("college Does not exist")
+
     def generate_registration_number(self):
         prefix = 'OFFICE-'
         college = College.objects.get(college_name=self.college_name)
@@ -726,7 +736,7 @@ class CollegeRequest(models.Model):
     def generate_password(self, length=10):
         alphabet = string.ascii_letters + string.digits + string.punctuation
         exclude = '/\\'
-        filtered_password = ''.join(c for c in alphabet if c not  in exclude )
+        filtered_password = ''.join(c for c in alphabet if c not in exclude)
         password = ''.join(secrets.choice(filtered_password) for i in range(length))
         return password
 
@@ -735,14 +745,15 @@ class CollegeRequest(models.Model):
             College.objects.create(college_name=self.college_name, college_address=self.college_address,
                                    established_date=self.established_date, phone_number=self.phone_number,
                                    principal_name=self.principal_name, college_logo=self.college_logo,
-                                   college_email=self.email,college_code=self.college_code)
+                                   college_email=self.email, college_code=self.college_code)
             notify_roles(["super-admin"], f"New college is added to the site")
 
     def __str__(self):
-        return f'{self.name} - {self.email} - {self.college_name} - {self.id_count}'
+        return f'{self.name} - {self.email} - {self.college_name} '
 
 
 @receiver(post_save, sender=CollegeRequest)
 def College_request_Notification(sender, instance, created, **kwargs):
     if created:
-        notify_roles(["super-admin"], f"New college request is received from {instance.college_name}  -- email: {instance.email}")
+        notify_roles(["super-admin"],
+                     f"New college request is received from {instance.college_name}  -- email: {instance.email}")
