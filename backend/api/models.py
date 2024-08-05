@@ -727,7 +727,9 @@ class CollegeRequest(models.Model):
 
     def generate_password(self, length=10):
         alphabet = string.ascii_letters + string.digits + string.punctuation
-        password = ''.join(secrets.choice(alphabet) for i in range(length))
+        exclude = '/\\'
+        filtered_password = ''.join(c for c in alphabet if c not  in exclude )
+        password = ''.join(secrets.choice(filtered_password) for i in range(length))
         return password
 
     def copy_to_college(self):
