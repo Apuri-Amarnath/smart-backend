@@ -683,13 +683,24 @@ class CollegeRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollegeRequest
         fields = '__all__'
+        read_only_fields = ['is_verified']
+
+    def validate(self, data):
+        college_name = data.get('college_name')
+        if CollegeRequest.objects.filter(college_name=college_name).exists():
+            raise ValidationError('A request already exists for this college')
+        return data
 
 
 class CollegeRequestVerificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollegeRequest
         fields = ['is_verified']
-
+    def validate(self, data):
+        instance = self.instance
+        if instance and instance.is_verified and data.get('is_verified') is True:
+            raise serializers.ValidationError("The 'is_verified' field cannot be changed once it is set to True.")
+        return data
 
 class CollegeSlugSerializer(serializers.ModelSerializer):
     class Meta:

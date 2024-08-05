@@ -13,6 +13,7 @@ from datetime import date
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.text import slugify
+from rest_framework.exceptions import ValidationError
 
 from .emails import send_login_credentials
 from .notifications import notify_roles
@@ -87,7 +88,7 @@ class User(AbstractBaseUser):
         ('caretaker', 'Caretaker'),
         ('department', 'Department'),
     ]
-    registration_number = models.CharField(verbose_name="registration number", max_length=20,
+    registration_number = models.CharField(verbose_name="registration number", max_length=20,unique=True,
                                            validators=[MinLengthValidator(6), MaxLengthValidator(11)])
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="users", null=True, blank=True)
@@ -244,7 +245,7 @@ class Notification(models.Model):
     time = models.DateTimeField(verbose_name="time", default=timezone.now)
 
     def __str__(self):
-        return f'Notification for -- {self.user.registration_number} -- {self.time}'
+        return f'Notification for -- {self.user.registration_number} -- {self.user.college} -- {self.time}'
 
 
 def generate_bonafide_number():
@@ -672,8 +673,13 @@ class VerifySemesterRegistration(models.Model):
 @receiver(post_save, sender=User)
 def create_welcome_message(sender, instance, created, **kwargs):
     if created and instance.role == 'student':
-        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the Dashboard")
+        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the SmartOne. - ")
         update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")
+    else:
+        welcome_notification = Notification.objects.create(user=instance, message="Welcome to SmartOne.")
+        reset_password_notification = Notification.objects.create(user=instance, message="please reset your password")
+
+
 
 
 def upload_college_requests(instance, filename):
@@ -685,6 +691,7 @@ class CollegeRequest(models.Model):
     email = models.EmailField(max_length=254, blank=True, null=True, verbose_name="email address")
     college_name = models.CharField(max_length=225, blank=True, null=True, verbose_name="college name")
     college_address = models.TextField(max_length=550, blank=True, null=True, verbose_name="college address")
+    college_code = models.CharField(max_length=10,blank=True, null=True, verbose_name="college code")
     established_date = models.DateField(verbose_name="established date", blank=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True, verbose_name="phone")
     principal_name = models.CharField(verbose_name="principal_name", null=True, max_length=255, blank=True)
@@ -694,27 +701,28 @@ class CollegeRequest(models.Model):
     is_verified = models.BooleanField(verbose_name="verified", default=False)
 
     def save(self, *args, **kwargs):
-        is_new = self.pk is None
         super().save(*args, **kwargs)
         if self.is_verified:
             self.copy_to_college()
             registration_number = self.generate_registration_number()
             Temparory_password = self.generate_password()
-            college = College.objects.get(college_name=self.college_name)
-            user = User.objects.create_user(
-                registration_number=registration_number,
-                password=Temparory_password,
-                college=college,
-                role='office',
-            )
-            send_login_credentials(registration_number=registration_number, password=Temparory_password,
-                                   to_email=self.email)
-
+            try:
+                college = College.objects.get(college_name=self.college_name)
+                user = User.objects.create_user(
+                    registration_number=registration_number,
+                    password=Temparory_password,
+                    college=college,
+                    role='office',
+                )
+                send_login_credentials(registration_number=registration_number, password=Temparory_password,
+                                       to_email=self.email, college=self.college_name)
+            except College.DoesNotExist:
+                raise ValidationError("college Does not exist")
     def generate_registration_number(self):
         prefix = 'OFFICE-'
         college = College.objects.get(college_name=self.college_name)
-        college_name = slugify(college.college_name[:4])
-        registration_number = f'{prefix}{college_name}'.upper()
+        college_code = str(college.college_code[:4])
+        registration_number = f'{prefix}{college_code}'.upper()
         return registration_number[:11]
 
     def generate_password(self, length=10):
@@ -727,8 +735,8 @@ class CollegeRequest(models.Model):
             College.objects.create(college_name=self.college_name, college_address=self.college_address,
                                    established_date=self.established_date, phone_number=self.phone_number,
                                    principal_name=self.principal_name, college_logo=self.college_logo,
-                                   college_email=self.email)
-            notify_roles("super-admin", f"New college is added to the site")
+                                   college_email=self.email,college_code=self.college_code)
+            notify_roles(["super-admin"], f"New college is added to the site")
 
     def __str__(self):
         return f'{self.name} - {self.email} - {self.college_name} - {self.id_count}'
@@ -737,4 +745,4 @@ class CollegeRequest(models.Model):
 @receiver(post_save, sender=CollegeRequest)
 def College_request_Notification(sender, instance, created, **kwargs):
     if created:
-        notify_roles("super-admin", f"New request received from {instance.college_name} --- {instance.id_count}")
+        notify_roles(["super-admin"], f"New college request is received from {instance.college_name}  -- email: {instance.email}")
