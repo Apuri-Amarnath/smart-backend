@@ -48,4 +48,4 @@ else:
     print('Superuser already exists.')
 END
 
-
+python manage.py runserver 0.0.0.0:$PORT
