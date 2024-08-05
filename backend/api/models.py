@@ -245,7 +245,7 @@ class Notification(models.Model):
     time = models.DateTimeField(verbose_name="time", default=timezone.now)
 
     def __str__(self):
-        return f'Notification for -- {self.user.registration_number} -- {self.user.college} -- {self.time}'
+        return f'Notification for -- {self.user.registration_number} ---- {self.user.role} - {self.message[:20]} ---  {self.user.college} -- {self.time}'
 
 
 def generate_bonafide_number():
