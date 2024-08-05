@@ -103,9 +103,7 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['registration_number', 'college'],
-                                    name='unique_registration_number_per_college')]
+        unique_together = ("registration_number", "college")
 
     def __str__(self):
         return self.registration_number
@@ -245,7 +243,7 @@ class Notification(models.Model):
     time = models.DateTimeField(verbose_name="time", default=timezone.now)
 
     def __str__(self):
-        return f'Notification for -- {self.user.registration_number} -- {self.user.college} -- {self.time}'
+        return f'Notification for -- {self.user.registration_number} ---- {self.user.role} - {self.message[:20]} ---  {self.user.college} -- {self.time}'
 
 
 def generate_bonafide_number():
@@ -672,13 +670,13 @@ class VerifySemesterRegistration(models.Model):
 
 @receiver(post_save, sender=User)
 def create_welcome_message(sender, instance, created, **kwargs):
-    if created and instance.role == 'student':
-        welcome_notification = Notification.objects.create(user=instance, message="Welcome to the SmartOne. - ")
-        update_profile_notification = Notification.objects.create(user=instance, message="Please update your profile")
-    else:
-        welcome_notification = Notification.objects.create(user=instance, message="Welcome to SmartOne.")
-        reset_password_notification = Notification.objects.create(user=instance, message="please reset your password")
-
+    if created:
+        if instance.role == 'student':
+            Notification.objects.create(user=instance, message="Welcome to the SmartOne.")
+            Notification.objects.create(user=instance, message="Please update your profile.")
+        else:
+            Notification.objects.create(user=instance, message="Welcome to SmartOne.")
+            Notification.objects.create(user=instance, message="Please reset your password.")
 
 
 

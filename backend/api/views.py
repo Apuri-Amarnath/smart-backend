@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.mail import send_mail
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.utils import timezone
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
@@ -118,26 +118,32 @@ class UserRegistrationView(APIView):
                 file_path = self.save_uploaded_file(csv_file)
                 response = self.handle_csv_user_creation(file_path, slug)
                 return response
+        if not slug:
+            return Response({'error': 'Not a valid slug'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            if not slug:
-                return Response({'error': 'Not a valid slug'}, status=status.HTTP_400_BAD_REQUEST)
             try:
-                college = College.objects.get(slug=slug)
-                college_request = CollegeRequest.objects.get(college_name=college.college_name)
+                with transaction.atomic():
+                    college = College.objects.get(slug=slug)
+                    college_request = CollegeRequest.objects.get(college_name=college.college_name)
+                    user_data = request.data.copy()
+                    user_data['college'] = college.id
+                    registration_number = user_data.get('registration_number')
+                    if User.objects.filter(registration_number=registration_number, college=college.id).exists():
+                        return Response({'message': 'User already exists with this registration number and college'},
+                                        status=status.HTTP_400_BAD_REQUEST)
+                    serializer = UserRegistrationSerializer(data=user_data)
+                    if serializer.is_valid(raise_exception=True):
+                        user = serializer.save()
+                        token = get_tokens_for_user(user)
+                        college_request.id_count += 1
+                        college_request.save()
+                        user_data.clear()
+                        return Response({'token': token, 'message': 'User creation successful'},
+                                        status=status.HTTP_201_CREATED)
             except College.DoesNotExist:
-                return Response({'error': 'College not found'}, status=status.HTTP_404_NOT_FOUND)
-
-            user_data = request.data.copy()
-            user_data['college'] = college.id
-            serializer = UserRegistrationSerializer(data=user_data)
-            if serializer.is_valid(raise_exception=True):
-                user = serializer.save()
-                token = get_tokens_for_user(user)
-                college_request.id_count += 1
-                college_request.save()
-                return Response({'token': token, 'message': 'User creation successful'}, status=status.HTTP_201_CREATED)
-            return Response({'message': 'user already exits', "error": serializer.errors},
-                            status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'College not found'}, status.HTTP_404_NOT_FOUND)
+            except CollegeRequest.DoesNotExist:
+                return Response({'error': 'College request not found'}, status.HTTP_404_NOT_FOUND)
 
     def save_uploaded_file(self, csv_file):
         upload_dir = settings.CSV_UPLOADS_DIR
@@ -150,7 +156,6 @@ class UserRegistrationView(APIView):
                 destination.write(chunk)
         return file_path
 
-    @transaction.atomic
     def handle_csv_user_creation(self, csv_file_path, slug):
         if not os.path.exists(csv_file_path):
             return Response({'message': 'csv file not found'}, status=status.HTTP_400_BAD_REQUEST)
@@ -169,22 +174,27 @@ class UserRegistrationView(APIView):
             reader = csv.DictReader(csvfile)
 
             for row in reader:
-                row['college'] = college.id
+                row['college'] = int(college.id)
                 registration_number = row.get('registration_number')
                 if User.objects.filter(registration_number=registration_number, college=college).exists():
                     user_existing.append(registration_number)
                 else:
                     serializer = UserRegistrationSerializer(data=row)
-                    if serializer.is_valid():
-                        user = serializer.save()
-                        user_created.append(user.registration_number)
-                        college_request.id_count += 1
-                        college_request.save()
+                    if serializer.is_valid(raise_exception=True):
+                        try:
+                            user = serializer.save()
+                            user_created.append(user.registration_number)
+                            college_request.id_count += 1
+                            college_request.save()
+                        except IntegrityError:
+                            errors.append({'registration_number': registration_number,
+                                           'error': 'User already exists with this registration number and college'})
                     else:
-                        errors.append(serializer.errors)
+                        errors.append({'registration_number': registration_number, 'error': serializer.errors})
 
-        return Response({'message': 'user creation process completed', 'users_created': user_created,
-                         'user_existing': user_existing, 'error': errors},
+        response_data={'message': 'user creation process completed', 'users_created': user_created,
+                         'user_existing': user_existing, 'errors': errors}
+        return Response(response_data,
                         status=status.HTTP_200_OK if not errors else status.HTTP_400_BAD_REQUEST)
 
 
@@ -789,7 +799,8 @@ class NotificationsViewSet(viewsets.ModelViewSet):
 class CollegeRequestViewSet(viewsets.ModelViewSet):
     queryset = CollegeRequest.objects.all()
     serializer_class = CollegeRequestSerializer
-    renderer_classes = [UserRenderer]
+
+    # renderer_classes = [UserRenderer]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
