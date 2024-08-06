@@ -130,7 +130,7 @@ class User(AbstractBaseUser):
 
 
 def upload_path(instance, filename, folder):
-    return f"{folder}/{instance.user.college.college_name}/{filename}"
+    return f"{folder}/{filename}"
 
 
 def upload_to_profile_pictures(instance, filename):
