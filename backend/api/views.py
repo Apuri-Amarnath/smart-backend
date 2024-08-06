@@ -30,7 +30,7 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
     NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer, \
-    CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer
+    CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer, Bonafide_Approve_Serializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -47,7 +47,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
 from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsOfficeOrAdmin, \
-    IsAdmin
+    IsAdmin, IsRegistrarOrAdmin
 from django.db.models import Case, When, IntegerField
 import logging
 
@@ -286,7 +286,6 @@ class CollegeViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
-        print(slug)
         try:
             college = College.objects.get(slug=slug)
         except College.DoesNotExist:
@@ -327,14 +326,13 @@ class BonafideViewSet(viewsets.ModelViewSet):
         ).order_by('status_order')
 
     def get_object(self):
-        registration_number = self.request.query_params.get('roll_no__registration_number')
-        if not registration_number:
-            raise ValidationError({'error': 'Registration number is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        pk = self.kwargs.get('pk')
+        if not pk:
+            raise ValidationError({'error': 'Primary key is required.'})
         try:
-            return self.queryset.get(roll_no__registration_number=registration_number)
+            return self.queryset.get(pk=pk)
         except Bonafide.DoesNotExist:
-            raise ValidationError({'error': 'Details are not found.'}, status=status.HTTP_404_NOT_FOUND)
-
+            raise NotFound({'error': 'Details are not found.'})
     def perform_update(self, serializer):
         with transaction.atomic():
             serializer.save(user=self.request.user)
@@ -361,6 +359,17 @@ class BonafideViewSet(viewsets.ModelViewSet):
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['patch'], detail=True, serializer_class=Bonafide_Approve_Serializer,
+            permission_classes=[IsRegistrarOrAdmin])
+    def approve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        print(request.data)
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(status.HTTP_200_OK, {'message': 'Bonafide has been verified'})
+        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SubjectViewSet(viewsets.ModelViewSet):

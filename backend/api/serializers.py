@@ -158,11 +158,12 @@ class AcademicInfoSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
     registration_year = YearField()
     year = YearField()
+    college_name = serializers.CharField(source='user.college.college_name', read_only=True)
 
     class Meta:
         model = AcademicInformation
         exclude = ['id']
-        read_only_fields = ['registration_number', 'user']
+        read_only_fields = ['registration_number', 'user', 'college_name']
 
 
 class ContactInformationSerializer(serializers.ModelSerializer):
@@ -246,21 +247,34 @@ class CollegeSerializer(serializers.ModelSerializer):
 class BonafideSerializer(serializers.ModelSerializer):
     supporting_document = Base64ImageField(required=False)
 
-    college_details = CollegeSerializer(source='college', read_only=True)
+    college_details = serializers.SerializerMethodField(source='college', read_only=True)
     student_details = PersonalInfoSerializer(source='student', read_only=True)
     roll_no_details = serializers.CharField(source='roll_no.registration_number', read_only=True)
 
-    college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True)
-    student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True)
-    roll_no = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True, required=False,
+                                                 allow_null=True)
+    student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True,
+                                                 required=False, allow_null=True)
+    roll_no = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Bonafide
         fields = '__all__'
         read_only_fields = ['student_details', 'college_details', 'bonafide_number', 'applied_date']
 
+    def get_college_details(self, obj):
+        if obj.college:
+            return CollegeSerializer(obj.college).data
     def create(self, validated_data):
+        request = self.context.get('request')
         supporting_document = validated_data.pop('supporting_document', None)
+        user_profile = UserProfile.objects.get(user=request.user)
+        college = user_profile.personal_information.user.college
+        student = user_profile.personal_information
+        roll_no = user_profile.user
+        validated_data['college'] = college
+        validated_data['student'] = student
+        validated_data['roll_no'] = roll_no
         instance = super().create(validated_data)
         if supporting_document:
             instance.supporting_document = supporting_document.read()
@@ -275,14 +289,19 @@ class BonafideSerializer(serializers.ModelSerializer):
             instance.save()
         return instance
 
-    def validate(self, attrs):
-        student_value = attrs.get('student')
-        roll_no_value = attrs.get('roll_no')
-        if student_value != roll_no_value.personal_information:
-            print("rollno", roll_no_value)
-            print("student", student_value)
-            raise serializers.ValidationError('student and roll_no should be the same')
-        return attrs
+
+
+class Bonafide_Approve_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bonafide
+        fields = [ 'status', 'issue_date']
+        read_only_fields = 'issue_date'
+
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get('status', instance.status)
+        instance.issue_date = validated_data.pop('issue_date', instance.date.today())
+        instance.save()
+        return instance
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -697,16 +716,20 @@ class CollegeRequestVerificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollegeRequest
         fields = ['is_verified']
+
     def validate(self, data):
         instance = self.instance
         if instance and instance.is_verified and data.get('is_verified') is True:
             raise serializers.ValidationError("The 'is_verified' field cannot be changed once it is set to True.")
         return data
 
+
 class CollegeSlugSerializer(serializers.ModelSerializer):
     class Meta:
         model = College
         fields = ['slug', 'id']
+
+
 class College_idsSerializer(serializers.ModelSerializer):
     class Meta:
         model = College_with_Ids

@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include,re_path
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -24,24 +24,27 @@ router.register(r'hostel-no-dues', Hostel_No_dueViewset, basename='hostel_no_due
 router.register(r'No-dues-list', NoDuesListViewSet, basename='no_dues_list')
 router.register(r'mess-fees-payment', MessFeePaymentCreateViewset, basename='mess_fee_payment')
 router.register(r'verify-semester-registration', SemesterVerificationViewSet, basename='verify_semester')
-router.register(r'notification', NotificationsViewSet, basename='notifications')
-router.register(r'college-requests', CollegeRequestViewSet, basename='college_requests')
 
 urlpatterns = [
+    ## basic urls
     path('register/', UserRegistrationView.as_view(), name='register'),
     path('login/', UserLoginView.as_view(), name='login'),
     path('logout/', UserLogoutView.as_view(), name='logout'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
-    path('<slug:slug>/profile/', UserProfileView.as_view(), name='profile-college-wise'),
     path('update_server/', update, name='update'),
     path('token/refresh/', TokenRefresh.as_view(), name='token_refresh'),
+    path('notification/', NotificationsViewSet.as_view({'get':'list','post':'create'}), name='notifications'),
+    path('college-requests/',CollegeRequestViewSet.as_view({'get':'list','post':'create'}), name='college-requests'),
+    ## dynamic urls
+    path('<slug:slug>/profile/', UserProfileView.as_view(), name='profile'),
+    path('<slug:slug>/bonafide/<int:pk>/approve/',BonafideViewSet.as_view({'patch':'approve'}), name='bonafide-approve'),
     path('fees/create/', MessFeeCreateSet.as_view(), name='create_fee'),
     path('fees/update/<int:pk>/', UpdateMessFeeViewset.as_view(), name='update_fee'),
     path('fees/<int:pk>/', GetMessFeeViewset.as_view(), name='get-fee'),
     path('fees/', GetMessFeeViewset.as_view(), name='fees-list'),
     path('hostel-allotments/<int:pk>/update-status/', HostelAllotmentStatusUpdateView.as_view(),
          name='host_allotments_status_update'),
-    path('', include(router.urls), ),
+    re_path(r'^(?P<slug>[\w-]+)/', include(router.urls), ),
     path('college/<slug:slug>/', CollegeViewSet.as_view({'get': 'retrieve'}), name='college'),
     path('<slug:slug>/register/', UserRegistrationView.as_view(), name='register-college-wise'),
     path('colleges-slugs/', CollegeSlugListView.as_view(), name='college-slug-list'),
