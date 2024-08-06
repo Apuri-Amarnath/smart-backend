@@ -36,3 +36,21 @@ def notify_same_college_users(roles, message, college):
     except Exception as e:
         looger.error(f"error in notifying users: {e}")
         print(e)
+
+
+def notify_user(registration_number, message):
+    """
+       Notify users with message
+
+       :param message: Message to send in the notification.
+    """
+    from .models import Notification, User
+    try:
+        user = User.objects.get(registration_number=registration_number)
+        Notification.objects.create(user=user, message=message)
+        looger.info(f"Notification was created for {user.registration_number}")
+    except user.DoesNotExist:
+            looger.warning(f"No users found with {user.registration_number}")
+    except Exception as e:
+        looger.error(f"error in notifying user: {e}")
+        print(e)
