@@ -16,7 +16,7 @@ from django.utils.text import slugify
 from rest_framework.exceptions import ValidationError
 
 from .emails import send_login_credentials
-from .notifications import notify_roles
+from .notifications import notify_roles, notify_same_college_users
 from django.db.utils import IntegrityError
 
 
@@ -86,8 +86,9 @@ class User(AbstractBaseUser):
         ('principal', 'Principal'),
         ('caretaker', 'Caretaker'),
         ('department', 'Department'),
+        ('registrar', 'Registrar'),
     ]
-    registration_number = models.CharField(verbose_name="registration number", max_length=20, unique=True,
+    registration_number = models.CharField(verbose_name="registration number", max_length=11, unique=True,
                                            validators=[MinLengthValidator(6), MaxLengthValidator(11)])
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="users", null=True, blank=True)
@@ -178,7 +179,6 @@ class AcademicInformation(models.Model):
     branch = models.CharField(verbose_name="branch", max_length=225, null=True, blank=True)
     merit_serial_number = models.CharField(verbose_name="merit serial number", max_length=225, null=True, default=None)
     category = models.CharField(verbose_name="category", max_length=225, null=True, blank=True)
-    college_name = models.CharField(verbose_name="college name", max_length=225, null=True, blank=True)
     date_of_admission = models.DateField(verbose_name="date of admission", null=True, blank=True)
     session = models.CharField(verbose_name="session", max_length=225, null=True, blank=True)
     university_reg_no = models.CharField(verbose_name="university registration number", max_length=225, null=True,
@@ -268,17 +268,31 @@ class Bonafide(models.Model):
     fee_structure = models.BooleanField(verbose_name="fee_structure", default=False, null=True, blank=True)
     bonafide_number = models.CharField(unique=True, verbose_name="bonafide number", max_length=10, null=True,
                                        blank=True)
-    status = models.CharField(verbose_name="status", choices=STATUS_CHOICES, max_length=225, default=STATUS_CHOICES[0])
+    status = models.CharField(verbose_name="status", choices=STATUS_CHOICES, max_length=225, default='not-applied')
 
     def save(self, *args, **kwargs):
         if not self.bonafide_number:
             self.bonafide_number = generate_bonafide_number()
         if not self.applied_date:
             self.applied_date = date.today()
+        old_status = self.status
+        if old_status == 'not-applied':
+            self.status = 'applied'
         super(Bonafide, self).save(*args, **kwargs)
+        if old_status != 'approved' and self.status == 'approved':
+            Notification.objects.create(user=self.roll_no,
+                                        message=f'your bonafide request is approved. please download your bonafide')
 
     def __str__(self):
         return f" fname: {self.student.first_name} -- lname: {self.student.last_name} -- roll_no: {self.roll_no} -- bonafide no: {self.bonafide_number} -- date:  {self.issue_date}"
+
+
+@receiver(post_save, sender=Bonafide)
+def Bonafide_request_Notification(sender, instance, created, **kwargs):
+    if created:
+        notify_same_college_users(['registrar'],
+                                  message=f"A new Bonafide has been requested from the student: {instance.roll_no}",
+                                  college=instance.college)
 
 
 class Subject(models.Model):

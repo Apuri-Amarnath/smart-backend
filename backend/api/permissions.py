@@ -25,6 +25,14 @@ class IsCaretakerOrAdmin(permissions.BasePermission):
             return False
         return is_same_college and (request.user.role in ['caretaker', 'super-admin'])
 
+class IsRegistrarOrAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        is_same_college = IsCollegeMember().has_permission(request, view)
+        if not is_same_college:
+            return False
+        return is_same_college and (request.user.role in ['registrar', 'super-admin'])
 
 class IsStudentOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
