@@ -16,7 +16,7 @@ from django.utils.text import slugify
 from rest_framework.exceptions import ValidationError
 
 from .emails import send_login_credentials
-from .notifications import notify_roles, notify_same_college_users
+from .notifications import notify_roles, notify_same_college_users, notify_user
 from django.db.utils import IntegrityError
 
 
@@ -279,9 +279,6 @@ class Bonafide(models.Model):
         if old_status == 'not-applied':
             self.status = 'applied'
         super(Bonafide, self).save(*args, **kwargs)
-        if old_status != 'approved' and self.status == 'approved':
-            Notification.objects.create(user=self.roll_no,
-                                        message=f'your bonafide request is approved. please download your bonafide')
 
     def __str__(self):
         return f" fname: {self.student.first_name} -- lname: {self.student.last_name} -- roll_no: {self.roll_no} -- bonafide no: {self.bonafide_number} -- date:  {self.issue_date}"
@@ -293,7 +290,10 @@ def Bonafide_request_Notification(sender, instance, created, **kwargs):
         notify_same_college_users(['registrar'],
                                   message=f"A new Bonafide has been requested from the student: {instance.roll_no}",
                                   college=instance.college)
-
+@receiver(post_save, sender=Bonafide)
+def Bonafide_approved_Notification(sender, instance, created, **kwargs):
+    if instance.status == 'approved':
+        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide has been approved!")
 
 class Subject(models.Model):
     subject_name = models.CharField(verbose_name="subject_name", max_length=225, null=True, blank=True)
