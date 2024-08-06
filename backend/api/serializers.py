@@ -133,6 +133,7 @@ class ChangeUserPasswordSerializer(serializers.Serializer):
 class PersonalInfoSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
     role = serializers.CharField(source='user.role', read_only=True)
+    profile_picture = serializers.ImageField(allow_null=True, required=False)
 
     class Meta:
         model = PersonalInformation
