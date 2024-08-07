@@ -2,3 +2,4 @@
 db.sqlite3
 /backend/media/
 /backend/.venv/
+/backend/django.log

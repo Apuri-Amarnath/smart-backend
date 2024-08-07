@@ -274,11 +274,15 @@ class Bonafide(models.Model):
             self.bonafide_number = generate_bonafide_number()
         if not self.applied_date:
             self.applied_date = date.today()
-        old_status = self.status
-        if old_status == 'not-applied':
+        if self.pk:
+            old_status = Bonafide.objects.get(pk=self.pk).status
+        if old_status == 'not-applied' and self.status == 'not-applied':
             self.status = 'applied'
-        if old_status == 'applied' and old_status not in ['approved', 'rejected']:
+        elif old_status == 'applied' and self.status not in ['approved', 'rejected']:
             self.status = 'pending'
+        else:
+            if self.status == 'not-applied':
+                self.status = 'applied'
         super(Bonafide, self).save(*args, **kwargs)
 
     def __str__(self):

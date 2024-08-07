@@ -31,7 +31,8 @@ SECRET_KEY = 'django-insecure-ky(6i6p-xw-v!i^fuqr9m&z+y*eug@$zn&&mcwje-s6-jf)!h#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost', 'amarnath013.pythonanywhere.com','smartone.pythonanywhere.com','smart-backend-uebh.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'amarnath013.pythonanywhere.com', 'smartone.pythonanywhere.com',
+                 'smart-backend-uebh.onrender.com']
 
 # Application definition
 
@@ -178,3 +179,43 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'josephscollege.ac.in'
 EMAIL_HOST_PASSWORD = '1upmTjQr7WWDiP1w'
 DEFAULT_FROM_EMAIL = '121420474013@josephscollege.ac.in'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'django.log'),
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
