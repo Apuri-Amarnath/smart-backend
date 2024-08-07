@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed profile picture">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed approve" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -244,22 +242,7 @@
       <workItem from="1722946667702" duration="16327000" />
       <workItem from="1722969411917" duration="903000" />
       <workItem from="1723002332535" duration="601000" />
-    </task>
-    <task id="LOCAL-00142" summary="mess fee update">
-      <option name="closed" value="true" />
-      <created>1719944245273</created>
-      <option name="number" value="00142" />
-      <option name="presentableId" value="LOCAL-00142" />
-      <option name="project" value="LOCAL" />
-      <updated>1719944245273</updated>
-    </task>
-    <task id="LOCAL-00143" summary="mess fee update">
-      <option name="closed" value="true" />
-      <created>1719944713092</created>
-      <option name="number" value="00143" />
-      <option name="presentableId" value="LOCAL-00143" />
-      <option name="project" value="LOCAL" />
-      <updated>1719944713092</updated>
+      <workItem from="1723018051789" duration="513000" />
     </task>
     <task id="LOCAL-00144" summary="mess fee update">
       <option name="closed" value="true" />
@@ -637,7 +620,23 @@
       <option name="project" value="LOCAL" />
       <updated>1722969507001</updated>
     </task>
-    <option name="localTasksCounter" value="191" />
+    <task id="LOCAL-00191" summary="fixed approve">
+      <option name="closed" value="true" />
+      <created>1723018279774</created>
+      <option name="number" value="00191" />
+      <option name="presentableId" value="LOCAL-00191" />
+      <option name="project" value="LOCAL" />
+      <updated>1723018279774</updated>
+    </task>
+    <task id="LOCAL-00192" summary="fixed approve">
+      <option name="closed" value="true" />
+      <created>1723018513264</created>
+      <option name="number" value="00192" />
+      <option name="presentableId" value="LOCAL-00192" />
+      <option name="project" value="LOCAL" />
+      <updated>1723018513265</updated>
+    </task>
+    <option name="localTasksCounter" value="193" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -699,7 +698,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="updated fees model" />
     <MESSAGE value="allotment fix" />
     <MESSAGE value="fix subjects add" />
     <MESSAGE value="fixed mess fee" />
@@ -724,7 +722,8 @@
     <MESSAGE value="added some validators" />
     <MESSAGE value="excluded ''&quot;" />
     <MESSAGE value="fixed profile picture" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed profile picture" />
+    <MESSAGE value="fixed approve" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed approve" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
