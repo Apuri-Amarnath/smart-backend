@@ -258,7 +258,7 @@ class Bonafide(models.Model):
         ('rejected', 'Rejected'),
     ]
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="bonafide_college")
-    student = models.ForeignKey(PersonalInformation, on_delete=models.CASCADE, related_name="bonafide_student")
+    student = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="bonafide_student")
     roll_no = models.ForeignKey(User, on_delete=models.CASCADE, related_name="roll_no")
     supporting_document = models.BinaryField(verbose_name="supporting_document", null=True, blank=True)
     issue_date = models.DateField(verbose_name="issue date", null=True, blank=True)
@@ -282,7 +282,7 @@ class Bonafide(models.Model):
         super(Bonafide, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f" fname: {self.student.first_name} -- lname: {self.student.last_name} -- roll_no: {self.roll_no} -- bonafide no: {self.bonafide_number} -- date:  {self.issue_date}"
+        return f" fname: {self.student.personal_information.first_name} -- lname: {self.student.personal_information.last_name} -- roll_no: {self.roll_no} -- bonafide no: {self.bonafide_number} -- date:  {self.issue_date}"
 
 
 @receiver(post_save, sender=Bonafide)

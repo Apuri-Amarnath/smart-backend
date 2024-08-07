@@ -2,6 +2,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import permissions, viewsets
 from .models import College
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class IsCollegeMember(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -12,7 +16,7 @@ class IsCollegeMember(permissions.BasePermission):
             college = College.objects.get(slug=college_slug)
         except College.DoesNotExist:
             return False
-        print(f"User College ID: {request.user.college.id}, Requested College ID: {college.id}")
+        logger.debug(f"User College ID: {request.user.college.id}, Requested College ID: {college.id}")
         return request.user.college.id == college.id
 
 
@@ -25,6 +29,7 @@ class IsCaretakerOrAdmin(permissions.BasePermission):
             return False
         return is_same_college and (request.user.role in ['caretaker', 'super-admin'])
 
+
 class IsRegistrarOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
@@ -33,6 +38,7 @@ class IsRegistrarOrAdmin(permissions.BasePermission):
         if not is_same_college:
             return False
         return is_same_college and (request.user.role in ['registrar', 'super-admin'])
+
 
 class IsStudentOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):

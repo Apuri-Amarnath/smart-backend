@@ -315,10 +315,10 @@ class BonafideViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         slug = self.kwargs.get('slug')
-        print(slug)
+        #print(slug)
         if slug:
             queryset = queryset.filter(college__slug__iexact=slug)
-            print(queryset)
+            #print(queryset)
         status_order = Case(
             When(status='applied', then=1),
             When(status='approved', then=2),

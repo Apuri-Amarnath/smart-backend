@@ -249,12 +249,12 @@ class BonafideSerializer(serializers.ModelSerializer):
     supporting_document = Base64ImageField(required=False)
 
     college_details = serializers.SerializerMethodField(source='college', read_only=True)
-    student_details = PersonalInfoSerializer(source='student', read_only=True)
+    student_details = UserProfileSerializer(source='student', read_only=True)
     roll_no_details = serializers.CharField(source='roll_no.registration_number', read_only=True)
 
     college = serializers.PrimaryKeyRelatedField(queryset=College.objects.all(), write_only=True, required=False,
                                                  allow_null=True)
-    student = serializers.PrimaryKeyRelatedField(queryset=PersonalInformation.objects.all(), write_only=True,
+    student = serializers.PrimaryKeyRelatedField(queryset=UserProfile.objects.all(), write_only=True,
                                                  required=False, allow_null=True)
     roll_no = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
 
@@ -271,7 +271,7 @@ class BonafideSerializer(serializers.ModelSerializer):
         supporting_document = validated_data.pop('supporting_document', None)
         user_profile = UserProfile.objects.get(user=request.user)
         college = user_profile.personal_information.user.college
-        student = user_profile.personal_information
+        student = user_profile
         roll_no = user_profile.user
         validated_data['college'] = college
         validated_data['student'] = student
