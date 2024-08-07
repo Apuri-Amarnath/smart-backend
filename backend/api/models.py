@@ -254,7 +254,6 @@ class Bonafide(models.Model):
         ('not-applied', 'Not-applied'),
         ('applied', 'Applied'),
         ('pending', 'Pending'),
-        ('rejected', 'Rejected'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
@@ -278,7 +277,7 @@ class Bonafide(models.Model):
         old_status = self.status
         if old_status == 'not-applied':
             self.status = 'applied'
-        if old_status == 'applied':
+        if old_status == 'applied' and old_status not in ['approved', 'rejected']:
             self.status = 'pending'
         super(Bonafide, self).save(*args, **kwargs)
 
@@ -297,9 +296,11 @@ def Bonafide_request_Notification(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Bonafide)
 def Bonafide_approved_Notification(sender, instance, created, **kwargs):
     if instance.status == 'approved':
-        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide request has been approved, please download it!")
+        notify_user(registration_number=instance.roll_no,
+                    message=f"Your Bonafide request has been approved, please download it!")
     if instance.status == 'rejected':
-        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide request has been rejected, please re-apply !")
+        notify_user(registration_number=instance.roll_no,
+                    message=f"Your Bonafide request has been rejected, please re-apply !")
 
 
 class Subject(models.Model):
