@@ -307,12 +307,18 @@ class CollegeViewSet(viewsets.ModelViewSet):
 class BonafideViewSet(viewsets.ModelViewSet):
     queryset = Bonafide.objects.all()
     serializer_class = BonafideSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsStudentOrAdmin | IsRegistrarOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['roll_no__registration_number']
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        #print(slug)
+        if slug:
+            queryset = queryset.filter(college__slug__iexact=slug)
+            #print(queryset)
         status_order = Case(
             When(status='applied', then=1),
             When(status='approved', then=2),
@@ -321,11 +327,12 @@ class BonafideViewSet(viewsets.ModelViewSet):
             When(status='not-applied', then=5),
             output_field=IntegerField(),
         )
-        return super().get_queryset().annotate(
+        return queryset.annotate(
             status_order=status_order
         ).order_by('status_order')
 
     def get_object(self):
+
         pk = self.kwargs.get('pk')
         if not pk:
             raise ValidationError({'error': 'Primary key is required.'})
