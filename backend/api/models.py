@@ -297,7 +297,9 @@ def Bonafide_request_Notification(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Bonafide)
 def Bonafide_approved_Notification(sender, instance, created, **kwargs):
     if instance.status == 'approved':
-        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide has been approved!")
+        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide request has been approved, please download it!")
+    if instance.status == 'rejected':
+        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide request has been rejected, please re-apply !")
 
 
 class Subject(models.Model):
