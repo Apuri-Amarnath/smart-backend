@@ -274,6 +274,7 @@ class Bonafide(models.Model):
             self.bonafide_number = generate_bonafide_number()
         if not self.applied_date:
             self.applied_date = date.today()
+        old_status = ''
         if self.pk:
             old_status = Bonafide.objects.get(pk=self.pk).status
         if old_status == 'not-applied' and self.status == 'not-applied':
