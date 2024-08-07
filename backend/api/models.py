@@ -278,6 +278,8 @@ class Bonafide(models.Model):
         old_status = self.status
         if old_status == 'not-applied':
             self.status = 'applied'
+        if old_status == 'applied':
+            self.status = 'pending'
         super(Bonafide, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -290,10 +292,15 @@ def Bonafide_request_Notification(sender, instance, created, **kwargs):
         notify_same_college_users(['registrar'],
                                   message=f"A new Bonafide has been requested from the student: {instance.roll_no}",
                                   college=instance.college)
+
+
 @receiver(post_save, sender=Bonafide)
 def Bonafide_approved_Notification(sender, instance, created, **kwargs):
     if instance.status == 'approved':
-        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide has been approved!")
+        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide request has been approved, please download it!")
+    if instance.status == 'rejected':
+        notify_user(registration_number=instance.roll_no, message=f"Your Bonafide request has been rejected, please re-apply !")
+
 
 class Subject(models.Model):
     subject_name = models.CharField(verbose_name="subject_name", max_length=225, null=True, blank=True)

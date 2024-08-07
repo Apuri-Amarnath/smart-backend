@@ -333,6 +333,7 @@ class BonafideViewSet(viewsets.ModelViewSet):
             return self.queryset.get(pk=pk)
         except Bonafide.DoesNotExist:
             raise NotFound({'error': 'Details are not found.'})
+
     def perform_update(self, serializer):
         with transaction.atomic():
             serializer.save(user=self.request.user)
@@ -368,7 +369,7 @@ class BonafideViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(status.HTTP_200_OK, {'message': 'Bonafide has been verified'})
+            return Response({'message': 'Bonafide has been verified'}, status=status.HTTP_200_OK)
         return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
