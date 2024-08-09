@@ -14,6 +14,13 @@ fi
 python manage.py makemigrations
 python manage.py collectstatic --noinput
 python manage.py migrate
+python manage.py create_initial_groups
+
+echo "groups created "
+
+python manage.py adddepartments_for_no_dues
+
+echo "added departments"
 
 # Create superuser if not exists
 python - <<END

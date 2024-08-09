@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed csv">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="slug college." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -252,15 +250,7 @@
       <workItem from="1723034618959" duration="1847000" />
       <workItem from="1723198221791" duration="5814000" />
       <workItem from="1723204609937" duration="32000" />
-      <workItem from="1723211134624" duration="611000" />
-    </task>
-    <task id="LOCAL-00159" summary="fixed notifications">
-      <option name="closed" value="true" />
-      <created>1720103285449</created>
-      <option name="number" value="00159" />
-      <option name="presentableId" value="LOCAL-00159" />
-      <option name="project" value="LOCAL" />
-      <updated>1720103285449</updated>
+      <workItem from="1723211134624" duration="1278000" />
     </task>
     <task id="LOCAL-00160" summary="fixed notifications">
       <option name="closed" value="true" />
@@ -646,7 +636,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723203709566</updated>
     </task>
-    <option name="localTasksCounter" value="208" />
+    <task id="LOCAL-00208" summary="slug college.">
+      <option name="closed" value="true" />
+      <created>1723212177163</created>
+      <option name="number" value="00208" />
+      <option name="presentableId" value="LOCAL-00208" />
+      <option name="project" value="LOCAL" />
+      <updated>1723212177163</updated>
+    </task>
+    <option name="localTasksCounter" value="209" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -708,7 +706,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fixed Hostel Due" />
     <MESSAGE value="overall due post cmple" />
     <MESSAGE value="fix mess fee" />
     <MESSAGE value="multiple fixes" />
@@ -733,7 +730,8 @@
     <MESSAGE value="added slug filtering" />
     <MESSAGE value="id counts api" />
     <MESSAGE value="fixed csv" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed csv" />
+    <MESSAGE value="slug college." />
+    <option name="LAST_COMMIT_MESSAGE" value="slug college." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
