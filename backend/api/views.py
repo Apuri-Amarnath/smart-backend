@@ -30,7 +30,8 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
     NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer, \
-    CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer, Bonafide_Approve_Serializer
+    CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer, Bonafide_Approve_Serializer, \
+    CollgeIdCountSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -315,10 +316,10 @@ class BonafideViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         slug = self.kwargs.get('slug')
-        #print(slug)
+        # print(slug)
         if slug:
             queryset = queryset.filter(college__slug__iexact=slug)
-            #print(queryset)
+            # print(queryset)
         status_order = Case(
             When(status='applied', then=1),
             When(status='approved', then=2),
@@ -862,3 +863,11 @@ class CollegeRequestVerificationView(generics.RetrieveUpdateAPIView):
         self.perform_update(serializer)
 
         return Response({'message': 'Request was successfully verified'}, status.HTTP_200_OK)
+
+
+class CollegeIDCountView(viewsets.ModelViewSet):
+    queryset = College_with_Ids.objects.all()
+    serializer_class = CollgeIdCountSerializer
+    #permission_classes = [IsRegistrarOrAdmin]
+    renderer_classes = [UserRenderer]
+    search_fields = ['college_name']

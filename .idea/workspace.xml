@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added slug filtering">
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="id counts api">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -252,39 +251,7 @@
       <workItem from="1723030740014" duration="350000" />
       <workItem from="1723032711350" duration="413000" />
       <workItem from="1723034618959" duration="1847000" />
-      <workItem from="1723198221791" duration="315000" />
-    </task>
-    <task id="LOCAL-00151" summary="add notifications">
-      <option name="closed" value="true" />
-      <created>1720017012812</created>
-      <option name="number" value="00151" />
-      <option name="presentableId" value="LOCAL-00151" />
-      <option name="project" value="LOCAL" />
-      <updated>1720017012813</updated>
-    </task>
-    <task id="LOCAL-00152" summary="add notifications">
-      <option name="closed" value="true" />
-      <created>1720017576877</created>
-      <option name="number" value="00152" />
-      <option name="presentableId" value="LOCAL-00152" />
-      <option name="project" value="LOCAL" />
-      <updated>1720017576877</updated>
-    </task>
-    <task id="LOCAL-00153" summary="add notifications">
-      <option name="closed" value="true" />
-      <created>1720019537918</created>
-      <option name="number" value="00153" />
-      <option name="presentableId" value="LOCAL-00153" />
-      <option name="project" value="LOCAL" />
-      <updated>1720019537918</updated>
-    </task>
-    <task id="LOCAL-00154" summary="add notifications">
-      <option name="closed" value="true" />
-      <created>1720020193713</created>
-      <option name="number" value="00154" />
-      <option name="presentableId" value="LOCAL-00154" />
-      <option name="project" value="LOCAL" />
-      <updated>1720020193713</updated>
+      <workItem from="1723198221791" duration="2326000" />
     </task>
     <task id="LOCAL-00155" summary="fixed Overall nodues">
       <option name="closed" value="true" />
@@ -646,7 +613,39 @@
       <option name="project" value="LOCAL" />
       <updated>1723036329006</updated>
     </task>
-    <option name="localTasksCounter" value="200" />
+    <task id="LOCAL-00200" summary="added slug filtering">
+      <option name="closed" value="true" />
+      <created>1723198672050</created>
+      <option name="number" value="00200" />
+      <option name="presentableId" value="LOCAL-00200" />
+      <option name="project" value="LOCAL" />
+      <updated>1723198672050</updated>
+    </task>
+    <task id="LOCAL-00201" summary="added slug filtering">
+      <option name="closed" value="true" />
+      <created>1723198711901</created>
+      <option name="number" value="00201" />
+      <option name="presentableId" value="LOCAL-00201" />
+      <option name="project" value="LOCAL" />
+      <updated>1723198711902</updated>
+    </task>
+    <task id="LOCAL-00202" summary="added slug filtering">
+      <option name="closed" value="true" />
+      <created>1723199461983</created>
+      <option name="number" value="00202" />
+      <option name="presentableId" value="LOCAL-00202" />
+      <option name="project" value="LOCAL" />
+      <updated>1723199461983</updated>
+    </task>
+    <task id="LOCAL-00203" summary="id counts api">
+      <option name="closed" value="true" />
+      <created>1723199502043</created>
+      <option name="number" value="00203" />
+      <option name="presentableId" value="LOCAL-00203" />
+      <option name="project" value="LOCAL" />
+      <updated>1723199502043</updated>
+    </task>
+    <option name="localTasksCounter" value="204" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -708,7 +707,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fix subjects add" />
     <MESSAGE value="fixed mess fee" />
     <MESSAGE value="fixed Hostel Due" />
     <MESSAGE value="overall due post cmple" />
@@ -733,7 +731,8 @@
     <MESSAGE value="fixed profile picture" />
     <MESSAGE value="fixed approve" />
     <MESSAGE value="added slug filtering" />
-    <option name="LAST_COMMIT_MESSAGE" value="added slug filtering" />
+    <MESSAGE value="id counts api" />
+    <option name="LAST_COMMIT_MESSAGE" value="id counts api" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />

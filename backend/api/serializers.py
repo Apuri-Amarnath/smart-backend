@@ -731,7 +731,7 @@ class CollegeSlugSerializer(serializers.ModelSerializer):
         fields = ['slug', 'id']
 
 
-class College_idsSerializer(serializers.ModelSerializer):
+class CollgeIdCountSerializer(serializers.ModelSerializer):
     class Meta:
         model = College_with_Ids
         fields = '__all__'

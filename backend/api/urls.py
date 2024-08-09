@@ -8,7 +8,7 @@ from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLog
     UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
     GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset, NoDuesListViewSet, \
     SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView, \
-    CollegeRequestVerificationView
+    CollegeRequestVerificationView, CollegeIDCountView
 
 router = DefaultRouter()
 router.register(r'colleges', CollegeViewSet, basename='college-details')
@@ -34,14 +34,17 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('update_server/', update, name='update'),
     path('token/refresh/', TokenRefresh.as_view(), name='token_refresh'),
-    path('notification/', NotificationsViewSet.as_view({'get': 'list', 'post': 'create','delete': 'delete_all_notification'}), name='notifications'),
+    path('notification/',
+         NotificationsViewSet.as_view({'get': 'list', 'post': 'create', 'delete': 'delete_all_notification'}),
+         name='notifications'),
     path('colleges-slugs/', CollegeSlugListView.as_view(), name='college-slug-list'),
     path('college-requests/', CollegeRequestViewSet.as_view({'get': 'list', 'post': 'create'}),
          name='college-requests'),
     path('college-requests/<int:pk>/verify/', CollegeRequestVerificationView.as_view(), name='college-request-verify'),
     path('college/<slug:slug>/', CollegeViewSet.as_view({'get': 'retrieve'}), name='single-college-details'),
+    path('id-count/', CollegeIDCountView.as_view({'get': 'list'}), name='college-Idcount'),
     ## dynamic urls
-    #path('<slug:slug>/add-branch/',)
+    # path('<slug:slug>/add-branch/',)
     path('<slug:slug>/register/', UserRegistrationView.as_view(), name='register-college-wise'),
     path('<slug:slug>/profile/', UserProfileView.as_view(), name='profile'),
     path('<slug:slug>/bonafide/<int:pk>/approve/', BonafideViewSet.as_view({'patch': 'approve'}),
