@@ -252,7 +252,6 @@ def generate_bonafide_number():
 class Bonafide(models.Model):
     STATUS_CHOICES = [
         ('not-applied', 'Not-applied'),
-        ('applied', 'Applied'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
