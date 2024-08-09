@@ -165,7 +165,7 @@ class UserRegistrationView(APIView):
         errors = []
         try:
             college = College.objects.get(slug=slug)
-            college_with_ids = College_with_Ids.objects.get(college_name=college.college_name)
+            college_with_ids = College_with_Ids.objects.get(college_name=college.slug)
         except College.DoesNotExist:
             return Response({'error': 'College not found'}, status=status.HTTP_404_NOT_FOUND)
         except College_with_Ids.DoesNotExist:
