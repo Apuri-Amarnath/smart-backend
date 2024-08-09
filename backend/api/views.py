@@ -126,7 +126,7 @@ class UserRegistrationView(APIView):
             try:
                 with transaction.atomic():
                     college = College.objects.get(slug=slug)
-                    college_with_ids = College_with_Ids.objects.get(college_name=college.college_name)
+                    college_with_ids = College_with_Ids.objects.get(college_name=college.slug)
                     user_data = request.data.copy()
                     user_data['college'] = college.id
                     registration_number = user_data.get('registration_number')
