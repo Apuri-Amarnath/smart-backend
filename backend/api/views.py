@@ -865,9 +865,9 @@ class CollegeRequestVerificationView(generics.RetrieveUpdateAPIView):
         return Response({'message': 'Request was successfully verified'}, status.HTTP_200_OK)
 
 
-class CollgeIDCountView(generics.ListAPIView):
+class CollegeIDCountView(viewsets.ModelViewSet):
     queryset = College_with_Ids.objects.all()
     serializer_class = CollgeIdCountSerializer
-    permission_classes = [IsRegistrarOrAdmin]
+    #permission_classes = [IsRegistrarOrAdmin]
     renderer_classes = [UserRenderer]
     search_fields = ['college_name']

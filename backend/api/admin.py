@@ -23,7 +23,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('registration_number', 'role')
+        fields = ('registration_number', 'role','college')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -63,7 +63,7 @@ class UserModelAdmin(BaseUserAdmin):
     list_filter = ('is_admin', 'role', 'college')
     fieldsets = (
         (None, {'fields': ('registration_number', 'password')}),
-        ('Personal info', {'fields': ('role',)}),
+        ('Personal info', {'fields': ('role','college')}),
         ('Permissions', {'fields': ('is_admin',)}),
         ('Important dates', {'fields': ('last_login',)}),
     )
@@ -72,7 +72,7 @@ class UserModelAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('registration_number', 'role', 'password1', 'password2'),
+            'fields': ('registration_number', 'role', 'password1', 'password2', 'college'),
         }),
     )
     search_fields = ('registration_number',)

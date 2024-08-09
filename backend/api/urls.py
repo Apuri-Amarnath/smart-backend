@@ -8,7 +8,7 @@ from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLog
     UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
     GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset, NoDuesListViewSet, \
     SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView, \
-    CollegeRequestVerificationView, CollgeIDCountView
+    CollegeRequestVerificationView, CollegeIDCountView
 
 router = DefaultRouter()
 router.register(r'colleges', CollegeViewSet, basename='college-details')
@@ -42,7 +42,7 @@ urlpatterns = [
          name='college-requests'),
     path('college-requests/<int:pk>/verify/', CollegeRequestVerificationView.as_view(), name='college-request-verify'),
     path('college/<slug:slug>/', CollegeViewSet.as_view({'get': 'retrieve'}), name='single-college-details'),
-    path('id-count/', CollgeIDCountView.as_view(), name='college-Idcount'),
+    path('id-count/', CollegeIDCountView.as_view({'get': 'list'}), name='college-Idcount'),
     ## dynamic urls
     # path('<slug:slug>/add-branch/',)
     path('<slug:slug>/register/', UserRegistrationView.as_view(), name='register-college-wise'),
