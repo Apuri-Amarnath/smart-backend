@@ -48,6 +48,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
 from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsOfficeOrAdmin, \
+    IsOfficeOnlyorAdmin, \
     IsAdmin, IsRegistrarOrAdmin
 from django.db.models import Case, When, IntegerField
 import logging
@@ -868,7 +869,7 @@ class CollegeRequestVerificationView(generics.RetrieveUpdateAPIView):
 class CollegeIDCountView(viewsets.ModelViewSet):
     queryset = College_with_Ids.objects.all()
     serializer_class = CollgeIdCountSerializer
-    permission_classes = [IsOfficeOrAdmin]
+    permission_classes = [IsOfficeOnlyorAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter]
     search_fields = ['college_name']

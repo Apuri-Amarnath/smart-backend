@@ -158,7 +158,6 @@ class PersonalInfoSerializer(serializers.ModelSerializer):
 class AcademicInfoSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source='user.registration_number', read_only=True)
     registration_year = YearField()
-    year = YearField()
     college_name = serializers.CharField(source='user.college.college_name', read_only=True)
 
     class Meta:
