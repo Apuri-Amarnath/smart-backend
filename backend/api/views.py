@@ -868,6 +868,6 @@ class CollegeRequestVerificationView(generics.RetrieveUpdateAPIView):
 class CollgeIDCountView(generics.ListAPIView):
     queryset = College_with_Ids.objects.all()
     serializer_class = CollgeIdCountSerializer
-    # permission_classes = [IsRegistrarOrAdmin]
-    # renderer_classes = [UserRenderer]
-    search_fields = ['colleg_name']
+    permission_classes = [IsRegistrarOrAdmin]
+    renderer_classes = [UserRenderer]
+    search_fields = ['college_name']
