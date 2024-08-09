@@ -299,6 +299,10 @@ def Bonafide_approved_Notification(sender, instance, created, **kwargs):
                     message=f"Your Bonafide request has been rejected, please re-apply !")
 
 
+class Branch(models.Model):
+    Branch_name = models.CharField(max_length=225, null=True, blank=True)
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
+
 class Subject(models.Model):
     subject_name = models.CharField(verbose_name="subject_name", max_length=225, null=True, blank=True)
     subject_code = models.CharField(verbose_name="subject_id", max_length=30, null=True, unique=True)
@@ -738,7 +742,7 @@ class CollegeRequest(models.Model):
                 send_login_credentials(registration_number=registration_number, password=Temparory_password,
                                        to_email=self.email, college_name=self.college_name)
                 College_with_Ids.objects.update_or_create(
-                    college_name=self.college_name,
+                    college_name=slugify(self.college_name),
                     defaults={'id_count': 0}
                 )
             except College.DoesNotExist:

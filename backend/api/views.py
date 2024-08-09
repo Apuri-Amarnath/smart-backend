@@ -165,10 +165,10 @@ class UserRegistrationView(APIView):
         errors = []
         try:
             college = College.objects.get(slug=slug)
-            college_request = CollegeRequest.objects.get(college_name=college.college_name)
+            college_with_ids = College_with_Ids.objects.get(college_name=college.college_name)
         except College.DoesNotExist:
             return Response({'error': 'College not found'}, status=status.HTTP_404_NOT_FOUND)
-        except CollegeRequest.DoesNotExist:
+        except College_with_Ids.DoesNotExist:
             return Response({'error': 'College request not found'}, status=status.HTTP_404_NOT_FOUND)
 
         with open(csv_file_path, newline='') as csvfile:
@@ -185,8 +185,8 @@ class UserRegistrationView(APIView):
                         try:
                             user = serializer.save()
                             user_created.append(user.registration_number)
-                            college_request.id_count += 1
-                            college_request.save()
+                            college_with_ids.id_count += 1
+                            college_with_ids.save()
                         except IntegrityError:
                             errors.append({'registration_number': registration_number,
                                            'error': 'User already exists with this registration number and college'})
@@ -868,6 +868,7 @@ class CollegeRequestVerificationView(generics.RetrieveUpdateAPIView):
 class CollegeIDCountView(viewsets.ModelViewSet):
     queryset = College_with_Ids.objects.all()
     serializer_class = CollgeIdCountSerializer
-    #permission_classes = [IsRegistrarOrAdmin]
+    permission_classes = [IsRegistrarOrAdmin]
     renderer_classes = [UserRenderer]
+    filter_backends = [filters.SearchFilter]
     search_fields = ['college_name']
