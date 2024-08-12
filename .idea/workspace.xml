@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="user management" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="user management">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -255,23 +259,8 @@
       <workItem from="1723274900641" duration="40000" />
       <workItem from="1723274991320" duration="13000" />
       <workItem from="1723470589715" duration="5131000" />
-      <workItem from="1723482587157" duration="2273000" />
-    </task>
-    <task id="LOCAL-00165" summary="some modifications">
-      <option name="closed" value="true" />
-      <created>1721622724429</created>
-      <option name="number" value="00165" />
-      <option name="presentableId" value="LOCAL-00165" />
-      <option name="project" value="LOCAL" />
-      <updated>1721622724430</updated>
-    </task>
-    <task id="LOCAL-00166" summary="v2 - module 1">
-      <option name="closed" value="true" />
-      <created>1722269411093</created>
-      <option name="number" value="00166" />
-      <option name="presentableId" value="LOCAL-00166" />
-      <option name="project" value="LOCAL" />
-      <updated>1722269411094</updated>
+      <workItem from="1723482587157" duration="3372000" />
+      <workItem from="1723488188120" duration="1206000" />
     </task>
     <task id="LOCAL-00167" summary="change role to office">
       <option name="closed" value="true" />
@@ -649,7 +638,23 @@
       <option name="project" value="LOCAL" />
       <updated>1723484863171</updated>
     </task>
-    <option name="localTasksCounter" value="214" />
+    <task id="LOCAL-00214" summary="user management">
+      <option name="closed" value="true" />
+      <created>1723485134081</created>
+      <option name="number" value="00214" />
+      <option name="presentableId" value="LOCAL-00214" />
+      <option name="project" value="LOCAL" />
+      <updated>1723485134081</updated>
+    </task>
+    <task id="LOCAL-00215" summary="user management">
+      <option name="closed" value="true" />
+      <created>1723485729463</created>
+      <option name="number" value="00215" />
+      <option name="presentableId" value="LOCAL-00215" />
+      <option name="project" value="LOCAL" />
+      <updated>1723485729463</updated>
+    </task>
+    <option name="localTasksCounter" value="216" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

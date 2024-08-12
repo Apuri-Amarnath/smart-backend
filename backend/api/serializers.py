@@ -83,47 +83,44 @@ class Csv_RegistrationSerializer(serializers.Serializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    registration_number = serializers.CharField(read_only=True)
 
     class Meta:
         model = User
         fields = ('registration_number', 'role', 'college', 'password', 'password2')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance:
-            self.fields['registration_number'].read_only = True
-
-    # validate password
     def validate(self, attrs):
-        if self.instance:  # For update operations
-            if 'password' in attrs or 'password2' in attrs:
-                if attrs.get('password') != attrs.pop('password2', None):
-                    raise serializers.ValidationError("Password and Confirm Password don't match")
-            else:
-                attrs.pop('password2', None)
-        else:
-            password = attrs.get('password')
-            password2 = attrs.get('password2')
-            if password != password2:
-                raise serializers.ValidationError(f"password and confirm password don't match")
-            return attrs
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+        if password != password2:
+            raise serializers.ValidationError(f"password and confirm password don't match")
+        return attrs
 
     def create(self, validated_data):
         validated_data.pop('password2')
         user = User.objects.create_user(**validated_data)
         return user
 
+
+class UserManagementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('role', 'college', 'password')
+        extra_kwargs = {'password': {'write_only': True, 'required': False}}
+
+    def validate(self, attrs):
+        if 'password' in attrs:
+            if attrs['password']:
+                password2 = self.context['request'].data.get('password2')
+                if attrs['password']!= password2:
+                    raise serializers.ValidationError('Passwords do not match')
+        return attrs
+
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
-        validated_data.pop('password2', None)
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
         if password:
             instance.set_password(password)
-            instance.save()
-        return instance
+        return super().update(instance, validated_data)
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
