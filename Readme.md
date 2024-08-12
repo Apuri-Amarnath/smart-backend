@@ -69,47 +69,65 @@ python manage.py runserver
 ## API Endpoints
 
 ### Authentication
-- **Login**: `POST /api/token/` - Obtain JWT tokens
+- **Login**: `POST /api/user/token/` - Obtain JWT tokens
+- **Refresh Token**: `POST /api/user/token/refresh/` - Refresh JWT tokens
 
 ### Semester Management
-- **Create Semester**: `POST /api/semesters/`
-- **Update Semester**: `PUT /api/semesters/{id}/`
-- **List Semesters**: `GET /api/semesters/`
-- **Retrieve Semester**: `GET /api/semesters/{id}/`
+- **Create Semester**: `POST /api/user/semester/`
+- **Update Semester**: `PUT /api/user/semester/{id}/`
+- **List Semesters**: `GET /api/user/semester/`
+- **Retrieve Semester**: `GET /api/user/semester/{id}/`
 
 ### Hostel Allotment
-- **Create Hostel Allotment**: `POST /api/hostel-allotments/`
-- **Update Hostel Allotment**: `PUT /api/hostel-allotments/{id}/`
-- **List Hostel Allotments**: `GET /api/hostel-allotments/`
-- **Retrieve Hostel Allotment**: `GET /api/hostel-allotments/{id}/`
+- **Create Hostel Allotment**: `POST /api/user/hostel-allotments/`
+- **Update Hostel Allotment**: `PUT /api/user/hostel-allotments/{id}/`
+- **List Hostel Allotments**: `GET /api/user/hostel-allotments/`
+- **Retrieve Hostel Allotment**: `GET /api/user/hostel-allotments/{id}/`
 
 ### Mess Fee
-- **Create Mess Fee**: `POST /api/mess-fees/`
-- **Update Mess Fee**: `PUT /api/mess-fees/{id}/`
-- **Get Mess Fee**: `GET /api/mess-fees/{id}/`
-- **List Mess Fees**: `GET /api/mess-fees/`
+- **Create Mess Fee**: `POST /api/user/mess-fees/`
+- **Update Mess Fee**: `PUT /api/user/mess-fees/{id}/`
+- **Get Mess Fee**: `GET /api/user/mess-fees/{id}/`
+- **List Mess Fees**: `GET /api/user/mess-fees/`
 
 ### Complaint Management
-- **Create Complaint**: `POST /api/complaints/`
-- **List Complaints**: `GET /api/complaints/`
-- **Retrieve Complaint**: `GET /api/complaints/{id}/`
+- **Create Complaint**: `POST /api/user/complaints/`
+- **List Complaints**: `GET /api/user/complaints/`
+- **Retrieve Complaint**: `GET /api/user/complaints/{id}/`
 
 ### Notifications
-- **Create Notification**: `POST /api/notifications/`
-- **List Notifications**: `GET /api/notifications/`
-- **Delete Notification**: `DELETE /api/notifications/{id}/`
-- **Delete All Notifications**: `DELETE /api/notifications/delete_all/`
+- **Create Notification**: `POST /api/user/notifications/`
+- **List Notifications**: `GET /api/user/notifications/`
+- **Delete Notification**: `DELETE /api/user/notifications/{id}/`
+- **Delete All Notifications**: `DELETE /api/user/notifications/delete_all/`
 
 ### Branch and College Management
-- **Create Branch**: `POST /api/branches/`
-- **List Branches**: `GET /api/branches/`
-- **List Colleges**: `GET /api/colleges/`
+- **Create Branch**: `POST /api/user/branch/`
+- **List Branches**: `GET /api/user/branch/`
+- **List Colleges**: `GET /api/user/colleges/`
+- **Retrieve College**: `GET /api/user/college/{slug}/`
 
 ### User Management
-- **List Users**: `GET /api/users/`
-- **Retrieve User**: `GET /api/users/{id}/`
-- **Update User**: `PUT /api/users/{id}/`
-- **Create User**: `POST /api/users/`
+- **List Users**: `GET /api/user/user-management/`
+- **Retrieve User**: `GET /api/user/user-management/{id}/`
+- **Update User**: `PUT /api/user/user-management/{id}/`
+- **Create User**: `POST /api/user/user-management/`
+
+### College Management
+- **Create College Request**: `POST /api/user/college-requests/`
+- **List College Requests**: `GET /api/user/college-requests/`
+- **Verify College Request**: `POST /api/user/college-requests/{id}/verify/`
+
+### Dynamic URLs
+- **Register College-wise**: `POST /api/user/{slug}/register/`
+- **User Profile**: `GET /api/user/{slug}/profile/`
+- **Bonafide Approval**: `PATCH /api/user/bonafide/{pk}/approve/`
+- **Create Mess Fee**: `POST /api/user/fees/create/`
+- **Update Mess Fee**: `PUT /api/user/fees/update/{pk}/`
+- **Get Mess Fee**: `GET /api/user/fees/{pk}/`
+- **List Mess Fees**: `GET /api/user/fees/`
+- **Update Hostel Allotment Status**: `PATCH /api/user/hostel-allotments/{pk}/update-status/`
+- **Add Branch to College**: `POST /api/user/{slug}/add-branch/`
 
 ## Permissions
 
