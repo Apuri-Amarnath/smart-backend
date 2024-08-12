@@ -13,7 +13,7 @@ from .models import User, UserProfile, PersonalInformation, AcademicInformation,
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
     Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification, \
-    Cloned_Departments_for_no_Dues, CollegeRequest, College_with_Ids
+    Cloned_Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -265,6 +265,7 @@ class BonafideSerializer(serializers.ModelSerializer):
     def get_college_details(self, obj):
         if obj.college:
             return CollegeSerializer(obj.college).data
+
     def create(self, validated_data):
         request = self.context.get('request')
         supporting_document = validated_data.pop('supporting_document', None)
@@ -290,11 +291,10 @@ class BonafideSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class Bonafide_Approve_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Bonafide
-        fields = [ 'status', 'issue_date']
+        fields = ['status', 'issue_date']
         read_only_fields = 'issue_date'
 
     def update(self, instance, validated_data):
@@ -734,3 +734,21 @@ class CollgeIdCountSerializer(serializers.ModelSerializer):
     class Meta:
         model = College_with_Ids
         fields = '__all__'
+
+
+class BranchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Branch
+        fields = '__all__'
+
+    def validate(self, data):
+        branch_name = data.get('branch_name')
+        college = data.get('college')
+        if Branch.objects.filter(branch_name=branch_name, college=college).exists():
+            raise serializers.ValidationError("A branch with this name already exists in the selected college.")
+        return data
+
+    def create(self, validated_data):
+        branch = Branch.objects.create(**validated_data)
+        branch.save()
+        return branch

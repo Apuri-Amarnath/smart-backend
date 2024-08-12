@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.text import slugify
 from rest_framework.exceptions import ValidationError
 
-from .emails import send_login_credentials
+from .emails import send_login_credentials, send_HOD_login_credentials
 from .notifications import notify_roles, notify_same_college_users, notify_user
 from django.db.utils import IntegrityError
 
@@ -83,6 +83,7 @@ class User(AbstractBaseUser):
         ('office', 'Office'),
         ('faculty', 'Faculty'),
         ('super-admin', 'Super-Admin'),
+        ('hod', 'HOD'),
         ('principal', 'Principal'),
         ('caretaker', 'Caretaker'),
         ('department', 'Department'),
@@ -300,8 +301,38 @@ def Bonafide_approved_Notification(sender, instance, created, **kwargs):
 
 
 class Branch(models.Model):
-    Branch_name = models.CharField(max_length=225, null=True, blank=True)
+    branch_name = models.CharField(max_length=225, null=True, blank=True)
     college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.branch_name} --  {self.college.college_name}"
+
+
+def generate_password(length):
+    import secrets, string
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    exclude = '/\\\'\"'
+    filtered_password = ''.join(c for c in alphabet if c not in exclude)
+    password = ''.join(secrets.choice(filtered_password) for i in range(length))
+    return password
+
+
+@receiver(post_save, sender=Branch)
+def create_HOD_and_send_email(sender, instance, created, **kwargs):
+    if created:
+        try:
+            branch_name = instance.branch_name
+            college = instance.college
+            registration_number = f'HOD-{branch_name.upper()[:3]}{college.college_code[:4]}'.upper()
+            temporary_password = generate_password(10)
+            if not User.objects.filter(registration_number=registration_number, college=college).exists():
+                user = User.objects.create_user(
+                    registration_number=registration_number, password=temporary_password, college=college, role='hod')
+                send_HOD_login_credentials(registration_number=registration_number, college_name=college.college_name,
+                                           password=temporary_password, branch=branch_name.upper(),
+                                           to_email=college.college_email)
+        except Exception as e:
+            print(f"An error occured while user creation: {e}")
 
 
 class Subject(models.Model):
