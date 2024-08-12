@@ -31,7 +31,7 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
     NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer, \
     CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer, Bonafide_Approve_Serializer, \
-    CollgeIdCountSerializer, BranchSerializer
+    CollgeIdCountSerializer, BranchSerializer, UserManagementSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -126,7 +126,7 @@ class UserRegistrationView(APIView):
             try:
                 with transaction.atomic():
                     college = College.objects.get(slug=slug)
-                    college_with_ids = College_with_Ids.objects.get(college_name=college.slug)
+                    college_with_ids = College_with_Ids.objects.get(college_name=college.college_name)
                     user_data = request.data.copy()
                     user_data['college'] = college.id
                     registration_number = user_data.get('registration_number')
@@ -907,7 +907,7 @@ class BranchViewSet(viewsets.ModelViewSet):
 
 class UserManagmentViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserRegistrationSerializer
+    serializer_class = UserManagementSerializer
     permission_classes = [IsOfficeOrAdmin]
 
     def get_queryset(self):
@@ -923,7 +923,7 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         slug = self.kwargs.get('slug')
         with transaction.atomic():
-            college = College.objects.get(College, slug=slug)
+            college = get_object_or_404(College, slug=slug)
             college_with_id = College_with_Ids.objects.get(college_name=college.slug)
             user_data = request.data.copy()
             user_data['college'] = college.id
@@ -941,8 +941,7 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         user_instance = self.get_object()
         data = request.data.copy()
-        if 'college' in data:
-            data.pop('college')
+        data.pop('college', None)
 
         serializer = self.get_serializer(user_instance, data=data, partial=False)
         serializer.is_valid(raise_exception=True)
@@ -952,8 +951,8 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         user_instance = self.get_object()
         data = request.data.copy()
-        if 'college' in data:
-            data.pop('college')
+        data.pop('college', None)
+
         serializer = self.get_serializer(user_instance, data=data, partial=True)
         serializer.valid(raise_exception=True)
         serializer.save()
@@ -968,4 +967,4 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             college_with_ids.id_count -= 1
             college_with_ids.save()
-        return Response({'message':'User deleted successfully'},status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
