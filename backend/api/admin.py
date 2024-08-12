@@ -1,9 +1,11 @@
 import base64
 
 from django.contrib import admin
+from django.contrib.admin.exceptions import NotRegistered
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
+from django.contrib.auth.models import Group
 from django.utils.html import format_html
 
 from .models import Semester, Subject, User, UserProfile, PersonalInformation, ContactInformation, AcademicInformation, \
@@ -23,7 +25,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('registration_number', 'role','college')
+        fields = ('registration_number', 'role', 'college')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -63,7 +65,7 @@ class UserModelAdmin(BaseUserAdmin):
     list_filter = ('is_admin', 'role', 'college')
     fieldsets = (
         (None, {'fields': ('registration_number', 'password')}),
-        ('Personal info', {'fields': ('role','college')}),
+        ('Personal info', {'fields': ('role', 'college')}),
         ('Permissions', {'fields': ('is_admin',)}),
         ('Important dates', {'fields': ('last_login',)}),
     )
