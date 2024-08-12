@@ -968,4 +968,4 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
             self.perform_destroy(instance)
             college_with_ids.id_count -= 1
             college_with_ids.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'message':'User deleted successfully'},status=status.HTTP_204_NO_CONTENT)
