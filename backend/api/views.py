@@ -910,6 +910,16 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
     serializer_class = UserRegistrationSerializer
     permission_classes = [IsOfficeOrAdmin]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            queryset = queryset.exclude(role="super-admin")
+            queryset = queryset.exclude(id=self.request.user.id)
+        return queryset
+
     def create(self, request, *args, **kwargs):
         slug = self.kwargs.get('slug')
         with transaction.atomic():
