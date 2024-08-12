@@ -903,3 +903,59 @@ class BranchViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
+
+
+class UserManagmentViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = [IsOfficeOrAdmin]
+
+    def create(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        with transaction.atomic():
+            college = College.objects.get(College, slug=slug)
+            college_with_id = College_with_Ids.objects.get(college_name=college.slug)
+            user_data = request.data.copy()
+            user_data['college'] = college.id
+            registration_number = user_data.get('registration_number')
+            if User.objects.filter(registration_number=registration_number, college=college.id).exists():
+                return Response({'message': 'User already exists with this registration number in the college'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            serializer = UserRegistrationSerializer(data=user_data)
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                college_with_id.id_count += 1
+                college_with_id.save()
+                return Response({'message': 'User Creation successfull'}, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        user_instance = self.get_object()
+        data = request.data.copy()
+        if 'college' in data:
+            data.pop('college')
+
+        serializer = self.get_serializer(user_instance, data=data, partial=False)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'message': 'User Updated successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, *args, **kwargs):
+        user_instance = self.get_object()
+        data = request.data.copy()
+        if 'college' in data:
+            data.pop('college')
+        serializer = self.get_serializer(user_instance, data=data, partial=True)
+        serializer.valid(raise_exception=True)
+        serializer.save()
+        return Response({'message': 'User Updated successfully', 'data':
+            serializer.data}, status=status.HTTP_202_ACCEPTED)
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        college = instance.college
+        college_with_ids = College_with_Ids.objects.get(college_name=college.slug)
+        with transaction.atomic():
+            self.perform_destroy(instance)
+            college_with_ids.id_count -= 1
+            college_with_ids.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
