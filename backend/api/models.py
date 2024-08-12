@@ -237,6 +237,14 @@ def save_related_information(sender, instance, **kwargs):
     instance.profile.save()
 
 
+class College_with_Ids(models.Model):
+    id_count = models.IntegerField(verbose_name="id_count", default=0)
+    college_name = models.CharField(verbose_name="college_name", max_length=255)
+
+    def __str__(self):
+        return f"{self.college_name} -- {self.id_count}"
+
+
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='nofications_user')
     message = models.TextField(verbose_name="message", max_length=400, blank=True, null=True)
@@ -325,12 +333,18 @@ def create_HOD_and_send_email(sender, instance, created, **kwargs):
             college = instance.college
             registration_number = f'HOD-{branch_name.upper()[:3]}{college.college_code[:4]}'.upper()
             temporary_password = generate_password(10)
-            if not User.objects.filter(registration_number=registration_number, college=college).exists():
-                user = User.objects.create_user(
-                    registration_number=registration_number, password=temporary_password, college=college, role='hod')
-                send_HOD_login_credentials(registration_number=registration_number, college_name=college.college_name,
-                                           password=temporary_password, branch=branch_name.upper(),
-                                           to_email=college.college_email)
+            with transaction.atomic():
+                if not User.objects.filter(registration_number=registration_number, college=college).exists():
+                    user = User.objects.create_user(
+                        registration_number=registration_number, password=temporary_password, college=college,
+                        role='hod')
+                    college_with_ids = College_with_Ids.objects.get(college_name=college.slug)
+                    college_with_ids.id_count += 1
+                    college_with_ids.save()
+                    send_HOD_login_credentials(registration_number=registration_number,
+                                               college_name=college.college_name,
+                                               password=temporary_password, branch=branch_name.upper(),
+                                               to_email=college.college_email)
         except Exception as e:
             print(f"An error occured while user creation: {e}")
 
@@ -734,14 +748,6 @@ def create_welcome_message(sender, instance, created, **kwargs):
 
 def upload_college_requests(instance, filename):
     return upload_path(instance, filename, 'college-requests')
-
-
-class College_with_Ids(models.Model):
-    id_count = models.IntegerField(verbose_name="id_count", default=0)
-    college_name = models.CharField(verbose_name="college_name", max_length=255)
-
-    def __str__(self):
-        return f"{self.college_name} -- {self.id_count}"
 
 
 class CollegeRequest(models.Model):
