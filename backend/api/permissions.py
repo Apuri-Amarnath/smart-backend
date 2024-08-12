@@ -82,7 +82,7 @@ class IsOfficeOrAdmin(permissions.BasePermission):
         return request.user.role in ['office', 'super-admin']
 
 
-class IsOfficeOnlyorAdmin(permissions.BasePermission):
+class IsOfficeOnlyOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
             return False

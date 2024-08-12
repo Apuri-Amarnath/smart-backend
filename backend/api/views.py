@@ -21,7 +21,7 @@ from .emails import send_login_credentials
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
     Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request, No_Dues_list, \
-    VerifySemesterRegistration, Notification, Departments_for_no_Dues, CollegeRequest, College_with_Ids
+    VerifySemesterRegistration, Notification, Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
@@ -31,7 +31,7 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
     NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer, \
     CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer, Bonafide_Approve_Serializer, \
-    CollgeIdCountSerializer
+    CollgeIdCountSerializer, BranchSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -48,7 +48,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
 from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsOfficeOrAdmin, \
-    IsOfficeOnlyorAdmin, \
+    IsOfficeOnlyOrAdmin, \
     IsAdmin, IsRegistrarOrAdmin
 from django.db.models import Case, When, IntegerField
 import logging
@@ -112,7 +112,6 @@ class UserRegistrationView(APIView):
 
     def post(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
-        print(request.user.college.id)
 
         if 'file' in request.data:
             file_serializer = Csv_RegistrationSerializer(data=request.data)
@@ -869,7 +868,38 @@ class CollegeRequestVerificationView(generics.RetrieveUpdateAPIView):
 class CollegeIDCountView(viewsets.ModelViewSet):
     queryset = College_with_Ids.objects.all()
     serializer_class = CollgeIdCountSerializer
-    permission_classes = [IsOfficeOnlyorAdmin]
+    permission_classes = [IsOfficeOnlyOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter]
     search_fields = ['college_name']
+
+
+class BranchViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsOfficeOrAdmin]
+    renderer_classes = [UserRenderer]
+    queryset = Branch.objects.all()
+    serializer_class = BranchSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            data.clear()
+            return Response({'message': 'Branch was successfully created and HOD credentials are mailed'},
+                            status=status.HTTP_201_CREATED)
+        return Response({'error': 'serializer.errors'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save()

@@ -54,3 +54,4 @@ def notify_user(registration_number, message):
     except Exception as e:
         looger.error(f"error in notifying user: {e}")
         print(e)
+
