@@ -353,13 +353,14 @@ class Subject(models.Model):
     subject_name = models.CharField(verbose_name="subject_name", max_length=225, null=True, blank=True)
     subject_code = models.CharField(verbose_name="subject_id", max_length=30, null=True, unique=True)
     instructor = models.CharField(verbose_name="Instructor", max_length=100, null=True, blank=True)
+    college = models.ForeignKey(College, verbose_name="subjects", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"subject name: {self.subject_name} -- subject code: {self.subject_code} -- instructor: {self.instructor}"
 
 
 class Semester(models.Model):
-    college = models.ForeignKey(College, on_delete=models.CASCADE)
+    college = models.ForeignKey(College, verbose_name="semester", on_delete=models.CASCADE)
     branch = models.CharField(verbose_name="branch", max_length=225, null=True, blank=True)
     semester_name = models.CharField(verbose_name="semester_name", max_length=225)
     subjects = models.ManyToManyField(Subject, verbose_name="subjects", related_name="semester_subjects")

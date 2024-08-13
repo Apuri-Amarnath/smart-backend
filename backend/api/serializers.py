@@ -1,5 +1,7 @@
 import base64
 from datetime import datetime
+import re
+
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.validators import MinLengthValidator, MaxLengthValidator
@@ -105,14 +107,14 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserManagementSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('role', 'college', 'password','registration_number','id')
+        fields = ('role', 'college', 'password', 'registration_number', 'id')
         extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
     def validate(self, attrs):
         if 'password' in attrs:
             if attrs['password']:
                 password2 = self.context['request'].data.get('password2')
-                if attrs['password']!= password2:
+                if attrs['password'] != password2:
                     raise serializers.ValidationError('Passwords do not match')
         return attrs
 
@@ -336,7 +338,24 @@ class SemesterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Semester
-        fields = ['id', 'semester_name', 'subjects', 'subject_codes', 'branch']
+        fields = ['id', 'semester_name', 'subjects', 'subject_codes', 'branch', 'college']
+
+    def validate(self, data):
+        user = self.context['request'].user
+        match = re.match(r'HOD-(\w{3})', user.registration_number)
+        college = data.get('college')
+        subject_codes = data.get('subject_codes', [])
+        if user.role == 'hod':
+            if not match:
+                raise serializers.ValidationError('Invalid registration number')
+            if match.group(1) != data.get('branch'):
+                raise serializers.ValidationError("You can only add semesters and subjects to your own branch.")
+
+        if subject_codes:
+            subjects = Subject.objects.filter(subject_code__in=subject_codes)
+            if subjects.exclude(college_id=college.id).exists():
+                raise serializers.ValidationError("Subjects must belong to the same college as the semester.")
+        return data
 
     def create(self, validated_data):
         subject_codes = validated_data.pop('subject_codes')
@@ -346,7 +365,7 @@ class SemesterSerializer(serializers.ModelSerializer):
         return semester
 
     def update(self, instance, validated_data):
-        subject_codes = validated_data.pop('subject_code', None)
+        subject_codes = validated_data.pop('subject_codes', None)
         instance.branch = validated_data.get('branch', instance.branch)
         instance.semester_name = validated_data.get('semester_name', instance.semester_name)
         instance.save()

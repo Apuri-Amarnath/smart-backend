@@ -49,7 +49,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets, filters
 from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsOfficeOrAdmin, \
     IsOfficeOnlyOrAdmin, \
-    IsAdmin, IsRegistrarOrAdmin
+    IsAdmin, IsRegistrarOrAdmin, IsHODorAdmin
 from django.db.models import Case, When, IntegerField
 import logging
 
@@ -383,58 +383,107 @@ class BonafideViewSet(viewsets.ModelViewSet):
 
 
 class SubjectViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsHODorAdmin]
     renderer_classes = [UserRenderer]
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
     filter_backends = [SearchFilter]
     search_fields = ['subject_name', 'subject_code', 'instructor']
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+        return queryset
+
     def create(self, request, *args, **kwargs):
-        if self.request.user.role not in ['admin', 'faculty']:
-            raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
-        return super().create(request, *args, **kwargs)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+
+        if self.request.user.role not in ['hod', 'super-admin']:
+            raise PermissionDenied({'error': 'Only HOD or Admin users can add subject data.'})
+
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
-        if self.request.user.role not in ['admin', 'faculty']:
-            raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
-        return super().create(request, *args, **kwargs)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+
+        if self.request.user.role not in ['hod', 'super-admin']:
+            raise PermissionDenied({'error': 'Only HOD or Admin users can update subject data.'})
+
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_update(serializer)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 class SemesterViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsHODorAdmin]
     renderer_classes = [UserRenderer]
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['semester_name', 'branch']
     ordering_fields = '__all__'
-    ordering = ['semester_name', ]
+    ordering = ['semester_name']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+        return queryset
 
     def create(self, request, *args, **kwargs):
-        if self.request.user.role not in ['admin', 'faculty']:
-            raise ValidationError({'error': 'Only admin or staff users can create semester data.'})
-        serializer = self.get_serializer(data=request.data)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        if request.user.role not in ['hod', 'super-admin']:
+            raise ValidationError({'error': 'Only HOD or Admin users can create semester data.'})
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_update(self, serializer):
-        if self.request.user.role not in ['admin', 'faculty']:
-            raise ValidationError({'error': 'Only admin or staff users can update semester data.'})
         serializer.save()
 
     def perform_create(self, serializer):
-        if self.request.user.role not in ['admin', 'faculty']:
-            raise ValidationError({'error': 'Only admin or staff users can create semester data.'})
         serializer.save()
 
     def update(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        if request.user.role not in ['hod', 'super-admin']:
+            raise ValidationError({'error': 'Only HOD or Admin users can create semester data.'})
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=data, partial=partial)
         if serializer.is_valid(raise_exception=True):
             self.perform_update(serializer)
             return Response(serializer.data)
