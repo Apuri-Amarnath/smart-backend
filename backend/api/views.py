@@ -398,6 +398,8 @@ class SubjectViewSet(viewsets.ModelViewSet):
         if self.request.user.role not in ['admin', 'faculty']:
             raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
         return super().create(request, *args, **kwargs)
+
+
 class SemesterViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     renderer_classes = [UserRenderer]
@@ -952,7 +954,7 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
         data.pop('college', None)
 
         serializer = self.get_serializer(user_instance, data=data, partial=True)
-        serializer.valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({'message': 'User Updated successfully', 'data':
             serializer.data}, status=status.HTTP_202_ACCEPTED)
