@@ -83,10 +83,11 @@ def update(request):
 
 # manually generate token
 def get_tokens_for_user(user):
+    college = College.objects.get(id=user.college.id)
     refresh = RefreshToken.for_user(user)
     refresh['role'] = user.role
     refresh['registration_number'] = user.registration_number
-    refresh['college'] = user.college.id if user.college else None
+    refresh['college'] = college.college_name
 
     return {
         'refresh': str(refresh),
