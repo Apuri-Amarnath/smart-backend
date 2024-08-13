@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="user management">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -260,14 +259,7 @@
       <workItem from="1723470589715" duration="5131000" />
       <workItem from="1723482587157" duration="3372000" />
       <workItem from="1723488188120" duration="4694000" />
-    </task>
-    <task id="LOCAL-00171" summary="added some validators">
-      <option name="closed" value="true" />
-      <created>1722839801523</created>
-      <option name="number" value="00171" />
-      <option name="presentableId" value="LOCAL-00171" />
-      <option name="project" value="LOCAL" />
-      <updated>1722839801523</updated>
+      <workItem from="1723544364102" duration="938000" />
     </task>
     <task id="LOCAL-00172" summary="added some validators">
       <option name="closed" value="true" />
@@ -653,7 +645,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723490932043</updated>
     </task>
-    <option name="localTasksCounter" value="220" />
+    <task id="LOCAL-00220" summary="user management">
+      <option name="closed" value="true" />
+      <created>1723544595643</created>
+      <option name="number" value="00220" />
+      <option name="presentableId" value="LOCAL-00220" />
+      <option name="project" value="LOCAL" />
+      <updated>1723544595644</updated>
+    </task>
+    <option name="localTasksCounter" value="221" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
