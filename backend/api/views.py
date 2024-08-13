@@ -398,8 +398,6 @@ class SubjectViewSet(viewsets.ModelViewSet):
         if self.request.user.role not in ['admin', 'faculty']:
             raise PermissionDenied({'error': 'Only admin or staff users can add subjects data.'})
         return super().create(request, *args, **kwargs)
-
-
 class SemesterViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     renderer_classes = [UserRenderer]
