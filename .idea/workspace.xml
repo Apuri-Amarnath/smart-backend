@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added college_name to the token">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/permissions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,15 +260,7 @@
       <workItem from="1723482587157" duration="3372000" />
       <workItem from="1723488188120" duration="4694000" />
       <workItem from="1723544364102" duration="1020000" />
-      <workItem from="1723560245286" duration="4184000" />
-    </task>
-    <task id="LOCAL-00175" summary="added some validators">
-      <option name="closed" value="true" />
-      <created>1722842821074</created>
-      <option name="number" value="00175" />
-      <option name="presentableId" value="LOCAL-00175" />
-      <option name="project" value="LOCAL" />
-      <updated>1722842821074</updated>
+      <workItem from="1723560245286" duration="4788000" />
     </task>
     <task id="LOCAL-00176" summary="added some validators">
       <option name="closed" value="true" />
@@ -658,7 +646,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723561576795</updated>
     </task>
-    <option name="localTasksCounter" value="224" />
+    <task id="LOCAL-00224" summary="added college_name to the token">
+      <option name="closed" value="true" />
+      <created>1723583673113</created>
+      <option name="number" value="00224" />
+      <option name="presentableId" value="LOCAL-00224" />
+      <option name="project" value="LOCAL" />
+      <updated>1723583673113</updated>
+    </task>
+    <option name="localTasksCounter" value="225" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

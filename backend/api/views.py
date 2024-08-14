@@ -83,7 +83,7 @@ def update(request):
 
 # manually generate token
 def get_tokens_for_user(user):
-    college = College.objects.get(id=user.college.id)
+    college = College.objects.get(slug=user.college.slug)
     refresh = RefreshToken.for_user(user)
     refresh['role'] = user.role
     refresh['registration_number'] = user.registration_number
