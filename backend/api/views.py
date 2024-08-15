@@ -87,10 +87,14 @@ def get_tokens_for_user(user):
     if user.college:
         college = College.objects.get(slug=user.college.slug)
         college_name = college.slug
+    branch = None
+    if user.role == 'hod':
+        branch = user.branch
     refresh = RefreshToken.for_user(user)
     refresh['role'] = user.role
     refresh['registration_number'] = user.registration_number
     refresh['college'] = college_name
+    refresh['branch'] = branch
 
     return {
         'refresh': str(refresh),

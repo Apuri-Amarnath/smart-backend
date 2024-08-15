@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added college_name to the token">
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0002_semester_branch_name.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0003_user_branch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -270,23 +269,8 @@
       <workItem from="1723659498727" duration="839000" />
       <workItem from="1723661701617" duration="292000" />
       <workItem from="1723662254512" duration="249000" />
-      <workItem from="1723709014515" duration="1773000" />
-    </task>
-    <task id="LOCAL-00179" summary="added some validators">
-      <option name="closed" value="true" />
-      <created>1722846034160</created>
-      <option name="number" value="00179" />
-      <option name="presentableId" value="LOCAL-00179" />
-      <option name="project" value="LOCAL" />
-      <updated>1722846034160</updated>
-    </task>
-    <task id="LOCAL-00180" summary="added some validators">
-      <option name="closed" value="true" />
-      <created>1722850562929</created>
-      <option name="number" value="00180" />
-      <option name="presentableId" value="LOCAL-00180" />
-      <option name="project" value="LOCAL" />
-      <updated>1722850562929</updated>
+      <workItem from="1723709014515" duration="2640000" />
+      <workItem from="1723718414896" duration="641000" />
     </task>
     <task id="LOCAL-00181" summary="added some validators">
       <option name="closed" value="true" />
@@ -664,7 +648,23 @@
       <option name="project" value="LOCAL" />
       <updated>1723659771594</updated>
     </task>
-    <option name="localTasksCounter" value="228" />
+    <task id="LOCAL-00228" summary="added college_name to the token">
+      <option name="closed" value="true" />
+      <created>1723710881164</created>
+      <option name="number" value="00228" />
+      <option name="presentableId" value="LOCAL-00228" />
+      <option name="project" value="LOCAL" />
+      <updated>1723710881165</updated>
+    </task>
+    <task id="LOCAL-00229" summary="added college_name to the token">
+      <option name="closed" value="true" />
+      <created>1723710954658</created>
+      <option name="number" value="00229" />
+      <option name="presentableId" value="LOCAL-00229" />
+      <option name="project" value="LOCAL" />
+      <updated>1723710954658</updated>
+    </task>
+    <option name="localTasksCounter" value="230" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

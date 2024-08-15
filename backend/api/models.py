@@ -93,6 +93,7 @@ class User(AbstractBaseUser):
                                            validators=[MinLengthValidator(6), MaxLengthValidator(11)])
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="users", null=True, blank=True)
+    branch = models.CharField(max_length=25, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -128,6 +129,11 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin or self.role in ['faculty', 'principal', 'office', 'caretaker']
+
+    def clean(self):
+        super().clean()
+        if self.role == 'hod' and not self.branch:
+            raise ValidationError({'branch': 'Branch is required when the role is HOD.'})
 
 
 def upload_path(instance, filename, folder):
@@ -337,7 +343,7 @@ def create_HOD_and_send_email(sender, instance, created, **kwargs):
                 if not User.objects.filter(registration_number=registration_number, college=college).exists():
                     user = User.objects.create_user(
                         registration_number=registration_number, password=temporary_password, college=college,
-                        role='hod')
+                        role='hod', branch=branch_name)
                     college_with_ids = College_with_Ids.objects.get(college_name=college.slug)
                     college_with_ids.id_count += 1
                     college_with_ids.save()
