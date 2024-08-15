@@ -392,7 +392,7 @@ class SemesterRegistrationSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'student_details', 'semester']
 
     def validate(self, attrs):
-        user = self.context['request'].user
+        user = self.context['request'].user.profile
         semester_id = self.context['request'].data.get('semester')
         college = attrs.get('college')
         try:
@@ -407,9 +407,7 @@ class SemesterRegistrationSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        student = self.context['request'].user
-        semester = validated_data.pop('semester')
-        registration = Semester_Registration.objects.create(student=student, semester=semester, **validated_data)
+        registration = Semester_Registration.objects.create(**validated_data)
         return registration
 
 
