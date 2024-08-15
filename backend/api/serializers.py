@@ -338,19 +338,6 @@ class SubjectSerializer(serializers.ModelSerializer):
         model = Subject
         fields = '__all__'
 
-    def validate_subject_code(self, value):
-        """
-        Check if the subject code already exists in the database.
-        """
-        if self.instance:
-            if Subject.objects.exclude(pk=self.instance.pk).filter(subject_code=value).exists():
-                raise serializers.ValidationError("A subject with this code already exists.")
-        else:
-            if Subject.objects.filter(subject_code=value).exists():
-                raise serializers.ValidationError("A subject with this code already exists.")
-        return value
-
-
 class SemesterSerializer(serializers.ModelSerializer):
     subject_codes = serializers.ListField(child=serializers.CharField(), write_only=True)
     subjects = SubjectSerializer(many=True, read_only=True)
@@ -367,7 +354,7 @@ class SemesterSerializer(serializers.ModelSerializer):
             if user.branch != data.get('branch'):
                 raise serializers.ValidationError("You can only add semesters and subjects to your own branch.")
         if subject_codes:
-            subjects = Subject.objects.filter(subject_codes__in=subject_codes)
+            subjects = Subject.objects.filter(subject_code__in=subject_codes)
             missing_subject_codes = set(subject_codes) - set(subjects.values_list('subject_code', flat=True))
             if missing_subject_codes:
                 raise serializers.ValidationError(f"Subject codes not found: {', '.join(missing_subject_codes)}")

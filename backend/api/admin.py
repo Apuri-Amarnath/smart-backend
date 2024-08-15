@@ -53,28 +53,20 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
-    """
-    A form for updating users. Includes all the fields on
-    the user, but replaces the password field with admin's
-    disabled password hash display field.
-    """
     password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = User
         fields = ('registration_number', 'password', 'is_active', 'is_admin', 'role', 'college', 'branch')
 
-    def __init__(self, *args, **kwargs):
-        super(UserChangeForm, self).__init__(*args, **kwargs)
-        if self.instance and self.instance.role == 'hod':
-            self.fields['branch'].required = True
-
     def clean(self):
         cleaned_data = super().clean()
         role = cleaned_data.get('role')
         branch = cleaned_data.get('branch')
+
         if role == 'hod' and not branch:
-            self.add_error('branch', 'Branch is required when the role is HOD.')
+            raise forms.ValidationError({'branch': 'Branch is required when the role is HOD.'})
+
         return cleaned_data
 
 
@@ -99,11 +91,19 @@ class UserModelAdmin(BaseUserAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        if obj and obj.role == 'hod':
+        role = None
+        if request.method == 'POST':
+            role = request.POST.get('role')
+        elif obj:
+            role = obj.role
+        if role == 'hod':
             form.base_fields['branch'].required = True
         else:
             form.base_fields['branch'].required = False
+
         return form
+
+
 class BonafideAdmin(admin.ModelAdmin):
     list_display = ['college', 'student', 'roll_no', 'issue_date', 'status', 'supporting_document_display']
 
