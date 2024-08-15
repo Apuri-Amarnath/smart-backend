@@ -385,7 +385,9 @@ class Semester_Registration(models.Model):
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
+
     ]
+    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="semester_registrations_college", null=True, blank=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="semester_registrations")
     student = models.ForeignKey(UserProfile, on_delete=models.CASCADE,
                                 related_name="semester_registration_student")
