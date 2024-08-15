@@ -25,7 +25,15 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('registration_number', 'role', 'college')
+        fields = ('registration_number', 'role', 'college', 'branch')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        role = cleaned_data.get('role')
+        branch = cleaned_data.get('branch')
+        if role == 'hod' and not branch:
+            self.add_error('branch', 'Branch is required when the role is HOD.')
+        return cleaned_data
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -54,34 +62,48 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('registration_number', 'password', 'is_active', 'is_admin', 'role')
+        fields = ('registration_number', 'password', 'is_active', 'is_admin', 'role', 'college', 'branch')
+
+    def __init__(self, *args, **kwargs):
+        super(UserChangeForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.role == 'hod':
+            self.fields['branch'].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        role = cleaned_data.get('role')
+        branch = cleaned_data.get('branch')
+        if role == 'hod' and not branch:
+            self.add_error('branch', 'Branch is required when the role is HOD.')
+        return cleaned_data
 
 
 class UserModelAdmin(BaseUserAdmin):
-    # The fields to be used in displaying the User model.
-    # These override the definitions on the base UserAdmin
-    # that reference specific fields on auth.User.
     list_display = ('registration_number', 'role', 'college', 'is_admin')
     list_filter = ('is_admin', 'role', 'college')
     fieldsets = (
         (None, {'fields': ('registration_number', 'password')}),
-        ('Personal info', {'fields': ('role', 'college')}),
+        ('Personal info', {'fields': ('role', 'college', 'branch')}),
         ('Permissions', {'fields': ('is_admin',)}),
         ('Important dates', {'fields': ('last_login',)}),
     )
-    # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-    # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('registration_number', 'role', 'password1', 'password2', 'college'),
+            'fields': ('registration_number', 'role', 'password1', 'password2', 'college', 'branch'),
         }),
     )
     search_fields = ('registration_number',)
     ordering = ('registration_number',)
     filter_horizontal = ()
 
-
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if obj and obj.role == 'hod':
+            form.base_fields['branch'].required = True
+        else:
+            form.base_fields['branch'].required = False
+        return form
 class BonafideAdmin(admin.ModelAdmin):
     list_display = ['college', 'student', 'roll_no', 'issue_date', 'status', 'supporting_document_display']
 

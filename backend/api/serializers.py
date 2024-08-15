@@ -398,29 +398,29 @@ class SemesterSerializer(serializers.ModelSerializer):
 class SemesterRegistrationSerializer(serializers.ModelSerializer):
     semester = SemesterSerializer(read_only=True)
     student_details = UserProfileSerializer(source='student', read_only=True)
-    student = serializers.PrimaryKeyRelatedField(queryset=UserProfile.objects.all(), write_only=True)
 
     class Meta:
         model = Semester_Registration
-        fields = ['id', 'semester', 'student', 'student_details', 'applied_date', 'status', 'college']
+        fields = ['id', 'semester', 'student_details', 'applied_date', 'status', 'college']
         read_only_fields = ['id', 'student_details', 'semester']
 
     def validate(self, attrs):
-        student = attrs.get('student')
+        user = self.context['request'].user
         semester_id = self.context['request'].data.get('semester')
         college = attrs.get('college')
         try:
             semester = Semester.objects.get(id=semester_id, college=college)
         except Semester.DoesNotExist:
             raise serializers.ValidationError("Invalid semester or semester does not belong to the specified college.")
-        if Semester_Registration.objects.filter(student=student, semester=semester).exists():
+        if Semester_Registration.objects.filter(student=user, semester=semester).exists():
             raise serializers.ValidationError("Student is already registered for this semester.")
 
         attrs['semester'] = semester
+        attrs['student'] = user
         return attrs
 
     def create(self, validated_data):
-        student = validated_data.pop('student')
+        student = self.context['request'].user
         semester = validated_data.pop('semester')
         registration = Semester_Registration.objects.create(student=student, semester=semester, **validated_data)
         return registration
