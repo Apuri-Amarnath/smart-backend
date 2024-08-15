@@ -55,3 +55,20 @@ def notify_user(registration_number, message):
         looger.error(f"error in notifying user: {e}")
         print(e)
 
+def notify_hod(role,message,branch):
+    """
+       Notify HOD with message
+
+       :param message: Message to send in the notification.
+    """
+    from .models import Notification, User
+    try:
+        user = User.objects.filter(role=role,branch=branch)
+        Notification.objects.create(user=user, message=message)
+        looger.info(f"Notification was created for {user.registration_number}")
+    except user.DoesNotExist:
+            looger.warning(f"No users found with {user.registration_number}")
+    except Exception as e:
+        looger.error(f"error in notifying user: {e}")
+        print(e)
+

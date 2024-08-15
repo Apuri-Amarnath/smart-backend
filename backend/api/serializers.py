@@ -719,7 +719,7 @@ class SemesterVerificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VerifySemesterRegistration
-        fields = ['id', 'registration_details', 'registration_details_info', 'remarks', 'status']
+        fields = ['id', 'registration_details', 'registration_details_info', 'remarks', 'status','college']
 
     def create(self, validated_data):
         instance = VerifySemesterRegistration.objects.create(**validated_data)

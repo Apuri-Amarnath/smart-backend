@@ -450,7 +450,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
     filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ['semester_name', 'branch','branch_name']
+    search_fields = ['semester_name', 'branch', 'branch_name']
     ordering_fields = '__all__'
     ordering = ['semester_name']
 
@@ -498,7 +498,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
 
 class SemesterRegistrationViewset(viewsets.ModelViewSet):
-    permission_classes = [IsStudentOrAdmin]
+    permission_classes = [IsStudentOrAdmin | IsHODorAdmin]
     filter_backends = [SearchFilter]
     search_fields = ['student__user__registration_number']
     renderer_classes = [UserRenderer]
@@ -511,6 +511,47 @@ class SemesterRegistrationViewset(viewsets.ModelViewSet):
         if slug:
             college = get_object_or_404(College, slug=slug)
             queryset = queryset.filter(college_id=college.id)
+        if self.request.user.role == 'hod':
+            branch = self.request.user.branch
+            queryset = queryset.filter(semester__branch=branch)
+        if self.request.user.role == 'student':
+            queryset = queryset.filter(student__user__registration_number=self.request.user.registration_number)
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
+        if request.user.role in ['hod', 'super-admin']:
+            raise ValidationError({'error': 'Only students can register for semesters.'})
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+class SemesterVerificationViewSet(viewsets.ModelViewSet):
+    queryset = VerifySemesterRegistration.objects.all()
+    serializer_class = SemesterVerificationSerializer
+    permission_classes = [IsHODorAdmin]
+    renderer_classes = [UserRenderer]
+    filter_backends = [SearchFilter]
+    search_fields = ['status', 'registration_details__student__user__registration_number']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+        if self.request.user.role == 'hod':
+            branch = self.request.user.branch
+            queryset = queryset.filter(registration_details__semester__branch=branch)
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -521,8 +562,8 @@ class SemesterRegistrationViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'semester verificaton successfull'}, status=status.HTTP_201_CREATED)
+        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         serializer.save()
@@ -836,18 +877,6 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
             return Response(department_serializer.data)
 
         return Response({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
-
-
-class SemesterVerificationViewSet(viewsets.ModelViewSet):
-    queryset = VerifySemesterRegistration.objects.all()
-    serializer_class = SemesterVerificationSerializer
-    permission_classes = [IsAuthenticated, IsFacultyOrAdmin]
-    renderer_classes = [UserRenderer]
-    filter_backends = [SearchFilter]
-    search_fields = ['status', 'registration_details__student__user__registration_number']
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 
 class NotificationsViewSet(viewsets.ModelViewSet):

@@ -16,7 +16,7 @@ from django.utils.text import slugify
 from rest_framework.exceptions import ValidationError
 
 from .emails import send_login_credentials, send_HOD_login_credentials
-from .notifications import notify_roles, notify_same_college_users, notify_user
+from .notifications import notify_roles, notify_same_college_users, notify_user, notify_hod
 from django.db.utils import IntegrityError
 
 
@@ -374,7 +374,7 @@ class Semester(models.Model):
 
     def __str__(self):
         subjects_list = ", ".join([subject.subject_name for subject in self.subjects.all()])
-        return f" semester: {self.semester_name} -- subjects: {subjects_list}"
+        return f" semester: {self.semester_name} -- subjects: {subjects_list} -- {self.branch} == {self.college.college_name}"
 
     def get_subjects_list(self):
         return self.subjects.all()
@@ -387,7 +387,8 @@ class Semester_Registration(models.Model):
         ('rejected', 'Rejected'),
 
     ]
-    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="semester_registrations_college", null=True, blank=True)
+    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="semester_registrations_college",
+                                null=True, blank=True)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="semester_registrations")
     student = models.ForeignKey(UserProfile, on_delete=models.CASCADE,
                                 related_name="semester_registration_student")
@@ -400,7 +401,51 @@ class Semester_Registration(models.Model):
         super(Semester_Registration, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.semester} - {self.student}"
+        return f"{self.semester} - {self.student} -- {self.semester.branch} == {self.college.college_name}"
+
+
+@receiver(signal=post_save, sender=Semester_Registration)
+def create_semester_registration_notification(sender, instance, created, *args, **kwargs):
+    if created:
+        branch = instance.semester.branch
+        notify_hod(role='hod', branch=instance.branch,
+                   message=f"semester registration from {instance.student.user.registration_number} for {instance.semester.semester_name} is recieved")
+
+
+class VerifySemesterRegistration(models.Model):
+    STATUS_CHOICES = [
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='semester_verification', null=True,
+                                blank=True)
+    registration_details = models.ForeignKey(Semester_Registration, on_delete=models.CASCADE,
+                                             related_name='registration_details')
+    remarks = models.CharField(max_length=300, verbose_name="remarks", blank=True, null=True)
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
+
+    def save(self, *args, **kwargs):
+        previous_status = None
+        if self.pk:
+            try:
+                previous_status = VerifySemesterRegistration.objects.get(pk=self.pk).status
+            except ObjectDoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+        self.registration_details.status = self.status
+        self.registration_details.save()
+
+        if self.status == 'approved' and previous_status != 'approved':
+            user = self.registration_details.student.user
+            Notification.objects.create(user=user,
+                                        message=f"Your semester registration has been approved")
+        if self.status == 'rejected' and previous_status != 'rejected':
+            user = self.registration_details.student.user
+            Notification.objects.create(user=user, message=f"Your semester registration has been rejected")
+
+    def __str__(self):
+        return f'{self.registration_details} - {self.status}-- {self.college.college_name}'
 
 
 class Hostel_Allotment(models.Model):
@@ -709,40 +754,6 @@ def update_overall_request_status(sender, instance, **kwargs):
     elif instance.status == 'rejected':
         instance.request_id.status = 'rejected'
         instance.request_id.save()
-
-
-class VerifySemesterRegistration(models.Model):
-    STATUS_CHOICES = [
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-    ]
-    registration_details = models.ForeignKey(Semester_Registration, on_delete=models.CASCADE,
-                                             related_name='registration_details')
-    remarks = models.CharField(max_length=300, verbose_name="remarks", blank=True, null=True)
-    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status")
-
-    def save(self, *args, **kwargs):
-        previous_status = None
-        if self.pk:
-            try:
-                previous_status = VerifySemesterRegistration.objects.get(pk=self.pk).status
-            except ObjectDoesNotExist:
-                pass
-
-        super().save(*args, **kwargs)
-        self.registration_details.status = self.status
-        self.registration_details.save()
-
-        if self.status == 'approved' and previous_status != 'approved':
-            user = self.registration_details.student.user
-            Notification.objects.create(user=user,
-                                        message=f"Your semester registration has been approved")
-        if self.status == 'rejected' and previous_status != 'rejected':
-            user = self.registration_details.student.user
-            Notification.objects.create(user=user, message=f"Your semester registration has been rejected")
-
-    def __str__(self):
-        return f'{self.registration_details} - {self.status}'
 
 
 @receiver(post_save, sender=User)
