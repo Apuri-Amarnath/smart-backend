@@ -338,7 +338,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Semester
-        fields = ['id', 'semester_name', 'subjects', 'subject_codes', 'branch', 'college']
+        fields = ['id', 'semester_name', 'subjects', 'subject_codes', 'branch', 'college','branch_name']
 
     def validate(self, data):
         user = self.context['request'].user
@@ -368,6 +368,7 @@ class SemesterSerializer(serializers.ModelSerializer):
         subject_codes = validated_data.pop('subject_codes', None)
         instance.branch = validated_data.get('branch', instance.branch)
         instance.semester_name = validated_data.get('semester_name', instance.semester_name)
+        instance.branch_name = validated_data.get('branch_name',instance.branch_name)
         instance.save()
         if subject_codes is not None:
             subjects = Subject.objects.filter(subject_code__in=subject_codes)

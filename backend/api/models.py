@@ -362,6 +362,7 @@ class Subject(models.Model):
 class Semester(models.Model):
     college = models.ForeignKey(College, verbose_name="semester", on_delete=models.CASCADE)
     branch = models.CharField(verbose_name="branch", max_length=225, null=True, blank=True)
+    branch_name = models.CharField(verbose_name="branch_name", max_length=225, null=True, blank=True)
     semester_name = models.CharField(verbose_name="semester_name", max_length=225)
     subjects = models.ManyToManyField(Subject, verbose_name="subjects", related_name="semester_subjects")
 

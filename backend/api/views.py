@@ -471,13 +471,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def perform_update(self, serializer):
-        serializer.save()
-
-    def perform_create(self, serializer):
-        serializer.save()
-
     def update(self, request, *args, **kwargs):
+        print("Update method called")
         slug = kwargs.get('slug')
         college = get_object_or_404(College, slug=slug)
         data = request.data.copy()
@@ -488,9 +483,16 @@ class SemesterViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=data, partial=partial)
         if serializer.is_valid(raise_exception=True):
+            print("Serializer is valid")
             self.perform_update(serializer)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 class SemesterRegistrationViewset(viewsets.ModelViewSet):
@@ -870,7 +872,8 @@ class NotificationsViewSet(viewsets.ModelViewSet):
 class CollegeRequestViewSet(viewsets.ModelViewSet):
     queryset = CollegeRequest.objects.all()
     serializer_class = CollegeRequestSerializer
-    renderer_classes = [UserRenderer]
+
+    # renderer_classes = [UserRenderer]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -882,12 +885,12 @@ class CollegeRequestViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def list(self, request, *args, **kwargs):
-        self.permission_classes = [IsAuthenticated]
+        # self.permission_classes = [IsAuthenticated]
         self.check_permissions(request)
         return super().list(request, args, kwargs)
 
     def retrieve(self, request, *args, **kwargs):
-        self.permission_classes = [IsAuthenticated]
+        # self.permission_classes = [IsAuthenticated]
         self.check_permissions(request)
         return super().retrieve(request, args, kwargs)
 
