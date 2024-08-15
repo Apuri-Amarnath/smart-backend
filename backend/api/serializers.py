@@ -107,10 +107,17 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserManagementSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('role', 'college', 'password', 'registration_number', 'id')
+        fields = ('role', 'college', 'password', 'registration_number', 'id', 'branch')
         extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
     def validate(self, attrs):
+        instance = self.instance
+        new_role = attrs.get('role')
+        if new_role:
+            if new_role == 'hod':
+                branch = attrs.get('branch', instance.branch if instance else None)
+                if not branch:
+                    raise serializers.ValidationError({'branch': 'Branch is required when the role is HOD.'})
         if 'password' in attrs:
             if attrs['password']:
                 password2 = self.context['request'].data.get('password2')
@@ -331,6 +338,18 @@ class SubjectSerializer(serializers.ModelSerializer):
         model = Subject
         fields = '__all__'
 
+    def validate_subject_code(self, value):
+        """
+        Check if the subject code already exists in the database.
+        """
+        if self.instance:
+            if Subject.objects.exclude(pk=self.instance.pk).filter(subject_code=value).exists():
+                raise serializers.ValidationError("A subject with this code already exists.")
+        else:
+            if Subject.objects.filter(subject_code=value).exists():
+                raise serializers.ValidationError("A subject with this code already exists.")
+        return value
+
 
 class SemesterSerializer(serializers.ModelSerializer):
     subject_codes = serializers.ListField(child=serializers.CharField(), write_only=True)
@@ -338,22 +357,22 @@ class SemesterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Semester
-        fields = ['id', 'semester_name', 'subjects', 'subject_codes', 'branch', 'college','branch_name']
+        fields = ['id', 'semester_name', 'subjects', 'subject_codes', 'branch', 'college', 'branch_name']
 
     def validate(self, data):
         user = self.context['request'].user
-        match = re.match(r'HOD-(\w{3})', user.registration_number)
         college = data.get('college')
         subject_codes = data.get('subject_codes', [])
         if user.role == 'hod':
-            if not match:
-                raise serializers.ValidationError('Invalid registration number')
-            if match.group(1) != data.get('branch'):
+            if user.branch != data.get('branch'):
                 raise serializers.ValidationError("You can only add semesters and subjects to your own branch.")
-
         if subject_codes:
-            subjects = Subject.objects.filter(subject_code__in=subject_codes)
-            if subjects.exclude(college_id=college.id).exists():
+            subjects = Subject.objects.filter(subject_codes__in=subject_codes)
+            missing_subject_codes = set(subject_codes) - set(subjects.values_list('subject_code', flat=True))
+            if missing_subject_codes:
+                raise serializers.ValidationError(f"Subject codes not found: {', '.join(missing_subject_codes)}")
+            invalid_subjects = Subject.objects.filter(subject_code__in=subject_codes).exclude(college_id=college.id)
+            if invalid_subjects.exists():
                 raise serializers.ValidationError("Subjects must belong to the same college as the semester.")
         return data
 
@@ -368,7 +387,7 @@ class SemesterSerializer(serializers.ModelSerializer):
         subject_codes = validated_data.pop('subject_codes', None)
         instance.branch = validated_data.get('branch', instance.branch)
         instance.semester_name = validated_data.get('semester_name', instance.semester_name)
-        instance.branch_name = validated_data.get('branch_name',instance.branch_name)
+        instance.branch_name = validated_data.get('branch_name', instance.branch_name)
         instance.save()
         if subject_codes is not None:
             subjects = Subject.objects.filter(subject_code__in=subject_codes)
@@ -383,13 +402,27 @@ class SemesterRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Semester_Registration
-        fields = ['id', 'semester', 'student', 'student_details', 'applied_date', 'status']
+        fields = ['id', 'semester', 'student', 'student_details', 'applied_date', 'status', 'college']
         read_only_fields = ['id', 'student_details', 'semester']
+
+    def validate(self, attrs):
+        student = attrs.get('student')
+        semester_id = self.context['request'].data.get('semester')
+        college = attrs.get('college')
+        try:
+            semester = Semester.objects.get(id=semester_id, college=college)
+        except Semester.DoesNotExist:
+            raise serializers.ValidationError("Invalid semester or semester does not belong to the specified college.")
+        if Semester_Registration.objects.filter(student=student, semester=semester).exists():
+            raise serializers.ValidationError("Student is already registered for this semester.")
+
+        attrs['semester'] = semester
+        return attrs
 
     def create(self, validated_data):
         student = validated_data.pop('student')
-        semester = Semester.objects.get(id=self.context['request'].data['semester'])
-        registration = Semester_Registration.objects.create(student=student, semester=semester)
+        semester = validated_data.pop('semester')
+        registration = Semester_Registration.objects.create(student=student, semester=semester, **validated_data)
         return registration
 
 

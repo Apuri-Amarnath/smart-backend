@@ -450,7 +450,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
     filter_backends = [SearchFilter, OrderingFilter]
-    search_fields = ['semester_name', 'branch']
+    search_fields = ['semester_name', 'branch','branch_name']
     ordering_fields = '__all__'
     ordering = ['semester_name']
 
@@ -498,15 +498,27 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
 
 class SemesterRegistrationViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsStudentOrAdmin]
     filter_backends = [SearchFilter]
     search_fields = ['student__user__registration_number']
     renderer_classes = [UserRenderer]
     queryset = Semester_Registration.objects.all()
     serializer_class = SemesterRegistrationSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+        return queryset
+
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

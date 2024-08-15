@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added college_name to the token">
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0003_user_branch.py" afterDir="false" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="added branch to token">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -270,15 +271,8 @@
       <workItem from="1723661701617" duration="292000" />
       <workItem from="1723662254512" duration="249000" />
       <workItem from="1723709014515" duration="2640000" />
-      <workItem from="1723718414896" duration="641000" />
-    </task>
-    <task id="LOCAL-00181" summary="added some validators">
-      <option name="closed" value="true" />
-      <created>1722851323443</created>
-      <option name="number" value="00181" />
-      <option name="presentableId" value="LOCAL-00181" />
-      <option name="project" value="LOCAL" />
-      <updated>1722851323444</updated>
+      <workItem from="1723718414896" duration="1431000" />
+      <workItem from="1723736110915" duration="2775000" />
     </task>
     <task id="LOCAL-00182" summary="added some validators">
       <option name="closed" value="true" />
@@ -664,7 +658,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723710954658</updated>
     </task>
-    <option name="localTasksCounter" value="230" />
+    <task id="LOCAL-00230" summary="added branch to token">
+      <option name="closed" value="true" />
+      <created>1723719232380</created>
+      <option name="number" value="00230" />
+      <option name="presentableId" value="LOCAL-00230" />
+      <option name="project" value="LOCAL" />
+      <updated>1723719232381</updated>
+    </task>
+    <option name="localTasksCounter" value="231" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -726,7 +728,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="some changes" />
     <MESSAGE value="added changes" />
     <MESSAGE value="notifications done" />
     <MESSAGE value="mess fee update" />
@@ -751,7 +752,8 @@
     <MESSAGE value="added branch" />
     <MESSAGE value="user management" />
     <MESSAGE value="added college_name to the token" />
-    <option name="LAST_COMMIT_MESSAGE" value="added college_name to the token" />
+    <MESSAGE value="added branch to token" />
+    <option name="LAST_COMMIT_MESSAGE" value="added branch to token" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />
