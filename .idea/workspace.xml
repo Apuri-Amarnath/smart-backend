@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="semester Registrations">
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0005_verifysemesterregistration_college.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/notifications.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/notifications.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -276,15 +273,8 @@
       <workItem from="1723736110915" duration="5033000" />
       <workItem from="1723742183896" duration="932000" />
       <workItem from="1723743148509" duration="26000" />
-      <workItem from="1723743763830" duration="3695000" />
-    </task>
-    <task id="LOCAL-00186" summary="excluded ''&quot;">
-      <option name="closed" value="true" />
-      <created>1722877434078</created>
-      <option name="number" value="00186" />
-      <option name="presentableId" value="LOCAL-00186" />
-      <option name="project" value="LOCAL" />
-      <updated>1722877434078</updated>
+      <workItem from="1723743763830" duration="3824000" />
+      <workItem from="1723791903619" duration="1960000" />
     </task>
     <task id="LOCAL-00187" summary="excluded ''&quot;">
       <option name="closed" value="true" />
@@ -670,7 +660,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723743076905</updated>
     </task>
-    <option name="localTasksCounter" value="235" />
+    <task id="LOCAL-00235" summary="semester Registrations">
+      <option name="closed" value="true" />
+      <created>1723753705198</created>
+      <option name="number" value="00235" />
+      <option name="presentableId" value="LOCAL-00235" />
+      <option name="project" value="LOCAL" />
+      <updated>1723753705199</updated>
+    </task>
+    <option name="localTasksCounter" value="236" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

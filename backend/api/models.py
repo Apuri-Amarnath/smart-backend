@@ -401,14 +401,14 @@ class Semester_Registration(models.Model):
         super(Semester_Registration, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.semester} - {self.student} -- {self.semester.branch} == {self.college.college_name}"
+        return f"{self.semester} - {self.student} -- {self.semester.branch} --  {self.college.college_name}"
 
 
 @receiver(signal=post_save, sender=Semester_Registration)
 def create_semester_registration_notification(sender, instance, created, *args, **kwargs):
     if created:
         branch = instance.semester.branch
-        notify_hod(role='hod', branch=instance.branch,
+        notify_hod(role='hod', branch=branch,
                    message=f"semester registration from {instance.student.user.registration_number} for {instance.semester.semester_name} is recieved")
 
 
