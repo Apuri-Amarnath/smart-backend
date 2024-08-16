@@ -401,14 +401,14 @@ class Semester_Registration(models.Model):
         super(Semester_Registration, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.semester} - {self.student} -- {self.semester.branch} == {self.college.college_name}"
+        return f"{self.semester} - {self.student} -- {self.semester.branch} --  {self.college.college_name}"
 
 
 @receiver(signal=post_save, sender=Semester_Registration)
 def create_semester_registration_notification(sender, instance, created, *args, **kwargs):
     if created:
         branch = instance.semester.branch
-        notify_hod(role='hod', branch=instance.branch,
+        notify_hod(role='hod', branch=branch,
                    message=f"semester registration from {instance.student.user.registration_number} for {instance.semester.semester_name} is recieved")
 
 
@@ -451,11 +451,11 @@ class VerifySemesterRegistration(models.Model):
 class Hostel_Allotment(models.Model):
     STATUS_CHOICES = [
         ('not-applied', 'Not-applied'),
-        ('applied', 'Applied'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="hostel_allotment_registrations")
     cgpa = models.CharField(max_length=125, verbose_name="CGPA", null=True, blank=True)
@@ -466,15 +466,21 @@ class Hostel_Allotment(models.Model):
     def __str__(self):
         return f"{self.user.registration_number} - {self.status}"
 
+    def save(self, *args, **kwargs):
+        if self.status == 'not-applied':
+            self.status = 'pending'
+        super(Hostel_Allotment, self).save(*args, **kwargs)
+
     def update_status(self, new_status):
         self.status = new_status
-        self.save
+        self.save()
 
 
 @receiver(post_save, sender=Hostel_Allotment)
 def Hostel_Allotment_Notification(sender, instance, created, **kwargs):
     if created:
-        notify_roles(["admin", "caretaker"], f"New Allotment received from {instance.user.registration_number}")
+        notify_same_college_users(["caretaker"], f"New Allotment received from {instance.user.registration_number}",
+                                  college=instance.college)
 
 
 class Hostel_Room_Allotment(models.Model):

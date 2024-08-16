@@ -50,7 +50,7 @@ from rest_framework import viewsets, filters
 from .permissions import IsCaretakerOrAdmin, IsStudentOrAdmin, IsFacultyOrAdmin, IsDepartmentOrAdmin, IsOfficeOrAdmin, \
     IsOfficeOnlyOrAdmin, \
     IsAdmin, IsRegistrarOrAdmin, IsHODorAdmin
-from django.db.models import Case, When, IntegerField
+from django.db.models import Case, When, IntegerField, OuterRef
 import logging
 
 # Set up logging
@@ -515,7 +515,7 @@ class SemesterRegistrationViewset(viewsets.ModelViewSet):
             branch = self.request.user.branch
             queryset = queryset.filter(semester__branch=branch)
         if self.request.user.role == 'student':
-            queryset = queryset.filter(student__user__registration_number=self.request.user.registration_number)
+            queryset = queryset.filter(student__user=self.request.user)
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -523,13 +523,15 @@ class SemesterRegistrationViewset(viewsets.ModelViewSet):
         college = get_object_or_404(College, slug=slug)
         data = request.data.copy()
         data['college'] = college.id
-        serializer = self.get_serializer(data=data)
-        if request.user.role in ['hod', 'super-admin']:
+        if request.user.role not in ['student']:
             raise ValidationError({'error': 'Only students can register for semesters.'})
-        if serializer.is_valid(raise_exception=True):
+        serializer = self.get_serializer(data=data)
+        try:
+            serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         serializer.save()
@@ -570,12 +572,22 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
 
 
 class HostelAllotmentViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsStudentOrAdmin | IsCaretakerOrAdmin]
+    permission_classes = [ IsStudentOrAdmin | IsCaretakerOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['user__registration_number', 'status']
     queryset = Hostel_Allotment.objects.all()
     serializer_class = HostelAllotmentSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(user=self.request.user)
+        return queryset
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -586,10 +598,14 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'data':serializer.data,'message':'Hostell allotment request is successfull'}, status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
