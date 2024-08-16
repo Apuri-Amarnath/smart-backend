@@ -338,6 +338,7 @@ class SubjectSerializer(serializers.ModelSerializer):
         model = Subject
         fields = '__all__'
 
+
 class SemesterSerializer(serializers.ModelSerializer):
     subject_codes = serializers.ListField(child=serializers.CharField(), write_only=True)
     subjects = SubjectSerializer(many=True, read_only=True)
@@ -417,29 +418,30 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hostel_Allotment
-        fields = ['id', 'registration_number', 'latest_marksheet', 'status']
+        fields = ['id', 'registration_number', 'latest_marksheet', 'status', 'college']
         read_only_fields = ['user']
 
     def validate(self, attrs):
         registration_number = attrs.get('registration_number')
+        college = attrs.get('college')
         if Hostel_Allotment.objects.filter(
-                user__registration_number=registration_number).exists():
+                user__registration_number=registration_number, user__college=college).exists():
             raise serializers.ValidationError(
                 "Only 1 Request is allowed your request already Exists, Wait for approval")
         return attrs
 
     def create(self, validated_data):
         registration_number = validated_data.pop('registration_number')
+        college = validated_data.pop('college')
         latest_marksheet = validated_data.pop('latest_marksheet', None)
         try:
-            user = User.objects.get(registration_number=registration_number)
+            user = User.objects.get(registration_number=registration_number, college=college)
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exist")
-        status = validated_data.pop('status')
 
         hostel_allotment = Hostel_Allotment.objects.create(
             user=user,
-            status=status
+            college=college
         )
         if latest_marksheet:
             hostel_allotment.latest_marksheet = latest_marksheet.read()
@@ -450,10 +452,11 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         registration_number = validated_data.pop('registration_number', None)
         latest_marksheet = validated_data.pop('latest_marksheet', None)
+        college =validated_data.pop('college', None)
 
         if registration_number:
             try:
-                user = User.objects.get(registration_number=registration_number)
+                user = User.objects.get(registration_number=registration_number,college=college)
                 instance.user = user
             except User.DoesNotExist:
                 raise serializers.ValidationError("User does not exist")
@@ -719,7 +722,7 @@ class SemesterVerificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VerifySemesterRegistration
-        fields = ['id', 'registration_details', 'registration_details_info', 'remarks', 'status','college']
+        fields = ['id', 'registration_details', 'registration_details_info', 'remarks', 'status', 'college']
 
     def create(self, validated_data):
         instance = VerifySemesterRegistration.objects.create(**validated_data)

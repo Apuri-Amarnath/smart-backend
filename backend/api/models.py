@@ -451,11 +451,11 @@ class VerifySemesterRegistration(models.Model):
 class Hostel_Allotment(models.Model):
     STATUS_CHOICES = [
         ('not-applied', 'Not-applied'),
-        ('applied', 'Applied'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="hostel_allotment_registrations")
     cgpa = models.CharField(max_length=125, verbose_name="CGPA", null=True, blank=True)
@@ -466,15 +466,21 @@ class Hostel_Allotment(models.Model):
     def __str__(self):
         return f"{self.user.registration_number} - {self.status}"
 
+    def save(self, *args, **kwargs):
+        if self.status == 'not-applied':
+            self.status = 'pending'
+        super(Hostel_Allotment, self).save(*args, **kwargs)
+
     def update_status(self, new_status):
         self.status = new_status
-        self.save
+        self.save()
 
 
 @receiver(post_save, sender=Hostel_Allotment)
 def Hostel_Allotment_Notification(sender, instance, created, **kwargs):
     if created:
-        notify_roles(["admin", "caretaker"], f"New Allotment received from {instance.user.registration_number}")
+        notify_same_college_users(["caretaker"], f"New Allotment received from {instance.user.registration_number}",
+                                  college=instance.college)
 
 
 class Hostel_Room_Allotment(models.Model):
