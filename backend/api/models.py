@@ -506,17 +506,20 @@ class Hostel_Allotment(models.Model):
 @receiver(post_save, sender=Hostel_Allotment)
 def Hostel_Allotment_Notification(sender, instance, created, **kwargs):
     if created:
-        notify_same_college_users(["caretaker"], f"New Allotment received from {instance.user.registration_number}",
+        notify_same_college_users(["caretaker"],
+                                  f"New Allotment request received from {instance.user.registration_number}",
                                   college=instance.college)
 
 
 class Hostel_Room_Allotment(models.Model):
-    registration_details = models.OneToOneField(Hostel_Allotment, on_delete=models.CASCADE,
-                                                related_name="hostel_room_allotment")
-    hostel_room = models.CharField(max_length=225, null=True, blank=True, verbose_name="hostel_room", unique=True)
+    allotment_details = models.ManyToManyField(Hostel_Allotment, related_name="hostel_room_allotment")
+    hostel_room = models.ForeignKey(HostelRooms, on_delete=models.CASCADE)
+
+    def get_registration_numbers(self):
+        return ", ".join([allotment.user.registration_number for allotment in self.allotment_details.all()])
 
     def __str__(self):
-        return f" room no : {self.hostel_room} -- registration No : {self.registration_details.user.registration_number}"
+        return f" room no : {self.hostel_room.room_no} -- registration No : {self.get_registration_numbers()} --"
 
 
 class Fees_model(models.Model):

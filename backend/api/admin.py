@@ -12,7 +12,7 @@ from .models import Semester, Subject, User, UserProfile, PersonalInformation, C
     College, Bonafide, Semester_Registration, Hostel_Allotment, Hostel_Room_Allotment, Hostel_No_Due_request, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
     Departments_for_no_Dues, Notification, TransferCertificateInformation, VerifySemesterRegistration, \
-    Cloned_Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch
+    Cloned_Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch, HostelRooms
 
 
 class UserCreationForm(forms.ModelForm):
@@ -168,3 +168,4 @@ admin.site.register(Cloned_Departments_for_no_Dues)
 admin.site.register(CollegeRequest)
 admin.site.register(Branch)
 admin.site.register(College_with_Ids)
+admin.site.register(HostelRooms)

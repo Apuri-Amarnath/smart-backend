@@ -614,29 +614,25 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
 
 
 class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin | IsStudentOrAdmin]
+    permission_classes = [IsCaretakerOrAdmin | IsStudentOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['registration_details__user__registration_number']
+    search_fields = ['allotment_details__user__registration_number']
     queryset = Hostel_Room_Allotment.objects.all()
     serializer_class = HostelRoomAllotmentSerializer
 
     def create(self, request, *args, **kwargs):
-        if not (request.user.role == 'admin' or request.user.role == 'caretaker'):
-            return Response(
-                {"detail": "You do not have permission to perform this action."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        serializer = self.get_serializer(data=request.data)
+        if not request.user.role in ['admin', 'caretaker']:
+            return ValidationError('only admin and caretaker can allotment rooms')
+        data = request.data.copy()
+        if isinstance(data.get('allotment_details'), int):
+            data['allotment_details'] = [data['allotment_details']]
+        print(data)
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            hostel_room_allotment = serializer.save()
+            self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context['request'] = self.request
-        return context
 
 
 class MessFeeCreateSet(APIView):
