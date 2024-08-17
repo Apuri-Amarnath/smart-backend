@@ -484,7 +484,7 @@ class HostelAllotmentRequestSerializer(serializers.ModelSerializer):
 class HostelRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = HostelRooms
-        fields = '__all__'
+        fields = ['id','room_no','current_occupancy','capacity','room_type','status','college']
 
     def validate(self, attrs):
         sharing = {'single': 1, 'double': 2, 'triple': 3}
