@@ -1090,8 +1090,8 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
 class HostelRoomRegistrationView(viewsets.ModelViewSet):
     queryset = HostelRooms.objects.all()
     serializer_class = HostelRoomSerializer
-    #permission_classes = [IsCaretakerOrAdmin]
-    #renderer_classes = [UserRenderer]
+    permission_classes = [IsCaretakerOrAdmin]
+    renderer_classes = [UserRenderer]
 
     def get_queryset(self):
         queryset = super().get_queryset()
