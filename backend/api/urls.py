@@ -8,7 +8,7 @@ from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLog
     UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
     GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset, NoDuesListViewSet, \
     SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView, \
-    CollegeRequestVerificationView, CollegeIDCountView, BranchViewSet ,UserManagmentViewSet
+    CollegeRequestVerificationView, CollegeIDCountView, BranchViewSet ,UserManagmentViewSet,HostelRoomRegistrationView
 
 router = DefaultRouter()
 router.register(r'colleges', CollegeViewSet, basename='college-details')
@@ -27,6 +27,7 @@ router.register(r'mess-fees-payment', MessFeePaymentCreateViewset, basename='mes
 router.register(r'verify-semester-registration', SemesterVerificationViewSet, basename='verify_semester')
 router.register(r'branch', BranchViewSet, basename='branch')
 router.register(r'user-management',UserManagmentViewSet, basename='user_management')
+router.register(r'hostel-room-registrations',HostelRoomRegistrationView, basename='hostel_room_registrations')
 urlpatterns = [
     ## basic urls
     path('register/', UserRegistrationView.as_view(), name='register'),

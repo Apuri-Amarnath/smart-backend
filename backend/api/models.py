@@ -316,7 +316,7 @@ def Bonafide_approved_Notification(sender, instance, created, **kwargs):
 
 class Branch(models.Model):
     branch_name = models.CharField(max_length=225, null=True, blank=True)
-    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
+    college = models.ForeignKey(College, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.branch_name} --  {self.college.college_name}"
@@ -387,8 +387,7 @@ class Semester_Registration(models.Model):
         ('rejected', 'Rejected'),
 
     ]
-    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="semester_registrations_college",
-                                null=True, blank=True)
+    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name="semester_registrations_college")
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="semester_registrations")
     student = models.ForeignKey(UserProfile, on_delete=models.CASCADE,
                                 related_name="semester_registration_student")
@@ -417,8 +416,7 @@ class VerifySemesterRegistration(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
-    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='semester_verification', null=True,
-                                blank=True)
+    college = models.ForeignKey(College, on_delete=models.CASCADE, related_name='semester_verification')
     registration_details = models.ForeignKey(Semester_Registration, on_delete=models.CASCADE,
                                              related_name='registration_details')
     remarks = models.CharField(max_length=300, verbose_name="remarks", blank=True, null=True)
@@ -448,7 +446,35 @@ class VerifySemesterRegistration(models.Model):
         return f'{self.registration_details} - {self.status}-- {self.college.college_name}'
 
 
+class HostelRooms(models.Model):
+    STATUS_CHOICES = [
+        ('not-available', 'Not available'),
+        ('available', 'Available'),
+        ('occupied', 'Occupied')
+    ]
+    ROOM_CHOICES = [
+        ('single', 'Single'),
+        ('double', 'Double'),
+        ('triple', 'Triple'),
+    ]
+    college = models.ForeignKey(College, on_delete=models.CASCADE, verbose_name="hostel_rooms")
+    room_no = models.IntegerField(verbose_name="room no", blank=True, null=True)
+    current_occupancy = models.IntegerField(verbose_name="current occupancy", default=0, blank=True, null=True)
+    capacity = models.IntegerField(verbose_name="capacity", blank=True, null=True)
+    room_type = models.CharField(verbose_name="room type", max_length=20, choices=ROOM_CHOICES, blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="room status",
+                              default='not-available', blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.room_no} - {self.status}-- {self.college.college_name} --  {self.room_type}'
+
+
 class Hostel_Allotment(models.Model):
+    ROOM_CHOICES = [
+        ('single', 'Single'),
+        ('double', 'Double'),
+        ('triple', 'Triple'),
+    ]
     STATUS_CHOICES = [
         ('not-applied', 'Not-applied'),
         ('pending', 'Pending'),
@@ -459,7 +485,8 @@ class Hostel_Allotment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="hostel_allotment_registrations")
     cgpa = models.CharField(max_length=125, verbose_name="CGPA", null=True, blank=True)
-
+    prefered_room_type = models.CharField(choices=STATUS_CHOICES, max_length=125, verbose_name="Prefered Room",
+                                          null=True, blank=True)
     latest_marksheet = models.BinaryField(verbose_name="marksheet", null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="not-applied")
 
