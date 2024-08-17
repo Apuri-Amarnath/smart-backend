@@ -1,6 +1,7 @@
 import os.path
 import smtplib
 from email.mime.text import MIMEText
+from venv import logger
 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -56,7 +57,7 @@ from django.db.models import Case, When, IntegerField, OuterRef
 import logging
 
 # Set up logging
-logger = logging.getLogger(__name__)
+looger = logging.getLogger(__name__)
 
 
 @csrf_exempt
@@ -1091,8 +1092,9 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
 class HostelRoomRegistrationView(viewsets.ModelViewSet):
     queryset = HostelRooms.objects.all()
     serializer_class = HostelRoomSerializer
-    permission_classes = [IsCaretakerOrAdmin]
-    renderer_classes = [UserRenderer]
+
+    # permission_classes = [IsCaretakerOrAdmin]
+    # renderer_classes = [UserRenderer]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -1102,16 +1104,16 @@ class HostelRoomRegistrationView(viewsets.ModelViewSet):
             queryset = queryset.filter(college_id=college.id)
         return queryset
 
-    def post(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
+        logger.debug("POST method started")
         slug = kwargs.get('slug')
         if 'file' in request.data:
             file_serializer = Csv_RegistrationSerializer(data=request.data)
             if file_serializer.is_valid(raise_exception=True):
                 csv_file = file_serializer.validated_data['file']
                 file_path = self.save_uploaded_file(csv_file)
-                response = self.handle_csv_room_creatio(file_path, slug)
-                return Response
-
+                response = self.handle_csv_room_creation(file_path, slug)
+                return response
         if not slug:
             return Response({'error': 'Not a valid slug'}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -1124,6 +1126,8 @@ class HostelRoomRegistrationView(viewsets.ModelViewSet):
                     if serializer.is_valid(raise_exception=True):
                         serializer.save()
                         return Response({'message': 'Rooms created successfully'}, status=status.HTTP_201_CREATED)
+                    else:
+                        return Response({'errors': serializer.errors}, status.HTTP_400_BAD_REQUEST)
             except College.DoesNotExist:
                 return Response({'error': 'College not found'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1152,9 +1156,9 @@ class HostelRoomRegistrationView(viewsets.ModelViewSet):
         with open(csv_file_path, newline='') as csv_file:
             reader = csv.DictReader(csv_file)
             for row in reader:
-                row['college'] = int(college.id)
+                row['college'] = college.id
                 serializer = HostelRoomSerializer(data=row)
-                if serializer.is_valid():
+                if serializer.is_valid(raise_exception=True):
                     try:
                         serializer.save()
                         rooms_created.append(serializer.data['room_no'])
