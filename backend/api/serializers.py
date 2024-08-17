@@ -457,7 +457,7 @@ class HostelAllotmentRequestSerializer(serializers.ModelSerializer):
         registration_number = validated_data.pop('registration_number', None)
         latest_marksheet = validated_data.pop('latest_marksheet', None)
         college = validated_data.pop('college', None)
-        prefered_room_type = validated_data.pop('prefered_room_type',None)
+        prefered_room_type = validated_data.pop('prefered_room_type', None)
         cgpa = validated_data.pop('cgpa', None)
         if registration_number:
             try:
@@ -484,7 +484,7 @@ class HostelAllotmentRequestSerializer(serializers.ModelSerializer):
 class HostelRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = HostelRooms
-        fields = ['id','room_no','current_occupancy','capacity','room_type','status','college']
+        fields = ['id', 'room_no', 'current_occupancy', 'capacity', 'room_type', 'status', 'college']
 
     def validate(self, attrs):
         sharing = {'single': 1, 'double': 2, 'triple': 3}
@@ -510,46 +510,89 @@ class HostelRoomSerializer(serializers.ModelSerializer):
         return instance
 
 
+class MultiplePrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def to_internal_value(self, data):
+        if isinstance(data, int):
+            data = [data]
+        if not isinstance(data, list):
+            raise serializers.ValidationError("Incorrect type. Expected a list of pk values.")
+        return super().to_internal_value(data)
+
+    def to_representation(self, value):
+        return [obj.pk for obj in value]
+
+
 class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
-    registration_number = serializers.CharField(write_only=True)
-    registration_details = serializers.SerializerMethodField()
+    allotment_details = serializers.PrimaryKeyRelatedField(
+        queryset=Hostel_Allotment.objects.all(), many=True,
+    )
+    hostel_room = serializers.PrimaryKeyRelatedField(
+        queryset=HostelRooms.objects.all(),
+    )
 
     class Meta:
         model = Hostel_Room_Allotment
-        fields = ['registration_number', 'hostel_room', 'id', 'registration_details']
-        read_only_fields = ['id']
+        fields = ['id', 'allotment_details', 'hostel_room']
 
-    def get_registration_details(self, obj):
-        return {
-            'id': obj.registration_details.id,
-            'registration_number': obj.registration_details.user.registration_number
-        }
+    def validate(self, data):
+        allotment_details = data['allotment_details']
+        hostel_room = data['hostel_room']
+
+        if not HostelRooms.objects.filter(id=hostel_room.id).exists():
+            raise serializers.ValidationError({'hostel_room': 'Hostel room does not exist'})
+
+        for allotment in allotment_details:
+            if not Hostel_Room_Allotment.objects.filter(id=allotment.id).exists():
+                raise serializers.ValidationError({'allotment_details': 'Invalid allotment details'})
+            if Hostel_Room_Allotment.objects.filter(allotment_details=allotment.id).exists():
+                raise serializers.ValidationError({'allotment_details': 'Allotment is already existing '})
+
+        if hostel_room.current_occupancy + len(allotment_details) > hostel_room.capacity:
+            raise serializers.ValidationError({'hostel_room': 'Hostel room does not have enough capacity'})
+
+        return data
 
     def create(self, validated_data):
-        registration_number = validated_data.pop('registration_number')
+        allotment_details_ids = validated_data.pop('allotment_details')
         hostel_room = validated_data.pop('hostel_room')
-
-        try:
-            hostel_allotment = Hostel_Allotment.objects.get(user__registration_number=registration_number)
-        except Hostel_Allotment.DoesNotExist:
-            raise serializers.ValidationError("Hostel allotment not found for the given registration number")
-        if Hostel_Room_Allotment.objects.filter(registration_details=hostel_allotment).exists():
-            raise serializers.ValidationError("A room has already been allotted to this registration number.")
-        if Hostel_Room_Allotment.objects.filter(hostel_room=hostel_room).exists():
-            raise serializers.ValidationError("A hostel room with the given number is already allotted.")
-
-        hostel_room_allotment = Hostel_Room_Allotment.objects.create(
-            registration_details=hostel_allotment,
-            hostel_room=hostel_room
-        )
+        hostel_room_allotment = Hostel_Room_Allotment.objects.create(hostel_room=hostel_room, **validated_data)
+        for allotment in allotment_details_ids:
+            hostel_room_allotment.allotment_details.add(allotment)
+            allotment.status = 'approved'
+            allotment.save()
+        hostel_room.current_occupancy += len(allotment_details_ids)
+        if hostel_room.current_occupancy >= hostel_room.capacity:
+            hostel_room.status = 'occupied'
+        else:
+            hostel_room.status = 'available'
+        hostel_room.save()
 
         return hostel_room_allotment
 
+    def update(self, instance, validated_data):
+        allotment_details = validated_data.pop('allotment_details', None)
+        hostel_room = validated_data.pop('hostel_room', None)
+
+        instance.hostel_room = hostel_room
+        instance.save()
+        if allotment_details:
+            instance.allotment_details.clear()
+            for allotment in allotment_details:
+                instance.allotment_details.add(allotment)
+                allotment.status = 'approved'
+                allotment.save()
+        hostel_room.current_occupancy = instance.allotment_details.count()
+        if hostel_room.current_occupancy >= hostel_room.capacity:
+            hostel_room.status = 'occupied'
+        else:
+            hostel_room.status = 'available'
+        hostel_room.save()
+        return instance
     def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        registration_details = self.get_registration_details(instance)
-        representation['registration_details'] = registration_details
-        return representation
+        data = super().to_representation(instance)
+        data['allotment_details'] = HostelAllotmentRequestSerializer(instance.allotment_details.all(), many=True).data
+        data['hostel_room'] = HostelRoomSerializer(instance.hostel_room).data
+        return data
 
 
 class HostelNoDuesSerializer(serializers.ModelSerializer):
@@ -719,7 +762,6 @@ class No_Due_ListSerializer(serializers.ModelSerializer):
             instance.cloned_departments.all().delete()
             for department_data in cloned_departments_data:
                 Cloned_Departments_for_no_Dues.objects.create(no_dues_list=instance, **department_data)
-
         return instance
 
 
