@@ -15,7 +15,7 @@ from .models import User, UserProfile, PersonalInformation, AcademicInformation,
     Subject, Semester, Semester_Registration, Hostel_Allotment, Hostel_No_Due_request, Hostel_Room_Allotment, \
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
     Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification, \
-    Cloned_Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch
+    Cloned_Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch, HostelRooms
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -418,7 +418,7 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hostel_Allotment
-        fields = ['id', 'registration_number', 'latest_marksheet', 'status', 'college']
+        fields = ['id', 'registration_number', 'latest_marksheet', 'status', 'college', 'prefered_room_type', 'cgpa']
         read_only_fields = ['user']
 
     def validate(self, attrs):
@@ -433,6 +433,8 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         registration_number = validated_data.pop('registration_number')
         college = validated_data.pop('college')
+        cgpa = validated_data.pop('cgpa')
+        prefered_room_type = validated_data.pop('prefered_room_type')
         latest_marksheet = validated_data.pop('latest_marksheet', None)
         try:
             user = User.objects.get(registration_number=registration_number, college=college)
@@ -441,7 +443,9 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
 
         hostel_allotment = Hostel_Allotment.objects.create(
             user=user,
-            college=college
+            college=college,
+            cgpa=cgpa,
+            prefered_room_type=prefered_room_type
         )
         if latest_marksheet:
             hostel_allotment.latest_marksheet = latest_marksheet.read()
@@ -452,17 +456,19 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         registration_number = validated_data.pop('registration_number', None)
         latest_marksheet = validated_data.pop('latest_marksheet', None)
-        college =validated_data.pop('college', None)
-
+        college = validated_data.pop('college', None)
+        prefered_room_type = validated_data.pop('prefered_room_type')
+        cgpa = validated_data.pop('cgpa', None)
         if registration_number:
             try:
-                user = User.objects.get(registration_number=registration_number,college=college)
+                user = User.objects.get(registration_number=registration_number, college=college)
                 instance.user = user
             except User.DoesNotExist:
                 raise serializers.ValidationError("User does not exist")
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        if prefered_room_type:
+            instance.prefered_room_type = prefered_room_type
+        if cgpa:
+            instance.cgpa = cgpa
 
         if latest_marksheet:
             instance.latest_marksheet = latest_marksheet.read()
@@ -473,6 +479,35 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['registration_number'] = instance.user.registration_number
         return representation
+
+
+class HostelRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HostelRooms
+        fields = '__all__'
+
+    def validate(self, attrs):
+        sharing = {'single': 1, 'double': 2, 'triple': 3}
+        room_no = attrs.get('room_no')
+        college = attrs.get('college')
+        sharing_type = attrs.get('room_type')
+        capacity = attrs.get('capacity')
+        if HostelRooms.objects.filter(room_no=room_no, college=college).exists():
+            raise serializers.ValidationError(f"Room already exists with {room_no}")
+        expected_capacity = sharing.get(sharing_type)
+        if expected_capacity is not None and capacity != expected_capacity:
+            raise serializers.ValidationError(
+                f"Capacity for {sharing_type} room type should be {expected_capacity} but got {capacity}")
+        return attrs
+
+    def update(self, instance, validated_data):
+        instance.college = validated_data.get('college', instance.college)
+        instance.room_no = validated_data.get('room_no', instance.room_no)
+        instance.capacity = validated_data.get('capacity', instance.capacity)
+        instance.room_type = validated_data.get('room_type', instance.room_type)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        return instance
 
 
 class HostelRoomAllotmentSerializer(serializers.ModelSerializer):

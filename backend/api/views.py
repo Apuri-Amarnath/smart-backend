@@ -21,7 +21,8 @@ from .emails import send_login_credentials
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
     Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request, No_Dues_list, \
-    VerifySemesterRegistration, Notification, Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch
+    VerifySemesterRegistration, Notification, Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch, \
+    HostelRooms
 from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
@@ -31,7 +32,7 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
     NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer, \
     CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer, Bonafide_Approve_Serializer, \
-    CollgeIdCountSerializer, BranchSerializer, UserManagementSerializer
+    CollgeIdCountSerializer, BranchSerializer, UserManagementSerializer, HostelRoomSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -572,7 +573,7 @@ class SemesterVerificationViewSet(viewsets.ModelViewSet):
 
 
 class HostelAllotmentViewset(viewsets.ModelViewSet):
-    permission_classes = [ IsStudentOrAdmin | IsCaretakerOrAdmin]
+    permission_classes = [IsStudentOrAdmin | IsCaretakerOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['user__registration_number', 'status']
@@ -605,7 +606,8 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
-            return Response({'data':serializer.data,'message':'Hostell allotment request is successfull'}, status=status.HTTP_201_CREATED)
+            return Response({'data': serializer.data, 'message': 'Hostell allotment request is successfull'},
+                            status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -1083,3 +1085,84 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
             college_with_ids.id_count -= 1
             college_with_ids.save()
         return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class HostelRoomRegistrationView(APIView):
+    permission_classes = [IsCaretakerOrAdmin]
+    renderer_classes = [UserRenderer]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+        return queryset
+
+    def post(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        if 'file' in request.data:
+            file_serializer = Csv_RegistrationSerializer(data=request.data)
+            if file_serializer.is_valid(raise_exception=True):
+                csv_file = file_serializer.validated_data['file']
+                file_path = self.save_uploaded_file(csv_file)
+                response = self.handle_csv_room_creatio(file_path, slug)
+                return Response
+
+        if not slug:
+            return Response({'error': 'Not a valid slug'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                with transaction.atomic():
+                    college = College.objects.get(slug=slug)
+                    room_data = request.data.copy()
+                    room_data['college'] = college.id
+                    serializer = HostelRoomSerializer(data=room_data)
+                    if serializer.is_valid(raise_exception=True):
+                        serializer.save()
+                        return Response({'message': 'Rooms created successfully'}, status=status.HTTP_201_CREATED)
+            except College.DoesNotExist:
+                return Response({'error': 'College not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def save_uploaded_file(self, csv_file):
+        upload_dir = settings.CSV_UPLOADS_DIR
+        if not os.path.exists(upload_dir):
+            os.makedirs(upload_dir)
+
+        file_path = os.path.join(upload_dir, csv_file.name)
+        with default_storage.open(file_path, 'wb') as destination:
+            for chunk in csv_file.chunks():
+                destination.write(chunk)
+            return file_path
+
+    def handle_csv_room_creation(self, csv_file_path, slug):
+        if not os.path.exists(csv_file_path):
+            return Response({'errors': 'csv file not found'}, status=status.HTTP_400_BAD_REQUEST)
+        rooms_created = []
+        rooms_existing = []
+        errors = []
+        try:
+            college = College.objects.get(slug=slug)
+        except College.DoesNotExist:
+            return Response({'error': 'College not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+        with open(csv_file_path, newline='') as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                row['college'] = int(college.id)
+                serializer = HostelRoomSerializer(data=row)
+                if serializer.is_valid():
+                    try:
+                        serializer.save()
+                        rooms_created.append(serializer.data['room_no'])
+                    except IntegrityError:
+                        rooms_existing.append(serializer.data['room_no'])
+                else:
+                    errors.append({'room_no': row.get('room_no'), 'errors': serializer.errors['room_no']})
+        response_data = {
+            'message': 'Room creation proccss completed',
+            'rooms_created': rooms_created,
+            'rooms_existing': rooms_existing,
+            'errors': errors,
+        }
+        return Response(response_data, status=status.HTTP_200_OK if not errors else status.HTTP_400_BAD_REQUEST)
