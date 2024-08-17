@@ -459,10 +459,12 @@ class HostelRooms(models.Model):
     ]
     college = models.ForeignKey(College, on_delete=models.CASCADE, verbose_name="hostel_rooms")
     room_no = models.IntegerField(verbose_name="room no", blank=True, null=True)
+    current_occupancy = models.IntegerField(verbose_name="current occupancy", default=0, blank=True, null=True)
     capacity = models.IntegerField(verbose_name="capacity", blank=True, null=True)
     room_type = models.CharField(verbose_name="room type", max_length=20, choices=ROOM_CHOICES, blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="room status",
                               default='not-available', blank=True, null=True)
+
     def __str__(self):
         return f'{self.room_no} - {self.status}-- {self.college.college_name} --  {self.room_type}'
 
