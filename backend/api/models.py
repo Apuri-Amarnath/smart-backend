@@ -485,7 +485,7 @@ class Hostel_Allotment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="hostel_allotment_registrations")
     cgpa = models.CharField(max_length=125, verbose_name="CGPA", null=True, blank=True)
-    prefered_room_type = models.CharField(choices=STATUS_CHOICES, max_length=125, verbose_name="Prefered Room",
+    prefered_room_type = models.CharField(choices=ROOM_CHOICES, max_length=125, verbose_name="Prefered Room",
                                           null=True, blank=True)
     latest_marksheet = models.BinaryField(verbose_name="marksheet", null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES, max_length=225, null=True, blank=True, default="not-applied")
