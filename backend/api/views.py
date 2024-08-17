@@ -1087,9 +1087,11 @@ class UserManagmentViewSet(viewsets.ModelViewSet):
         return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
-class HostelRoomRegistrationView(APIView):
-    permission_classes = [IsCaretakerOrAdmin]
-    renderer_classes = [UserRenderer]
+class HostelRoomRegistrationView(viewsets.ModelViewSet):
+    queryset = HostelRooms.objects.all()
+    serializer_class = HostelRoomSerializer
+    #permission_classes = [IsCaretakerOrAdmin]
+    #renderer_classes = [UserRenderer]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -1117,7 +1119,7 @@ class HostelRoomRegistrationView(APIView):
                     college = College.objects.get(slug=slug)
                     room_data = request.data.copy()
                     room_data['college'] = college.id
-                    serializer = HostelRoomSerializer(data=room_data)
+                    serializer = self.get_serializer(data=room_data)
                     if serializer.is_valid(raise_exception=True):
                         serializer.save()
                         return Response({'message': 'Rooms created successfully'}, status=status.HTTP_201_CREATED)
