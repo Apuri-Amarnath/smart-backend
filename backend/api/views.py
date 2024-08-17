@@ -27,12 +27,13 @@ from .renderers import UserRenderer
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer, CollegeSerializer, \
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
     ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer, \
-    SemesterRegistrationSerializer, HostelAllotmentSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
+    SemesterRegistrationSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
     HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
     NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer, \
     CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer, Bonafide_Approve_Serializer, \
-    CollgeIdCountSerializer, BranchSerializer, UserManagementSerializer, HostelRoomSerializer
+    CollgeIdCountSerializer, BranchSerializer, UserManagementSerializer, HostelRoomSerializer, \
+    HostelAllotmentRequestSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -578,7 +579,7 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['user__registration_number', 'status']
     queryset = Hostel_Allotment.objects.all()
-    serializer_class = HostelAllotmentSerializer
+    serializer_class = HostelAllotmentRequestSerializer
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -606,7 +607,7 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
-            return Response({'data': serializer.data, 'message': 'Hostell allotment request is successfull'},
+            return Response({'data': serializer.data, 'message': 'Hostel allotment request is successfull'},
                             status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 

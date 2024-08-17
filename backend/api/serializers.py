@@ -412,7 +412,7 @@ class SemesterRegistrationSerializer(serializers.ModelSerializer):
         return registration
 
 
-class HostelAllotmentSerializer(serializers.ModelSerializer):
+class HostelAllotmentRequestSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(write_only=True)
     latest_marksheet = Base64ImageField(required=False)
 
@@ -457,7 +457,7 @@ class HostelAllotmentSerializer(serializers.ModelSerializer):
         registration_number = validated_data.pop('registration_number', None)
         latest_marksheet = validated_data.pop('latest_marksheet', None)
         college = validated_data.pop('college', None)
-        prefered_room_type = validated_data.pop('prefered_room_type')
+        prefered_room_type = validated_data.pop('prefered_room_type',None)
         cgpa = validated_data.pop('cgpa', None)
         if registration_number:
             try:

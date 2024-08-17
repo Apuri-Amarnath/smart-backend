@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="updated hostel registrations">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/17db8717-027a-40c2-806d-e134de555165.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/17db8717-027a-40c2-806d-e134de555165.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/management/commands/create_initial_groups.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/management/commands/create_initial_groups.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -279,23 +277,7 @@
       <workItem from="1723743763830" duration="3824000" />
       <workItem from="1723791903619" duration="5488000" />
       <workItem from="1723841962346" duration="468000" />
-      <workItem from="1723904443211" duration="5460000" />
-    </task>
-    <task id="LOCAL-00190" summary="fixed profile picture">
-      <option name="closed" value="true" />
-      <created>1722969507000</created>
-      <option name="number" value="00190" />
-      <option name="presentableId" value="LOCAL-00190" />
-      <option name="project" value="LOCAL" />
-      <updated>1722969507001</updated>
-    </task>
-    <task id="LOCAL-00191" summary="fixed approve">
-      <option name="closed" value="true" />
-      <created>1723018279774</created>
-      <option name="number" value="00191" />
-      <option name="presentableId" value="LOCAL-00191" />
-      <option name="project" value="LOCAL" />
-      <updated>1723018279774</updated>
+      <workItem from="1723904443211" duration="6309000" />
     </task>
     <task id="LOCAL-00192" summary="fixed approve">
       <option name="closed" value="true" />
@@ -673,7 +655,23 @@
       <option name="project" value="LOCAL" />
       <updated>1723907846234</updated>
     </task>
-    <option name="localTasksCounter" value="239" />
+    <task id="LOCAL-00239" summary="updated hostel registrations">
+      <option name="closed" value="true" />
+      <created>1723910119837</created>
+      <option name="number" value="00239" />
+      <option name="presentableId" value="LOCAL-00239" />
+      <option name="project" value="LOCAL" />
+      <updated>1723910119837</updated>
+    </task>
+    <task id="LOCAL-00240" summary="updated hostel registrations">
+      <option name="closed" value="true" />
+      <created>1723910214216</created>
+      <option name="number" value="00240" />
+      <option name="presentableId" value="LOCAL-00240" />
+      <option name="project" value="LOCAL" />
+      <updated>1723910214216</updated>
+    </task>
+    <option name="localTasksCounter" value="241" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
