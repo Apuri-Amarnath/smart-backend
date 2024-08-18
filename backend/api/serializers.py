@@ -532,7 +532,7 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hostel_Room_Allotment
-        fields = ['id', 'allotment_details', 'hostel_room']
+        fields = ['id', 'allotment_details', 'hostel_room','college']
 
     def validate(self, data):
         allotment_details = data['allotment_details']
