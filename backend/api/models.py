@@ -512,6 +512,7 @@ def Hostel_Allotment_Notification(sender, instance, created, **kwargs):
 
 
 class Hostel_Room_Allotment(models.Model):
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     allotment_details = models.ManyToManyField(Hostel_Allotment, related_name="hostel_room_allotment")
     hostel_room = models.ForeignKey(HostelRooms, on_delete=models.CASCADE)
 

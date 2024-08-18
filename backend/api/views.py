@@ -12,7 +12,7 @@ from django.utils import timezone
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
-from rest_framework import status, generics, permissions, viewsets
+from rest_framework import status, generics, permissions, viewsets, parsers
 from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -581,6 +581,7 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
     search_fields = ['user__registration_number', 'status']
     queryset = Hostel_Allotment.objects.all()
     serializer_class = HostelAllotmentRequestSerializer
+    parser_classes = (parsers.MultiPartParser, parsers.FormParser)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -621,10 +622,23 @@ class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
     queryset = Hostel_Room_Allotment.objects.all()
     serializer_class = HostelRoomAllotmentSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(user=self.request.user)
+        return queryset
+
     def create(self, request, *args, **kwargs):
-        if not request.user.role in ['admin', 'caretaker']:
-            return ValidationError('only admin and caretaker can allotment rooms')
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
         data = request.data.copy()
+        data['college'] = college.id
+        if request.user.role not in ['admin', 'caretaker']:
+            return ValidationError('only admin and caretaker can allotment rooms')
         if isinstance(data.get('allotment_details'), int):
             data['allotment_details'] = [data['allotment_details']]
         print(data)
