@@ -542,7 +542,7 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'hostel_room': 'Hostel room does not exist'})
 
         for allotment in allotment_details:
-            if not Hostel_Room_Allotment.objects.filter(id=allotment.id).exists():
+            if not Hostel_Allotment.objects.filter(id=allotment.id).exists():
                 raise serializers.ValidationError({'allotment_details': 'Invalid allotment details'})
             if Hostel_Room_Allotment.objects.filter(allotment_details=allotment.id).exists():
                 raise serializers.ValidationError({'allotment_details': 'Allotment is already existing '})
