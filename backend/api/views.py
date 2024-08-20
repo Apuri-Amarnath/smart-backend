@@ -581,7 +581,7 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
     search_fields = ['user__registration_number', 'status']
     queryset = Hostel_Allotment.objects.all()
     serializer_class = HostelAllotmentRequestSerializer
-    parser_classes = (parsers.MultiPartParser, parsers.FormParser)
+
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -611,7 +611,7 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
             self.perform_create(serializer)
             return Response({'data': serializer.data, 'message': 'Hostel allotment request is successfull'},
                             status=status.HTTP_201_CREATED)
-        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
