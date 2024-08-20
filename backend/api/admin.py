@@ -137,9 +137,16 @@ class No_Dues_listAdmin(admin.ModelAdmin):
         if not change:  # If this is a new instance
             obj.departments.set(Departments_for_no_Dues.objects.all())
 
+
 class MessFeePaymentAdmin(admin.ModelAdmin):
     list_display = ['registration_details', 'from_date', 'to_date', 'fee_type', 'total_fees']
     fields = ['registration_details', 'from_date', 'to_date', 'fee_type', 'total_fees']
+
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'message', 'time']
+    fields = ['user', 'message', 'time']
+
 
 admin.site.register(Departments_for_no_Dues)
 admin.site.register(No_Dues_list, No_Dues_listAdmin)
@@ -165,7 +172,7 @@ admin.site.register(Guest_room_request)
 admin.site.register(Fees_model)
 admin.site.register(Mess_fee_payment, MessFeePaymentAdmin)
 admin.site.register(TransferCertificateInformation)
-admin.site.register(Notification)
+admin.site.register(Notification, NotificationAdmin)
 admin.site.register(VerifySemesterRegistration)
 admin.site.register(Cloned_Departments_for_no_Dues)
 admin.site.register(CollegeRequest)

@@ -537,8 +537,12 @@ def notify_allotment_users(sender, instance, created, **kwargs):
             f"your Room No : {instance.hostel_room.room_no},"
             f"your Room type : {instance.hostel_room.room_type},"
         )
-        for registration_number in registration_numbers.split(","):
-            notify_user(registration_number=registration_number.strip(), message=message)
+        currently_allotted = set(registration_numbers.split(","))
+        for allotment in instance.allotment_details.all():
+            if hasattr(allotment, 'user'):
+                new_registratin_number = allotment.user.registration_number
+                if new_registratin_number not in currently_allotted:
+                    notify_user(registration_number=new_registratin_number.strip(), message=message)
 
 
 class Fees_model(models.Model):
