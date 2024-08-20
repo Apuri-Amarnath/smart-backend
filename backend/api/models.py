@@ -601,7 +601,7 @@ class Hostel_No_Due_request(models.Model):
     college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     semester = models.CharField(max_length=225, verbose_name="semester", null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Hostel_no_due_request")
-    maintance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
+    maintenance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
     mess_fees_date = models.DateField(verbose_name="Mess_fees", null=True, blank=True)
     self_declaration = models.BooleanField(verbose_name="self_agree", null=True, blank=True, default=False)
     requested_date = models.DateField(verbose_name="requested_date", null=True, blank=True)
@@ -643,7 +643,7 @@ class Guest_room_request(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected')
     ]
-
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="guest_room_request")
     purpose_of_request = models.CharField(max_length=225, choices=PURPOSE_CHOICES)
     from_date = models.DateField(verbose_name="from_date", null=True, blank=True)
@@ -658,7 +658,8 @@ class Guest_room_request(models.Model):
 @receiver(post_save, sender=Guest_room_request)
 def guest_room_notify(sender, instance, created, **kwargs):
     if created:
-        notify_roles(["admin", "faculty"], f"New guest room request from {instance.user.registration_number}")
+        notify_same_college_users('office', f"New guest room request from {instance.user.registration_number}",
+                                  college=instance.college)
 
 
 class Complaint(models.Model):
@@ -677,13 +678,14 @@ class Complaint(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="registration_number_or_employee_no")
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=225, verbose_name="name", null=True, blank=True)
     branch = models.CharField(max_length=225, verbose_name="branch", null=True, blank=True)
     complaint_type = models.CharField(choices=COMPLAINT_CHOICES, max_length=225, verbose_name="complaint type",
                                       null=True, blank=True)
     subject = models.CharField(max_length=225, verbose_name="subject", null=True, blank=True)
     complaint_description = models.TextField(verbose_name="complaint description", null=True, blank=True)
-    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status", null=True, blank=True)
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",default='registered', null=True, blank=True)
     registered_date = models.DateField(verbose_name="registered date", null=True, blank=True)
 
     def __str__(self):
@@ -700,6 +702,7 @@ class Overall_No_Dues_Request(models.Model):
     ]
 
     name = models.CharField(max_length=225, verbose_name="Name", null=True, blank=True)
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='overall_no_due', null=True, blank=True)
     branch = models.CharField(max_length=225, verbose_name="Branch", null=True, blank=True)
     father_name = models.CharField(max_length=225, verbose_name="Father's Name", null=True, blank=True)

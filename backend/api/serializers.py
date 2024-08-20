@@ -583,10 +583,12 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
 
 class HostelNoDuesSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(source="user.registration_number", read_only=True)
+    mess_fees_date = YearMonthField()
+    maintenance_fees_date = YearMonthField()
 
     class Meta:
         model = Hostel_No_Due_request
-        fields = '__all__'
+        fields = ['id','registration_number', 'mess_fees_date', 'maintenance_fees_date', 'college', 'requested_date', 'user', 'status']
         read_only_fields = ['registration_number', 'requested_date', 'user']
 
     def validate(self, attrs):
@@ -642,6 +644,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['user'] = user
+        validated_data['registered_date'] = date.today()
         return super().create(validated_data)
 
 

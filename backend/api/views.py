@@ -723,16 +723,30 @@ class MessFeePaymentCreateViewset(viewsets.ModelViewSet):
 class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
     serializer_class = GuestRoomAllotmentSerializer
     queryset = Guest_room_request.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsStudentOrAdmin]
     renderer_classes = [UserRenderer]
     filter_backends = [SearchFilter]
     search_fields = ['user__registration_number']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(user=self.request.user)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             return Response(
@@ -745,15 +759,29 @@ class ComplaintViewSet(viewsets.ModelViewSet):
     renderer_classes = [UserRenderer]
     serializer_class = ComplaintSerializer
     queryset = Complaint.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsStudentOrAdmin]
     filter_backends = [SearchFilter]
     search_fields = ['user__registration_number']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(user=self.request.user)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             return Response({'data': serializer.data, 'message': 'Complaint successfully created'},
