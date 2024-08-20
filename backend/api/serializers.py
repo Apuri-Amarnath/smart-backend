@@ -601,8 +601,6 @@ class HostelNoDuesSerializer(serializers.ModelSerializer):
         validated_data['user'] = user
         validated_data['requested_date'] = date.today()
         validated_data['status'] = 'pending'
-        validated_data['maintance_fees_date'] = validated_data.get('maintance_fees_date')
-        validated_data['mess_fees_date'] = validated_data.get('mess_fees_date')
         return super().create(validated_data)
 
 
