@@ -629,7 +629,7 @@ class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
             college = get_object_or_404(College, slug=slug)
             queryset = queryset.filter(college_id=college.id)
             if self.request.user.role == 'student':
-                queryset = queryset.filter(user=self.request.user)
+                queryset = queryset.filter(allotment_details__user=self.request.user)
         return queryset
 
     def create(self, request, *args, **kwargs):
