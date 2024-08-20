@@ -433,46 +433,33 @@ class HostelAllotmentRequestSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         registration_number = validated_data.pop('registration_number')
         college = validated_data.pop('college')
-        cgpa = validated_data.pop('cgpa')
-        prefered_room_type = validated_data.pop('prefered_room_type')
-        latest_marksheet = validated_data.pop('latest_marksheet', None)
         try:
             user = User.objects.get(registration_number=registration_number, college=college)
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exist")
-
-        hostel_allotment = Hostel_Allotment.objects.create(
-            user=user,
-            college=college,
-            cgpa=cgpa,
-            prefered_room_type=prefered_room_type
-        )
+        validated_data['user'] = user
+        instance = super().create(validated_data)
+        latest_marksheet = validated_data.get('latest_marksheet')
         if latest_marksheet:
-            hostel_allotment.latest_marksheet = latest_marksheet.read()
-            hostel_allotment.save()
+            instance.latest_marksheet = latest_marksheet.read()
+            instance.save()
 
-        return hostel_allotment
+        return instance
 
     def update(self, instance, validated_data):
         registration_number = validated_data.pop('registration_number', None)
-        latest_marksheet = validated_data.pop('latest_marksheet', None)
         college = validated_data.pop('college', None)
-        prefered_room_type = validated_data.pop('prefered_room_type', None)
-        cgpa = validated_data.pop('cgpa', None)
+
         if registration_number:
             try:
                 user = User.objects.get(registration_number=registration_number, college=college)
                 instance.user = user
             except User.DoesNotExist:
                 raise serializers.ValidationError("User does not exist")
-        if prefered_room_type:
-            instance.prefered_room_type = prefered_room_type
-        if cgpa:
-            instance.cgpa = cgpa
-
+        latest_marksheet = validated_data.get('latest_marksheet')
         if latest_marksheet:
             instance.latest_marksheet = latest_marksheet.read()
-        instance.save()
+        instance = super().update(instance, validated_data)
         return instance
 
     def to_representation(self, instance):
@@ -532,7 +519,7 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hostel_Room_Allotment
-        fields = ['id', 'allotment_details', 'hostel_room','college']
+        fields = ['id', 'allotment_details', 'hostel_room', 'college']
 
     def validate(self, data):
         allotment_details = data['allotment_details']
@@ -588,6 +575,7 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
             hostel_room.status = 'available'
         hostel_room.save()
         return instance
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['allotment_details'] = HostelAllotmentRequestSerializer(instance.allotment_details.all(), many=True).data
