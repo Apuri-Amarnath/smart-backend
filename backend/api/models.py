@@ -306,12 +306,13 @@ def Bonafide_request_Notification(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Bonafide)
 def Bonafide_approved_Notification(sender, instance, created, **kwargs):
-    if instance.status == 'approved':
-        notify_user(registration_number=instance.roll_no,
-                    message=f"Your Bonafide request has been approved, please download it!")
-    if instance.status == 'rejected':
-        notify_user(registration_number=instance.roll_no,
-                    message=f"Your Bonafide request has been rejected, please re-apply !")
+    if not created:
+        if instance.status == 'approved':
+            notify_user(registration_number=instance.roll_no,
+                        message=f"Your Bonafide request has been approved, please download it!")
+        elif instance.status == 'rejected':
+            notify_user(registration_number=instance.roll_no,
+                        message=f"Your Bonafide request has been rejected, please re-apply !")
 
 
 class Branch(models.Model):
@@ -522,8 +523,22 @@ class Hostel_Room_Allotment(models.Model):
             if hasattr(allotment, 'user'):
                 registration_numbers.append(allotment.user.registration_number)
         return ", ".join(registration_numbers)
+
     def __str__(self):
         return f" room no : {self.hostel_room.room_no} -- registration No : {self.get_registration_numbers()} --"
+
+
+@receiver(post_save, sender=Hostel_Room_Allotment)
+def notify_allotment_users(sender, instance, created, **kwargs):
+    if created:
+        registration_numbers = instance.get_registration_numbers()
+        message = (
+            f"your room allotment has been made: "
+            f"your Room No : {instance.hostel_room.room_no},"
+            f"your Room type : {instance.hostel_room.room_type},"
+        )
+        for registration_number in registration_numbers.split(","):
+            notify_user(registration_number=registration_number.strip(), message=message)
 
 
 class Fees_model(models.Model):
@@ -546,25 +561,24 @@ class Mess_fee_payment(models.Model):
     registration_details = models.ForeignKey(Hostel_Room_Allotment, on_delete=models.CASCADE)
     from_date = models.DateField(null=True, blank=True)
     to_date = models.DateField(null=True, blank=True)
-    fee_type = models.CharField(max_length=225, choices=FEE_TYPE_CHOICES, null=True, blank=True, verbose_name="fee_type")
+    fee_type = models.CharField(max_length=225, choices=FEE_TYPE_CHOICES, null=True, blank=True,
+                                verbose_name="fee_type")
     total_fees = models.DecimalField(max_digits=30, decimal_places=2, default=0, null=True, blank=True)
 
     def __str__(self):
         allotments = self.registration_details.allotment_details.all()
-        registration_numbers= []
+        registration_numbers = []
         for allotment in allotments:
             if hasattr(allotment, 'user'):
                 registration_numbers.append(allotment.user.registration_number)
         user_names = ','.join(registration_numbers)
         return f" Users : {user_names} -- {self.from_date} -- {self.to_date} -- {self.fee_type} -- {self.total_fees}"
 
-
     def clean(self):
         if self.from_date and self.to_date and self.from_date > self.to_date:
             raise ValidationError('From date cannot be later than to date.')
         if self.total_fees < 0:
             raise ValidationError('Total fees must be a positive value.')
-
 
     class Meta:
         constraints = [
@@ -576,27 +590,41 @@ class Mess_fee_payment(models.Model):
 class Hostel_No_Due_request(models.Model):
     STATUS_CHOICES = [
         ('not-applied', 'Not-applied'),
-        ('applied', 'Applied'),
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     ]
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     semester = models.CharField(max_length=225, verbose_name="semester", null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Hostel_no_due_request")
-    Maintance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
-    Mess_fees_date = models.DateField(verbose_name="Mess_fees", null=True, blank=True)
+    maintance_fees_date = models.DateField(verbose_name="Maintance_fees", null=True, blank=True)
+    mess_fees_date = models.DateField(verbose_name="Mess_fees", null=True, blank=True)
     self_declaration = models.BooleanField(verbose_name="self_agree", null=True, blank=True, default=False)
     requested_date = models.DateField(verbose_name="requested_date", null=True, blank=True)
-    approved_date = models.DateField(verbose_name="approves_date", null=True, blank=True)
+    approved_date = models.DateField(verbose_name="approved_date", null=True, blank=True)
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, default="not-applied")
 
     def __str__(self):
-        return f"{self.user.registration_number} -- semester: {self.semester} -- requested date: {self.requested_date} -- approved date: {self.approved_date}"
+        return f"{self.user.registration_number} --{self.college.college_name} -- semester: {self.semester} -- requested date: {self.requested_date} -- approved date: {self.approved_date}"
 
-    def save(self, *args, **kwargs):
-        if not self.requested_date:
-            self.requested_date = date.today()
-            super(Hostel_No_Due_request, self).save(*args, **kwargs)
+
+@receiver(signal=post_save, sender=Hostel_No_Due_request)
+def notify_caretakers(sender, instance, created, **kwargs):
+    if created:
+        notify_same_college_users(roles='caretaker',
+                                  message=f"A New Hostel No Due Request has been recieved from {instance.user.registration_number}.",
+                                  college=instance.college)
+
+
+@receiver(signal=post_save, sender=Hostel_No_Due_request)
+def notify_student(sender, instance, created, **kwargs):
+    if not created:
+        if instance.status == 'approved':
+            notify_user(registration_number=instance.user.registration_number,
+                        message=f"Your Hostel No Due Request has has been approved, please download it!")
+        elif instance.status == 'rejected':
+            notify_user(registration_number=instance.user.registration_number,
+                        message=f"Your Hostel No Due Request has has been rejected, please re-apply !")
 
 
 class Guest_room_request(models.Model):

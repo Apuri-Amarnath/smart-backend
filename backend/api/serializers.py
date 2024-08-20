@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime
+from datetime import datetime, date
 import re
 
 from django.contrib.auth import get_user_model
@@ -589,10 +589,34 @@ class HostelNoDuesSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['registration_number', 'requested_date', 'user']
 
+    def validate(self, attrs):
+        user = self.context['request'].user
+        college = attrs.get('college')
+        if Hostel_No_Due_request.objects.filter(user=user, college=college, status='pending').exists():
+            raise serializers.ValidationError("A request with this registration number already exists.")
+        return attrs
+
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['user'] = user
+        validated_data['requested_date'] = date.today()
+        validated_data['status'] = 'pending'
+        validated_data['maintance_fees_date'] = validated_data.get('maintance_fees_date')
+        validated_data['mess_fees_date'] = validated_data.get('mess_fees_date')
         return super().create(validated_data)
+
+
+class Approve_HostelNoDueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hostel_No_Due_request
+        fields = ['status', 'approved_date']
+
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get('status', instance.status)
+        approved_date = validated_data.pop('approved_date', date.today())
+        instance.approved_date = approved_date
+        instance.save()
+        return instance
 
 
 class GuestRoomAllotmentSerializer(serializers.ModelSerializer):
@@ -635,7 +659,7 @@ class MessFeePaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mess_fee_payment
-        fields = ['id', 'registration_details','from_date', 'to_date', 'fee_type', 'total_fees','college']
+        fields = ['id', 'registration_details', 'from_date', 'to_date', 'fee_type', 'total_fees', 'college']
 
     def create(self, validated_data):
         mess_fee_payment = Mess_fee_payment.objects.create(**validated_data)
@@ -653,29 +677,19 @@ class MessFeePaymentSerializer(serializers.ModelSerializer):
         if total_fees < 0:
             raise serializers.ValidationError('Total fees must be positive value')
         if Mess_fee_payment.objects.filter(registration_details=registration_details,
-                                                from_date=from_date, to_date=to_date,
-                                                fee_type=fee_type, college=college).exists():
+                                           from_date=from_date, to_date=to_date,
+                                           fee_type=fee_type, college=college).exists():
             raise serializers.ValidationError("This fee type is already recorded for the given period.")
         return data
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         registration_details = instance.registration_details.allotment_details.all()
-        representation['registration_details'] = [{'registration_number': allotment.user.registration_number} for allotment in
+        representation['registration_details'] = [{'registration_number': allotment.user.registration_number} for
+                                                  allotment in
                                                   registration_details]
 
         return representation
-
-
-class HostelAllotmentStatusUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Hostel_Allotment
-        fields = ['id', 'status']
-
-    def update(self, instance, validated_data):
-        instance.status = validated_data.get('status', instance.status)
-        instance.save()
-        return instance
 
 
 class Departments_for_no_dueSerializer(serializers.ModelSerializer):

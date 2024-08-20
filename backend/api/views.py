@@ -29,12 +29,12 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserPr
     BonafideSerializer, PersonalInfoSerializer, AcademicInfoSerializer, ContactInformationSerializer, \
     ChangeUserPasswordSerializer, Csv_RegistrationSerializer, SubjectSerializer, SemesterSerializer, \
     SemesterRegistrationSerializer, GuestRoomAllotmentSerializer, HostelNoDuesSerializer, \
-    HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, HostelAllotmentStatusUpdateSerializer, \
+    HostelRoomAllotmentSerializer, MessFeeSerializer, MessFeePaymentSerializer, \
     ComplaintSerializer, Overall_No_Due_Serializer, No_Due_ListSerializer, SemesterVerificationSerializer, \
     NotificationSerializer, Departments_for_no_dueSerializer, Cloned_Departments_for_no_dueSerializer, \
     CollegeRequestSerializer, CollegeSlugSerializer, CollegeRequestVerificationSerializer, Bonafide_Approve_Serializer, \
     CollgeIdCountSerializer, BranchSerializer, UserManagementSerializer, HostelRoomSerializer, \
-    HostelAllotmentRequestSerializer
+    HostelAllotmentRequestSerializer, Approve_HostelNoDueSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -716,57 +716,8 @@ class MessFeePaymentCreateViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
-            return Response({'data':serializer.data}, status=status.HTTP_201_CREATED)
-        return Response({'errors':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class MessFeePaymentDetailView(APIView):
-    renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self, pk):
-        try:
-            return Mess_fee_payment.objects.get(pk=pk)
-        except Mess_fee_payment.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        mess_fee_payment = self.get_object(pk)
-        serializer = MessFeePaymentSerializer(mess_fee_payment)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        mess_fee_payment = self.get_object(pk)
-        serializer = MessFeePaymentSerializer(mess_fee_payment, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        mess_fee_payment = self.get_object(pk)
-        mess_fee_payment.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class HostelAllotmentStatusUpdateView(APIView):
-    serializer_class = HostelAllotmentStatusUpdateSerializer
-    renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin]
-
-    def get_object(self, pk):
-        try:
-            return Hostel_Allotment.objects.get(pk=pk)
-        except Hostel_Allotment.DoesNotExist:
-            raise Http404
-
-    def put(self, request, pk, format=None):
-        hostel_allotment = self.get_object(pk)
-        serializer = HostelAllotmentStatusUpdateSerializer(hostel_allotment, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GuestRoomAllotmentViewSet(viewsets.ModelViewSet):
@@ -836,11 +787,27 @@ class Overall_no_duesViewSet(viewsets.ModelViewSet):
 class Hostel_No_dueViewset(viewsets.ModelViewSet):
     serializer_class = HostelNoDuesSerializer
     queryset = Hostel_No_Due_request.objects.all()
-    permission_classes = [IsAuthenticated, IsStudentOrAdmin]
+    permission_classes = [IsStudentOrAdmin | IsCaretakerOrAdmin]
     renderer_classes = [UserRenderer]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(user=self.request.user)
+        return queryset
+
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        if self.request.user.role != 'student':
+            raise PermissionDenied({'error': 'only student can create a request'})
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             return Response({'message': 'Request was applied successfully'}, status=status.HTTP_200_OK)
@@ -849,11 +816,20 @@ class Hostel_No_dueViewset(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    def get_queryset(self):
-        user = self.request.user
-        if user.role == 'student':
-            return Hostel_No_Due_request.objects.filter(user=user)
-        return Hostel_No_Due_request.objects.all()
+    def update(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        instance = self.get_object()
+        if self.request.user.role not in ['caretaker', 'super-admin']:
+            raise PermissionDenied({'error': 'You do not have permissions to edit this request'})
+        serializer = Approve_HostelNoDueSerializer(instance=instance, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_update(serializer)
+            return Response({'message': 'Request was updated successfully'}, status=status.HTTP_200_OK)
+        return Response({'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 class NoDuesListViewSet(viewsets.ModelViewSet):

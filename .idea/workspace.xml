@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="hostell allotment">
+      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0006_hostel_no_due_request_college_and_more.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -286,15 +287,7 @@
       <workItem from="1724154557019" duration="113000" />
       <workItem from="1724155512748" duration="79000" />
       <workItem from="1724155846813" duration="367000" />
-      <workItem from="1724165832153" duration="8117000" />
-    </task>
-    <task id="LOCAL-00206" summary="fixed csv">
-      <option name="closed" value="true" />
-      <created>1723202327468</created>
-      <option name="number" value="00206" />
-      <option name="presentableId" value="LOCAL-00206" />
-      <option name="project" value="LOCAL" />
-      <updated>1723202327468</updated>
+      <workItem from="1724165832153" duration="12586000" />
     </task>
     <task id="LOCAL-00207" summary="fixed csv">
       <option name="closed" value="true" />
@@ -680,7 +673,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724177112206</updated>
     </task>
-    <option name="localTasksCounter" value="255" />
+    <task id="LOCAL-00255" summary="hostell allotment">
+      <option name="closed" value="true" />
+      <created>1724180931322</created>
+      <option name="number" value="00255" />
+      <option name="presentableId" value="LOCAL-00255" />
+      <option name="project" value="LOCAL" />
+      <updated>1724180931322</updated>
+    </task>
+    <option name="localTasksCounter" value="256" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

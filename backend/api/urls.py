@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLogoutView, update, CollegeViewSet, \
     BonafideViewSet, ChangePasswordView, SemesterViewSet, SubjectViewSet, TokenRefresh, SemesterRegistrationViewset, \
-    HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
+    HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, \
     GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset, NoDuesListViewSet, \
     SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView, \
     CollegeRequestVerificationView, CollegeIDCountView, BranchViewSet, UserManagmentViewSet, HostelRoomRegistrationView, \
@@ -53,7 +53,5 @@ urlpatterns = [
     path('<slug:slug>/profile/', UserProfileView.as_view(), name='profile'),
     path('<slug:slug>/bonafide/<int:pk>/approve/', BonafideViewSet.as_view({'patch': 'approve'}),
          name='bonafide-approve'),
-    path('hostel-allotments/<int:pk>/update-status/', HostelAllotmentStatusUpdateView.as_view(),
-         name='host_allotments_status_update'),
     re_path(r'^(?P<slug>[\w-]+)/', include(router.urls), ),
 ]
