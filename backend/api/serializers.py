@@ -432,23 +432,22 @@ class HostelAllotmentRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         registration_number = validated_data.pop('registration_number')
-        college = validated_data.pop('college')
+        college = validated_data.get('college')
+        latest_marksheet = validated_data.get('latest_marksheet', None)
         try:
             user = User.objects.get(registration_number=registration_number, college=college)
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exist")
         validated_data['user'] = user
-        instance = super().create(validated_data)
-        latest_marksheet = validated_data.get('latest_marksheet')
         if latest_marksheet:
-            instance.latest_marksheet = latest_marksheet.read()
-            instance.save()
-
+            validated_data['latest_marksheet'] = latest_marksheet.read()
+        instance = super().create(validated_data)
         return instance
 
     def update(self, instance, validated_data):
         registration_number = validated_data.pop('registration_number', None)
-        college = validated_data.pop('college', None)
+        college = validated_data.get('college', None)
+        latest_marksheet = validated_data.get('latest_marksheet',None)
 
         if registration_number:
             try:
@@ -456,7 +455,6 @@ class HostelAllotmentRequestSerializer(serializers.ModelSerializer):
                 instance.user = user
             except User.DoesNotExist:
                 raise serializers.ValidationError("User does not exist")
-        latest_marksheet = validated_data.get('latest_marksheet')
         if latest_marksheet:
             instance.latest_marksheet = latest_marksheet.read()
         instance = super().update(instance, validated_data)

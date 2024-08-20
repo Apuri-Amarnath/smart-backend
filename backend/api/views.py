@@ -606,6 +606,7 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
         college = get_object_or_404(College, slug=slug)
         data = request.data.copy()
         data['college'] = college.id
+        print(data)
         serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
