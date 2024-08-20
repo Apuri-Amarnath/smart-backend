@@ -447,7 +447,7 @@ class HostelAllotmentRequestSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         registration_number = validated_data.pop('registration_number', None)
         college = validated_data.get('college', None)
-        latest_marksheet = validated_data.get('latest_marksheet',None)
+        latest_marksheet = validated_data.get('latest_marksheet', None)
 
         if registration_number:
             try:
@@ -630,32 +630,39 @@ class MessFeeSerializer(serializers.ModelSerializer):
 
 
 class MessFeePaymentSerializer(serializers.ModelSerializer):
-    registration_details = serializers.PrimaryKeyRelatedField(queryset=Hostel_Room_Allotment.objects.all())
     from_date = YearMonthField()
     to_date = YearMonthField()
 
     class Meta:
         model = Mess_fee_payment
-        fields = ['id', 'registration_details', 'from_date', 'to_date', 'fee_type', 'total_fees']
+        fields = ['id', 'registration_details','from_date', 'to_date', 'fee_type', 'total_fees','college']
 
     def create(self, validated_data):
-        registration_details_data = validated_data.pop('registration_details')
-
-        mess_fee_payment = Mess_fee_payment.objects.create(
-            registration_details=registration_details_data,
-            **validated_data
-        )
+        mess_fee_payment = Mess_fee_payment.objects.create(**validated_data)
         return mess_fee_payment
 
-    def validate_registration_details(self, value):
-        if not Hostel_Room_Allotment.objects.filter(pk=value.pk).exists():
-            raise serializers.ValidationError("The provided registration details do not exist.")
-        return value
+    def validate(self, data):
+        from_date = data.get('from_date')
+        to_date = data.get('to_date')
+        registration_details = data.get('registration_details')
+        college = data.get('college')
+        total_fees = data.get('total_fees')
+        fee_type = data.get('fee_type')
+        if from_date and to_date and from_date > to_date:
+            raise serializers.ValidationError('From date must be before to date.')
+        if total_fees < 0:
+            raise serializers.ValidationError('Total fees must be positive value')
+        if Mess_fee_payment.objects.filter(registration_details=registration_details,
+                                                from_date=from_date, to_date=to_date,
+                                                fee_type=fee_type, college=college).exists():
+            raise serializers.ValidationError("This fee type is already recorded for the given period.")
+        return data
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        registration_details = HostelRoomAllotmentSerializer(instance.registration_details).data
-        representation['registration_details'] = registration_details
+        registration_details = instance.registration_details.allotment_details.all()
+        representation['registration_details'] = [{'registration_number': allotment.user.registration_number} for allotment in
+                                                  registration_details]
 
         return representation
 

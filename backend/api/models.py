@@ -517,8 +517,11 @@ class Hostel_Room_Allotment(models.Model):
     hostel_room = models.ForeignKey(HostelRooms, on_delete=models.CASCADE)
 
     def get_registration_numbers(self):
-        return ", ".join([allotment.user.registration_number for allotment in self.allotment_details.all()])
-
+        registration_numbers = []
+        for allotment in self.allotment_details.all():
+            if hasattr(allotment, 'user'):
+                registration_numbers.append(allotment.user.registration_number)
+        return ", ".join(registration_numbers)
     def __str__(self):
         return f" room no : {self.hostel_room.room_no} -- registration No : {self.get_registration_numbers()} --"
 
@@ -534,7 +537,7 @@ class Fees_model(models.Model):
 
 
 class Mess_fee_payment(models.Model):
-    FEE_TYPE = [
+    FEE_TYPE_CHOICES = [
         ('mess_fee', 'Mees Fee'),
         ('maintainance_fee', 'Maintainance Fees'),
         ('security_fee', 'Security Fee')
@@ -543,11 +546,31 @@ class Mess_fee_payment(models.Model):
     registration_details = models.ForeignKey(Hostel_Room_Allotment, on_delete=models.CASCADE)
     from_date = models.DateField(null=True, blank=True)
     to_date = models.DateField(null=True, blank=True)
-    fee_type = models.CharField(max_length=225, choices=FEE_TYPE, null=True, blank=True, verbose_name="fee_type")
+    fee_type = models.CharField(max_length=225, choices=FEE_TYPE_CHOICES, null=True, blank=True, verbose_name="fee_type")
     total_fees = models.DecimalField(max_digits=30, decimal_places=2, default=0, null=True, blank=True)
 
     def __str__(self):
-        return f" registration_detaiks : {self.registration_details.user} -- {self.from_date} -- {self.to_date} -- {self.fee_type} -- {self.total_fees}"
+        allotments = self.registration_details.allotment_details.all()
+        registration_numbers= []
+        for allotment in allotments:
+            if hasattr(allotment, 'user'):
+                registration_numbers.append(allotment.user.registration_number)
+        user_names = ','.join(registration_numbers)
+        return f" Users : {user_names} -- {self.from_date} -- {self.to_date} -- {self.fee_type} -- {self.total_fees}"
+
+
+    def clean(self):
+        if self.from_date and self.to_date and self.from_date > self.to_date:
+            raise ValidationError('From date cannot be later than to date.')
+        if self.total_fees < 0:
+            raise ValidationError('Total fees must be a positive value.')
+
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['registration_details', 'from_date', 'to_date', 'fee_type'],
+                                    name='unique_mess_fee_per_period')
+        ]
 
 
 class Hostel_No_Due_request(models.Model):

@@ -693,22 +693,31 @@ class MessFeePaymentCreateViewset(viewsets.ModelViewSet):
     queryset = Mess_fee_payment.objects.all()
     permission_classes = [IsCaretakerOrAdmin | IsStudentOrAdmin]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['registration_details__registration_details__user__registration_number']
+    search_fields = ['registration_details__allotment_details__user__registration_number']
 
-    def get(self, request, *args, **kwargs):
-        mess_fee_payments = Mess_fee_payment.objects.all()
-        serializer = MessFeePaymentSerializer(mess_fee_payments, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(registration_details__allotment_details__user=self.request.user)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save()
 
-    def post(self, request, *args, **kwargs):
-        serializer = MessFeePaymentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def create(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response({'data':serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'errors':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MessFeePaymentDetailView(APIView):
