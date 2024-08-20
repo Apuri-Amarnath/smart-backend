@@ -524,6 +524,7 @@ class Hostel_Room_Allotment(models.Model):
 
 
 class Fees_model(models.Model):
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     Maintainance_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="Maintainance_fees")
     Mess_fees = models.CharField(max_length=225, null=True, blank=True, verbose_name="Mess fees")
     Security_Deposit = models.CharField(max_length=225, null=True, blank=True, verbose_name="Security deposit")
@@ -538,6 +539,7 @@ class Mess_fee_payment(models.Model):
         ('maintainance_fee', 'Maintainance Fees'),
         ('security_fee', 'Security Fee')
     ]
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     registration_details = models.ForeignKey(Hostel_Room_Allotment, on_delete=models.CASCADE)
     from_date = models.DateField(null=True, blank=True)
     to_date = models.DateField(null=True, blank=True)

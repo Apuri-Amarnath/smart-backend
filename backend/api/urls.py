@@ -4,11 +4,11 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLogoutView, update, CollegeViewSet, \
     BonafideViewSet, ChangePasswordView, SemesterViewSet, SubjectViewSet, TokenRefresh, SemesterRegistrationViewset, \
-    HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, MessFeeCreateSet, \
-    UpdateMessFeeViewset, GetMessFeeViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
+    HostelRoomAllotmentViewset, MessFeePaymentCreateViewset, HostelAllotmentViewset, HostelAllotmentStatusUpdateView, MessFeePaymentDetailView, \
     GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset, NoDuesListViewSet, \
     SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView, \
-    CollegeRequestVerificationView, CollegeIDCountView, BranchViewSet ,UserManagmentViewSet,HostelRoomRegistrationView
+    CollegeRequestVerificationView, CollegeIDCountView, BranchViewSet, UserManagmentViewSet, HostelRoomRegistrationView, \
+    HostelMessFeeViewSet
 
 router = DefaultRouter()
 router.register(r'colleges', CollegeViewSet, basename='college-details')
@@ -28,6 +28,7 @@ router.register(r'verify-semester-registration', SemesterVerificationViewSet, ba
 router.register(r'branch', BranchViewSet, basename='branch')
 router.register(r'user-management',UserManagmentViewSet, basename='user_management')
 router.register(r'hostel-room-registrations',HostelRoomRegistrationView, basename='hostel_room_registrations')
+router.register(r'hostel-mess-fee',HostelMessFeeViewSet, basename='hostel_mess_fee')
 urlpatterns = [
     ## basic urls
     path('register/', UserRegistrationView.as_view(), name='register'),
@@ -52,10 +53,6 @@ urlpatterns = [
     path('<slug:slug>/profile/', UserProfileView.as_view(), name='profile'),
     path('<slug:slug>/bonafide/<int:pk>/approve/', BonafideViewSet.as_view({'patch': 'approve'}),
          name='bonafide-approve'),
-    path('fees/create/', MessFeeCreateSet.as_view(), name='create_fee'),
-    path('fees/update/<int:pk>/', UpdateMessFeeViewset.as_view(), name='update_fee'),
-    path('fees/<int:pk>/', GetMessFeeViewset.as_view(), name='get-fee'),
-    path('fees/', GetMessFeeViewset.as_view(), name='fees-list'),
     path('hostel-allotments/<int:pk>/update-status/', HostelAllotmentStatusUpdateView.as_view(),
          name='host_allotments_status_update'),
     re_path(r'^(?P<slug>[\w-]+)/', include(router.urls), ),

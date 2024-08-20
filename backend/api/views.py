@@ -471,7 +471,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         data = request.data.copy()
         data['college'] = college.id
         if request.user.role not in ['hod', 'super-admin']:
-            raise ValidationError({'error': 'Only HOD or Admin users can create semester data.'})
+            raise PermissionDenied({'errors': 'Only HOD or Admin users can create semester data.'})
         serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
@@ -484,7 +484,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         data = request.data.copy()
         data['college'] = college.id
         if request.user.role not in ['hod', 'super-admin']:
-            raise ValidationError({'error': 'Only HOD or Admin users can create semester data.'})
+            raise PermissionDenied({'errors': 'Only HOD or Admin users can create semester data.'})
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=data, partial=partial)
@@ -527,7 +527,7 @@ class SemesterRegistrationViewset(viewsets.ModelViewSet):
         data = request.data.copy()
         data['college'] = college.id
         if request.user.role not in ['student']:
-            raise ValidationError({'error': 'Only students can register for semesters.'})
+            raise PermissionDenied({'errors': 'Only students can register for semesters.'})
         serializer = self.get_serializer(data=data)
         try:
             serializer.is_valid(raise_exception=True)
@@ -582,7 +582,6 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
     queryset = Hostel_Allotment.objects.all()
     serializer_class = HostelAllotmentRequestSerializer
 
-
     def get_queryset(self):
         queryset = super().get_queryset()
         slug = self.kwargs.get('slug')
@@ -606,7 +605,6 @@ class HostelAllotmentViewset(viewsets.ModelViewSet):
         college = get_object_or_404(College, slug=slug)
         data = request.data.copy()
         data['college'] = college.id
-        print(data)
         serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
@@ -639,10 +637,9 @@ class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
         data = request.data.copy()
         data['college'] = college.id
         if request.user.role not in ['admin', 'caretaker']:
-            return ValidationError('only admin and caretaker can allotment rooms')
+            raise PermissionDenied({'errors': 'only admin and caretaker can allotment rooms'})
         if isinstance(data.get('allotment_details'), int):
             data['allotment_details'] = [data['allotment_details']]
-        print(data)
         serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
@@ -650,59 +647,51 @@ class HostelRoomAllotmentViewset(viewsets.ModelViewSet):
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MessFeeCreateSet(APIView):
+class HostelMessFeeViewSet(viewsets.ModelViewSet):
     queryset = Fees_model.objects.all()
     serializer_class = MessFeeSerializer
-    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin]
+    permission_classes = [IsCaretakerOrAdmin | IsStudentOrAdmin]
 
-    def post(self, request, format=None):
-        serializer = MessFeeSerializer(data=request.data)
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        if request.user.role not in ['admin', 'caretaker']:
+            raise PermissionDenied({'errors': 'only caretaker can add the fee details'})
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            self.perform_create(serializer)
             return Response({'message': 'data added succesfully'}, status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class UpdateMessFeeViewset(APIView):
-    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin]
-
-    def put(self, request, pk, format=None):
-        if pk != 1:
+    def update(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        if not pk:
             return Response({'error': 'invalid pk'}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            fee = Fees_model.objects.get(pk=pk)
-        except Fees_model.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = MessFeeSerializer(fee, data=request.data)
+        fee = get_object_or_404(Fees_model, pk=pk)
+        if request.user.role not in ['admin', 'caretaker']:
+            return Response({'errors': 'only caretaker can add the fee details'}, status=status.HTTP_403_FORBIDDEN)
+        serializer = self.get_serializer(fee, data=request.data, partial=kwargs.get('partial'))
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response({'message': 'data updated succesfully'}, status=status.HTTP_202_ACCEPTED)
+            self.perform_update(serializer)
+            return Response({'message': 'Data updated succesfully'}, status=status.HTTP_202_ACCEPTED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class GetMessFeeViewset(APIView):
-    renderer_classes = [UserRenderer]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, pk=1, format=None):
-        if pk:
-            try:
-                fee = Fees_model.objects.get(pk=pk)
-            except Fees_model.DoesNotExist:
-                return Response({"message": "ID does not Exists"}, status.HTTP_404_NOT_FOUND)
-            serializer = MessFeeSerializer(fee)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            fee = Fees_model.objects.all()
-            serializer = MessFeeSerializer(fee, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class MessFeePaymentCreateViewset(viewsets.ModelViewSet):
     renderer_classes = [UserRenderer]
     serializer_class = MessFeePaymentSerializer
     queryset = Mess_fee_payment.objects.all()
-    permission_classes = [IsAuthenticated, IsCaretakerOrAdmin | IsStudentOrAdmin]
+    permission_classes = [IsCaretakerOrAdmin | IsStudentOrAdmin]
     filter_backends = [filters.SearchFilter]
     search_fields = ['registration_details__registration_details__user__registration_number']
 
