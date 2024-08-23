@@ -751,6 +751,7 @@ class No_Due_ListSerializer(serializers.ModelSerializer):
             "self_declaration": request_id.self_declaration,
             "status": request_id.status,
             "session": request_id.session,
+            "college":request_id.college.id,
         }
 
     def create(self, validated_data):

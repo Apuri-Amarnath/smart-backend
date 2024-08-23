@@ -792,20 +792,29 @@ class ComplaintViewSet(viewsets.ModelViewSet):
 class Overall_no_duesViewSet(viewsets.ModelViewSet):
     serializer_class = Overall_No_Due_Serializer
     queryset = Overall_No_Dues_Request.objects.all()
-    permission_classes = [IsAuthenticated, IsStudentOrAdmin | IsDepartmentOrAdmin]
+    permission_classes = [IsStudentOrAdmin | IsDepartmentOrAdmin]
     renderer_classes = [UserRenderer]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
         user = self.request.user
-        if user.role == 'student':
-            return Overall_No_Dues_Request.objects.filter(user=user)
-        return Overall_No_Dues_Request.objects.all()
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(user=user)
+        return queryset
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             return Response({'message': 'Request was applied successfully'}, status=status.HTTP_201_CREATED)
@@ -867,6 +876,17 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     renderer_classes = [UserRenderer]
     search_fields = ['request_id__user__registration_number']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        user = self.request.user
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(request_id__user=user)
+        return queryset
 
     @action(detail=True, methods=['patch'], url_path='departments/(?P<department_id>[^/.]+)',
             permission_classes=[IsAuthenticated, IsDepartmentOrAdmin])

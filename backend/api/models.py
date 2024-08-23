@@ -685,7 +685,8 @@ class Complaint(models.Model):
                                       null=True, blank=True)
     subject = models.CharField(max_length=225, verbose_name="subject", null=True, blank=True)
     complaint_description = models.TextField(verbose_name="complaint description", null=True, blank=True)
-    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",default='registered', null=True, blank=True)
+    status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status", default='registered',
+                              null=True, blank=True)
     registered_date = models.DateField(verbose_name="registered date", null=True, blank=True)
 
     def __str__(self):
@@ -725,7 +726,6 @@ class Departments_for_no_Dues(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'),
                       ('approved', 'Approved'),
                       ('rejected', 'Rejected')]
-    college = models.ForeignKey(College, on_delete=models.CASCADE)
     Department_id = models.IntegerField(verbose_name="Department ID", primary_key=True)
     Department_name = models.CharField(max_length=225, verbose_name="Department")
     status = models.CharField(max_length=225, choices=STATUS_CHOICES, verbose_name="status",
@@ -751,7 +751,7 @@ class Departments_for_no_Dues(models.Model):
 
 
 class No_Dues_list(models.Model):
-    college = models.ForeignKey(College, on_delete=models.CASCADE)
+    college = models.ForeignKey(College, on_delete=models.CASCADE, null=True, blank=True)
     request_id = models.OneToOneField(Overall_No_Dues_Request, on_delete=models.CASCADE, related_name='no_dues_list',
                                       null=True, blank=True)
     STATUS_CHOICES = [('pending', 'Pending'),
@@ -772,6 +772,8 @@ class No_Dues_list(models.Model):
         return f'Request: {self.request_id} -- Departments: {department_names} -- status: {self.status}'
 
     def save(self, *args, **kwargs):
+        if self.request_id and self.request_id.college:
+            self.college = self.request_id.college
         with transaction.atomic():
             is_new = self._state.adding
             super().save(*args, **kwargs)
@@ -788,7 +790,7 @@ class No_Dues_list(models.Model):
             cloned_departments.append(
                 Cloned_Departments_for_no_Dues(
                     no_dues_list=self,
-                    college=department.college,
+                    college=self.college,
                     Department_name=department.Department_name,
                     Department_id=department.Department_id,
                     status='pending',
