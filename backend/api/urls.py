@@ -8,7 +8,7 @@ from .views import UserRegistrationView, UserLoginView, UserProfileView, UserLog
     GuestRoomAllotmentViewSet, ComplaintViewSet, Overall_no_duesViewSet, Hostel_No_dueViewset, NoDuesListViewSet, \
     SemesterVerificationViewSet, NotificationsViewSet, CollegeRequestViewSet, CollegeSlugListView, \
     CollegeRequestVerificationView, CollegeIDCountView, BranchViewSet, UserManagmentViewSet, HostelRoomRegistrationView, \
-    HostelMessFeeViewSet
+    HostelMessFeeViewSet, DepartmentIdCreationView, NoDuesListUpdateView
 
 router = DefaultRouter()
 router.register(r'colleges', CollegeViewSet, basename='college-details')
@@ -22,13 +22,14 @@ router.register(r'guest-room-allotments', GuestRoomAllotmentViewSet, basename='g
 router.register(r'complaints', ComplaintViewSet, basename='complaints')
 router.register(r'overall-no-dues', Overall_no_duesViewSet, basename='overall_no_dues')
 router.register(r'hostel-no-dues', Hostel_No_dueViewset, basename='hostel_no_dues')
-router.register(r'No-dues-list', NoDuesListViewSet, basename='no_dues_list')
+router.register(r'no-dues-list', NoDuesListViewSet, basename='no_dues_list')
 router.register(r'mess-fees-payment', MessFeePaymentCreateViewset, basename='mess_fee_payment')
 router.register(r'verify-semester-registration', SemesterVerificationViewSet, basename='verify_semester')
 router.register(r'branch', BranchViewSet, basename='branch')
-router.register(r'user-management',UserManagmentViewSet, basename='user_management')
-router.register(r'hostel-room-registrations',HostelRoomRegistrationView, basename='hostel_room_registrations')
-router.register(r'hostel-mess-fee',HostelMessFeeViewSet, basename='hostel_mess_fee')
+router.register(r'user-management', UserManagmentViewSet, basename='user_management')
+router.register(r'hostel-room-registrations', HostelRoomRegistrationView, basename='hostel_room_registrations')
+router.register(r'hostel-mess-fee', HostelMessFeeViewSet, basename='hostel_mess_fee')
+
 urlpatterns = [
     ## basic urls
     path('register/', UserRegistrationView.as_view(), name='register'),
@@ -49,9 +50,13 @@ urlpatterns = [
     path('id-count/', CollegeIDCountView.as_view({'get': 'list'}), name='college-Idcount'),
     ## dynamic urls
     # path('<slug:slug>/add-branch/',)
+    path('<slug:slug>/no-dues-list/<int:pk>/departments/<int:department_id>/',
+         NoDuesListUpdateView.as_view(),
+         name='update-department'),
     path('<slug:slug>/register/', UserRegistrationView.as_view(), name='register-college-wise'),
     path('<slug:slug>/profile/', UserProfileView.as_view(), name='profile'),
     path('<slug:slug>/bonafide/<int:pk>/approve/', BonafideViewSet.as_view({'patch': 'approve'}),
          name='bonafide-approve'),
+    path('<slug:slug>/generate-department/', DepartmentIdCreationView.as_view(), name='generate-department'),
     re_path(r'^(?P<slug>[\w-]+)/', include(router.urls), ),
 ]
