@@ -588,7 +588,8 @@ class HostelNoDuesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hostel_No_Due_request
-        fields = ['id','registration_number', 'mess_fees_date', 'maintenance_fees_date', 'college', 'requested_date', 'user', 'status']
+        fields = ['id', 'registration_number', 'mess_fees_date', 'maintenance_fees_date', 'college', 'requested_date',
+                  'user', 'status']
         read_only_fields = ['registration_number', 'requested_date', 'user']
 
     def validate(self, attrs):
@@ -753,7 +754,7 @@ class No_Due_ListSerializer(serializers.ModelSerializer):
             "self_declaration": request_id.self_declaration,
             "status": request_id.status,
             "session": request_id.session,
-            "college":request_id.college.id,
+            "college": request_id.college.id,
         }
 
     def create(self, validated_data):
@@ -786,8 +787,9 @@ class Overall_No_Due_Serializer(serializers.ModelSerializer):
 
     def validate(self, data):
         user = self.context['request'].user
+        college = data.get('college')
 
-        if Overall_No_Dues_Request.objects.filter(user=user).exists():
+        if Overall_No_Dues_Request.objects.filter(user=user, college=college).exists():
             raise ValidationError('A request for no dues already exists for this user.')
         return data
 
