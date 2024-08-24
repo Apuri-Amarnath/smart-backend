@@ -1208,15 +1208,17 @@ class HostelRoomRegistrationView(viewsets.ModelViewSet):
         }
         return Response(response_data, status=status.HTTP_200_OK if not errors else status.HTTP_400_BAD_REQUEST)
 
-def generate_password(self, length=10):
-    alphabet = string.ascii_letters + string.digits + string.punctuation
-    exclude = '/\\\'\"'
-    filtered_password = ''.join(c for c in alphabet if c not in exclude)
-    password = ''.join(secrets.choice(filtered_password) for i in range(length))
-    return password
+
 class DepartmentIdCreationView(APIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsOfficeOrAdmin]
+
+    def generate_password(self, length=10):
+        alphabet = string.ascii_letters + string.digits + string.punctuation
+        exclude = '/\\\'\"'
+        filtered_password = ''.join(c for c in alphabet if c not in exclude)
+        password = ''.join(secrets.choice(filtered_password) for i in range(length))
+        return password
 
     def post(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
@@ -1227,7 +1229,7 @@ class DepartmentIdCreationView(APIView):
             with transaction.atomic():
                 college = College.objects.get(slug=slug)
                 college_code = college.college_code
-                default_password = generate_password()
+                default_password = self.generate_password()
                 credentials = []
                 for i in range(1, 19):
                     department_number = f"{i:02}"

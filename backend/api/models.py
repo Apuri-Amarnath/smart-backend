@@ -358,7 +358,7 @@ def create_HOD_and_send_email(sender, instance, created, **kwargs):
 
 class Subject(models.Model):
     subject_name = models.CharField(verbose_name="subject_name", max_length=225, null=True, blank=True)
-    subject_code = models.CharField(verbose_name="subject_id", max_length=30, null=True, unique=True)
+    subject_code = models.CharField(verbose_name="subject_id", max_length=30, null=True)
     instructor = models.CharField(verbose_name="Instructor", max_length=100, null=True, blank=True)
     college = models.ForeignKey(College, verbose_name="subjects", on_delete=models.CASCADE)
 
