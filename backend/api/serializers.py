@@ -5,6 +5,7 @@ import re
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.db import transaction
 from rest_framework import serializers, status
 from django.utils import timezone
 import logging
@@ -16,6 +17,7 @@ from .models import User, UserProfile, PersonalInformation, AcademicInformation,
     Guest_room_request, Complaint, Fees_model, Mess_fee_payment, Overall_No_Dues_Request, No_Dues_list, \
     Departments_for_no_Dues, VerifySemesterRegistration, TransferCertificateInformation, Notification, \
     Cloned_Departments_for_no_Dues, CollegeRequest, College_with_Ids, Branch, HostelRooms
+from .notifications import notify_user
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -537,6 +539,20 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
 
         return data
 
+    def notify_users(self, hostel_room_allotment):
+        # Function to send notifications to users associated with the allotments
+        registration_numbers = hostel_room_allotment.get_registration_numbers()  # Get registration numbers
+        message = (
+            f"Your room allotment has been made: "
+            f"Your Room No: {hostel_room_allotment.hostel_room.room_no}, "
+            f"Your Room Type: {hostel_room_allotment.hostel_room.room_type}."
+        )
+
+        for allotment in hostel_room_allotment.allotment_details.all():
+            if hasattr(allotment, 'user'):
+                new_registration_number = allotment.user.registration_number.strip()
+                notify_user(registration_number=new_registration_number, message=message)
+
     def create(self, validated_data):
         allotment_details_ids = validated_data.pop('allotment_details')
         hostel_room = validated_data.pop('hostel_room')
@@ -551,8 +567,9 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
         else:
             hostel_room.status = 'available'
         hostel_room.save()
-
+        self.notify_users(hostel_room_allotment)
         return hostel_room_allotment
+
 
     def update(self, instance, validated_data):
         allotment_details = validated_data.pop('allotment_details', None)
@@ -561,18 +578,20 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
         instance.hostel_room = hostel_room
         instance.save()
         if allotment_details:
+            current_count = instance.allotment_details.count()
             instance.allotment_details.clear()
             for allotment in allotment_details:
                 instance.allotment_details.add(allotment)
                 allotment.status = 'approved'
                 allotment.save()
-        hostel_room.current_occupancy = instance.allotment_details.count()
-        if hostel_room.current_occupancy >= hostel_room.capacity:
-            hostel_room.status = 'occupied'
+        instance.hostel_room.current_occupancy = current_count + len(allotment_details)
+        if instance.hostel_room.current_occupancy >= hostel_room.capacity:
+            instance.hostel_room.status = 'occupied'
         else:
-            hostel_room.status = 'available'
-        hostel_room.save()
+            instance.hostel_room.status = 'available'
+        instance.hostel_room.save()
         return instance
+
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
