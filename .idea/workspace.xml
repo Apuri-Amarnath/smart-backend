@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="hostell allotment">
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0008_rename_maintance_fees_date_hostel_no_due_request_maintenance_fees_date.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0009_complaint_college_guest_room_request_college_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0010_alter_complaint_status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="overall dues done">
       <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -289,39 +283,8 @@
       <workItem from="1724155512748" duration="79000" />
       <workItem from="1724155846813" duration="367000" />
       <workItem from="1724165832153" duration="13292000" />
-      <workItem from="1724187371066" duration="1237000" />
-    </task>
-    <task id="LOCAL-00210" summary="notifications-fix">
-      <option name="closed" value="true" />
-      <created>1723214832421</created>
-      <option name="number" value="00210" />
-      <option name="presentableId" value="LOCAL-00210" />
-      <option name="project" value="LOCAL" />
-      <updated>1723214832421</updated>
-    </task>
-    <task id="LOCAL-00211" summary="notifications-fix">
-      <option name="closed" value="true" />
-      <created>1723233560953</created>
-      <option name="number" value="00211" />
-      <option name="presentableId" value="LOCAL-00211" />
-      <option name="project" value="LOCAL" />
-      <updated>1723233560954</updated>
-    </task>
-    <task id="LOCAL-00212" summary="added branch">
-      <option name="closed" value="true" />
-      <created>1723475549401</created>
-      <option name="number" value="00212" />
-      <option name="presentableId" value="LOCAL-00212" />
-      <option name="project" value="LOCAL" />
-      <updated>1723475549402</updated>
-    </task>
-    <task id="LOCAL-00213" summary="user management">
-      <option name="closed" value="true" />
-      <created>1723484863170</created>
-      <option name="number" value="00213" />
-      <option name="presentableId" value="LOCAL-00213" />
-      <option name="project" value="LOCAL" />
-      <updated>1723484863171</updated>
+      <workItem from="1724187371066" duration="1362000" />
+      <workItem from="1724451961201" duration="6712000" />
     </task>
     <task id="LOCAL-00214" summary="user management">
       <option name="closed" value="true" />
@@ -683,7 +646,39 @@
       <option name="project" value="LOCAL" />
       <updated>1724185893639</updated>
     </task>
-    <option name="localTasksCounter" value="259" />
+    <task id="LOCAL-00259" summary="hostell allotment">
+      <option name="closed" value="true" />
+      <created>1724188685330</created>
+      <option name="number" value="00259" />
+      <option name="presentableId" value="LOCAL-00259" />
+      <option name="project" value="LOCAL" />
+      <updated>1724188685331</updated>
+    </task>
+    <task id="LOCAL-00260" summary="hostell allotment">
+      <option name="closed" value="true" />
+      <created>1724454217747</created>
+      <option name="number" value="00260" />
+      <option name="presentableId" value="LOCAL-00260" />
+      <option name="project" value="LOCAL" />
+      <updated>1724454217748</updated>
+    </task>
+    <task id="LOCAL-00261" summary="overall dues done">
+      <option name="closed" value="true" />
+      <created>1724458377914</created>
+      <option name="number" value="00261" />
+      <option name="presentableId" value="LOCAL-00261" />
+      <option name="project" value="LOCAL" />
+      <updated>1724458377914</updated>
+    </task>
+    <task id="LOCAL-00262" summary="overall dues done">
+      <option name="closed" value="true" />
+      <created>1724458382659</created>
+      <option name="number" value="00262" />
+      <option name="presentableId" value="LOCAL-00262" />
+      <option name="project" value="LOCAL" />
+      <updated>1724458382659</updated>
+    </task>
+    <option name="localTasksCounter" value="263" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -745,7 +740,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="no dues working fine" />
     <MESSAGE value="add notifications" />
     <MESSAGE value="fixed Overall nodues" />
     <MESSAGE value="fixed notifications" />
@@ -770,7 +764,8 @@
     <MESSAGE value="semester Registrations" />
     <MESSAGE value="updated hostel registrations" />
     <MESSAGE value="hostell allotment" />
-    <option name="LAST_COMMIT_MESSAGE" value="hostell allotment" />
+    <MESSAGE value="overall dues done" />
+    <option name="LAST_COMMIT_MESSAGE" value="overall dues done" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />

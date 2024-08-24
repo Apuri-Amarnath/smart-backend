@@ -18,7 +18,7 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth.models import User
 
-from .emails import send_login_credentials
+from .emails import send_login_credentials, send_department_login_credentials
 from .models import User, UserProfile, College, Bonafide, PersonalInformation, AcademicInformation, ContactInformation, \
     Subject, Semester, Semester_Registration, Hostel_Allotment, Guest_room_request, Hostel_No_Due_request, \
     Hostel_Room_Allotment, Fees_model, Mess_fee_payment, Complaint, Overall_No_Dues_Request, No_Dues_list, \
@@ -792,20 +792,29 @@ class ComplaintViewSet(viewsets.ModelViewSet):
 class Overall_no_duesViewSet(viewsets.ModelViewSet):
     serializer_class = Overall_No_Due_Serializer
     queryset = Overall_No_Dues_Request.objects.all()
-    permission_classes = [IsAuthenticated, IsStudentOrAdmin | IsDepartmentOrAdmin]
+    permission_classes = [IsStudentOrAdmin | IsDepartmentOrAdmin]
     renderer_classes = [UserRenderer]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
         user = self.request.user
-        if user.role == 'student':
-            return Overall_No_Dues_Request.objects.filter(user=user)
-        return Overall_No_Dues_Request.objects.all()
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(user=user)
+        return queryset
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        slug = kwargs.get('slug')
+        college = get_object_or_404(College, slug=slug)
+        data = request.data.copy()
+        data['college'] = college.id
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             return Response({'message': 'Request was applied successfully'}, status=status.HTTP_201_CREATED)
@@ -868,8 +877,19 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
     renderer_classes = [UserRenderer]
     search_fields = ['request_id__user__registration_number']
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        slug = self.kwargs.get('slug')
+        user = self.request.user
+        if slug:
+            college = get_object_or_404(College, slug=slug)
+            queryset = queryset.filter(college_id=college.id)
+            if self.request.user.role == 'student':
+                queryset = queryset.filter(request_id__user=user)
+        return queryset
+
     @action(detail=True, methods=['patch'], url_path='departments/(?P<department_id>[^/.]+)',
-            permission_classes=[IsAuthenticated, IsDepartmentOrAdmin])
+            permission_classes=[IsDepartmentOrAdmin])
     def update_department(self, request, pk=None, department_id=None):
         try:
             no_dues_list_instance = self.get_object()
@@ -883,7 +903,7 @@ class NoDuesListViewSet(viewsets.ModelViewSet):
         if not user_registration_number.startswith("DEP"):
             return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
         try:
-            user_department_id = int(user_registration_number[3:])
+            user_department_id = int(user_registration_number[3:5])
         except ValueError:
             return Response({'error': 'Invalid registration number format'}, status=status.HTTP_400_BAD_REQUEST)
         if user_department_id != int(department_id):
@@ -1185,3 +1205,94 @@ class HostelRoomRegistrationView(viewsets.ModelViewSet):
             'errors': errors,
         }
         return Response(response_data, status=status.HTTP_200_OK if not errors else status.HTTP_400_BAD_REQUEST)
+
+
+class DepartmentIdCreationView(APIView):
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsOfficeOrAdmin]
+
+    def post(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        if not slug:
+            return Response({'error': 'Slug is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            with transaction.atomic():
+                college = College.objects.get(slug=slug)
+                college_code = college.college_code
+                default_password = f"{college.college_name[:5]}+{college_code}"
+                credentials = []
+                for i in range(1, 19):
+                    department_number = f"{i:02}"
+                    registration_number = f"DEP{department_number}-{college_code}"
+                    if User.objects.filter(registration_number=registration_number, college=college).exists():
+                        continue
+                    user_data = {
+                        'registration_number': registration_number[:11],
+                        'password': default_password,
+                        'password2': default_password,
+                        'role': 'department',
+                        'college': college.id
+                    }
+                    serializer = UserRegistrationSerializer(data=user_data)
+                    if serializer.is_valid(raise_exception=True):
+                        serializer.save()
+                        credentials.append((registration_number, default_password, department_number))
+                        to_email = college.college_email
+                        send_department_login_credentials(to_email=to_email, credentials=credentials,
+                                                          college_name=college.college_name)
+                    else:
+                        return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message': 'Departments Created Successfully'}, status=status.HTTP_201_CREATED)
+
+        except College.DoesNotExist:
+            return Response({'error': 'College not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class NoDuesListUpdateView(APIView):
+    permission_classes = [IsDepartmentOrAdmin]
+
+    def patch(self, request, pk, department_id, slug):
+        try:
+            no_dues_list_instance = No_Dues_list.objects.get(id=pk)
+        except No_Dues_list.DoesNotExist:
+            return Response({'error': 'No Dues list not found'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            department = no_dues_list_instance.cloned_departments.get(Department_id=department_id)
+        except No_Dues_list.DoesNotExist:
+            return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
+        user_registration_number = request.user.registration_number
+        if not user_registration_number.startswith("DEP"):
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        # Validate user department
+        try:
+            user_department_id = int(user_registration_number[3:5])  # Adjusted based on your requirement
+        except ValueError:
+            return Response({'error': 'Invalid registration number format'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if user_department_id != department_id:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+        # Update the department
+        department_data = request.data
+        department_serializer = Cloned_Departments_for_no_dueSerializer(
+            instance=department, data=department_data, partial=True
+        )
+
+        if department_serializer.is_valid():
+            department_serializer.save()
+
+            # Check if all departments are approved
+            all_approved = all(dep.status == 'approved' for dep in no_dues_list_instance.cloned_departments.all())
+            no_dues_list_instance.status = 'approved' if all_approved else 'pending'
+            no_dues_list_instance.approved_date = timezone.now() if all_approved else None
+
+            no_dues_list_instance.save()
+
+            return Response(department_serializer.data, status=status.HTTP_200_OK)
+
+        return Response(department_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
