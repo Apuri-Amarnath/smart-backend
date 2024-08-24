@@ -1,5 +1,7 @@
 import os.path
+import secrets
 import smtplib
+import string
 from email.mime.text import MIMEText
 from venv import logger
 
@@ -1206,7 +1208,12 @@ class HostelRoomRegistrationView(viewsets.ModelViewSet):
         }
         return Response(response_data, status=status.HTTP_200_OK if not errors else status.HTTP_400_BAD_REQUEST)
 
-
+def generate_password(self, length=10):
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    exclude = '/\\\'\"'
+    filtered_password = ''.join(c for c in alphabet if c not in exclude)
+    password = ''.join(secrets.choice(filtered_password) for i in range(length))
+    return password
 class DepartmentIdCreationView(APIView):
     renderer_classes = [UserRenderer]
     permission_classes = [IsOfficeOrAdmin]
@@ -1220,7 +1227,7 @@ class DepartmentIdCreationView(APIView):
             with transaction.atomic():
                 college = College.objects.get(slug=slug)
                 college_code = college.college_code
-                default_password = f"{college.college_name[:5]}+{college_code}"
+                default_password = generate_password()
                 credentials = []
                 for i in range(1, 19):
                     department_number = f"{i:02}"
@@ -1237,7 +1244,7 @@ class DepartmentIdCreationView(APIView):
                     serializer = UserRegistrationSerializer(data=user_data)
                     if serializer.is_valid(raise_exception=True):
                         serializer.save()
-                        credentials.append((registration_number, default_password, department_number))
+                        credentials.append(registration_number, default_password, department_number)
                         to_email = college.college_email
                         send_department_login_credentials(to_email=to_email, credentials=credentials,
                                                           college_name=college.college_name)
