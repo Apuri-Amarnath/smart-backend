@@ -365,6 +365,11 @@ class Subject(models.Model):
     def __str__(self):
         return f"subject name: {self.subject_name} -- subject code: {self.subject_code} -- instructor: {self.instructor}"
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['college', 'subject_code'], name='unique_college_subject_code')
+        ]
+
 
 class Semester(models.Model):
     college = models.ForeignKey(College, verbose_name="semester", on_delete=models.CASCADE)
