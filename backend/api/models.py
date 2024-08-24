@@ -518,31 +518,14 @@ class Hostel_Room_Allotment(models.Model):
     hostel_room = models.ForeignKey(HostelRooms, on_delete=models.CASCADE)
 
     def get_registration_numbers(self):
-        registration_numbers = []
-        for allotment in self.allotment_details.all():
-            if hasattr(allotment, 'user'):
-                registration_numbers.append(allotment.user.registration_number)
-        return ", ".join(registration_numbers)
+        return [
+            allotment.user.registration_number.strip()
+            for allotment in self.allotment_details.all()
+            if hasattr(allotment, 'user') and allotment.user
+        ]
 
     def __str__(self):
-        return f" room no : {self.hostel_room.room_no} -- registration No : {self.get_registration_numbers()} --"
-
-
-@receiver(post_save, sender=Hostel_Room_Allotment)
-def notify_allotment_users(sender, instance, created, **kwargs):
-    if created:
-        registration_numbers = instance.get_registration_numbers()
-        message = (
-            f"your room allotment has been made: "
-            f"your Room No : {instance.hostel_room.room_no},"
-            f"your Room type : {instance.hostel_room.room_type},"
-        )
-        currently_allotted = set(registration_numbers.split(","))
-        for allotment in instance.allotment_details.all():
-            if hasattr(allotment, 'user'):
-                new_registratin_number = allotment.user.registration_number
-                if new_registratin_number not in currently_allotted:
-                    notify_user(registration_number=new_registratin_number.strip(), message=message)
+        return f"Room No: {self.hostel_room.room_no} -- Registration No: {', '.join(self.get_registration_numbers())} --"
 
 
 class Fees_model(models.Model):
