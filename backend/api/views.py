@@ -1234,10 +1234,11 @@ class DepartmentIdCreationView(APIView):
                 for i in range(1, 19):
                     department_number = f"{i:02}"
                     registration_number = f"DEP{department_number}-{college_code}"
+                    registration_number = registration_number[:11]
                     if User.objects.filter(registration_number=registration_number, college=college).exists():
                         continue
                     user_data = {
-                        'registration_number': registration_number[:11],
+                        'registration_number': registration_number,
                         'password': default_password,
                         'password2': default_password,
                         'role': 'department',

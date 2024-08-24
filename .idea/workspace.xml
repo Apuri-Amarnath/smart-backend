@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fixed alll" />
+    <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="unique subjects" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -286,14 +286,7 @@
       <workItem from="1724502404746" duration="277000" />
       <workItem from="1724503198104" duration="307000" />
       <workItem from="1724503946480" duration="149000" />
-    </task>
-    <task id="LOCAL-00219" summary="user management">
-      <option name="closed" value="true" />
-      <created>1723490932043</created>
-      <option name="number" value="00219" />
-      <option name="presentableId" value="LOCAL-00219" />
-      <option name="project" value="LOCAL" />
-      <updated>1723490932043</updated>
+      <workItem from="1724504392363" duration="146000" />
     </task>
     <task id="LOCAL-00220" summary="user management">
       <option name="closed" value="true" />
@@ -679,7 +672,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724504012021</updated>
     </task>
-    <option name="localTasksCounter" value="268" />
+    <task id="LOCAL-00268" summary="unique subjects">
+      <option name="closed" value="true" />
+      <created>1724504507823</created>
+      <option name="number" value="00268" />
+      <option name="presentableId" value="LOCAL-00268" />
+      <option name="project" value="LOCAL" />
+      <updated>1724504507824</updated>
+    </task>
+    <option name="localTasksCounter" value="269" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -741,7 +742,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="fixed notifications" />
     <MESSAGE value="fixed refresh token" />
     <MESSAGE value="some modifications" />
     <MESSAGE value="v2 - module 1" />
@@ -766,7 +766,8 @@
     <MESSAGE value="overall dues done" />
     <MESSAGE value="fixed room notifications" />
     <MESSAGE value="fixed alll" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed alll" />
+    <MESSAGE value="unique subjects" />
+    <option name="LAST_COMMIT_MESSAGE" value="unique subjects" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/smart_education$serializers.coverage" NAME="serializers Coverage Results" MODIFIED="1717520356710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/api" />

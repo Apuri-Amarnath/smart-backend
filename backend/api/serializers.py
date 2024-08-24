@@ -353,15 +353,15 @@ class SemesterSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         college = data.get('college')
         subject_codes = data.get('subject_codes', [])
-        if user.role == 'hod':
-            if user.branch != data.get('branch'):
-                raise serializers.ValidationError("You can only add semesters and subjects to your own branch.")
+        if user.role == 'hod' and user.branch != data.get('branch'):
+            raise serializers.ValidationError("You can only add semesters and subjects to your own branch.")
         if subject_codes:
             subjects = Subject.objects.filter(subject_code__in=subject_codes)
-            missing_subject_codes = set(subject_codes) - set(subjects.values_list('subject_code', flat=True))
+            existing_subject_codes = set(subjects.values_list('subject_code', flat=True))
+            missing_subject_codes = set(subject_codes) - existing_subject_codes
             if missing_subject_codes:
                 raise serializers.ValidationError(f"Subject codes not found: {', '.join(missing_subject_codes)}")
-            invalid_subjects = Subject.objects.filter(subject_code__in=subject_codes).exclude(college_id=college.id)
+            invalid_subjects = subjects.exclude(college_id=college.id)
             if invalid_subjects.exists():
                 raise serializers.ValidationError("Subjects must belong to the same college as the semester.")
         return data
@@ -375,10 +375,17 @@ class SemesterSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         subject_codes = validated_data.pop('subject_codes', None)
-        instance.branch = validated_data.get('branch', instance.branch)
-        instance.semester_name = validated_data.get('semester_name', instance.semester_name)
-        instance.branch_name = validated_data.get('branch_name', instance.branch_name)
-        instance.save()
+        if 'branch' in validated_data:
+            instance.branch = validated_data.get('branch', instance.branch)
+        if 'semester_name' in validated_data:
+            instance.semester_name = validated_data.get('semester_name', instance.semester_name)
+        if 'branch_name' in validated_data:
+            instance.branch_name = validated_data.get('branch_name', instance.branch_name)
+
+        if any([subject_codes, 'branch' in validated_data, 'semester_name' in validated_data,
+                'branch_name' in validated_data]):
+            instance.save()
+
         if subject_codes is not None:
             subjects = Subject.objects.filter(subject_code__in=subject_codes)
             instance.subjects.set(subjects)
@@ -570,7 +577,6 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
         self.notify_users(hostel_room_allotment)
         return hostel_room_allotment
 
-
     def update(self, instance, validated_data):
         allotment_details = validated_data.pop('allotment_details', None)
         hostel_room = validated_data.pop('hostel_room', None)
@@ -591,7 +597,6 @@ class HostelRoomAllotmentSerializer(serializers.ModelSerializer):
             instance.hostel_room.status = 'available'
         instance.hostel_room.save()
         return instance
-
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
