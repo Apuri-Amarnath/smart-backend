@@ -352,23 +352,24 @@ class SemesterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = self.context['request'].user
         college = data.get('college')
+        print(college)
         subject_codes = data.get('subject_codes', [])
         if user.role == 'hod' and user.branch != data.get('branch'):
             raise serializers.ValidationError("You can only add semesters and subjects to your own branch.")
         if subject_codes:
-            subjects = Subject.objects.filter(subject_code__in=subject_codes)
+            subjects = Subject.objects.filter(subject_code__in=subject_codes,college_id=college.id)
             existing_subject_codes = set(subjects.values_list('subject_code', flat=True))
             missing_subject_codes = set(subject_codes) - existing_subject_codes
             if missing_subject_codes:
                 raise serializers.ValidationError(f"Subject codes not found: {', '.join(missing_subject_codes)}")
             invalid_subjects = subjects.exclude(college_id=college.id)
             if invalid_subjects.exists():
-                raise serializers.ValidationError("Subjects must belong to the same college as the semester.")
+                raise serializers.ValidationError("All subjects must belong to the same college as the semester.")
         return data
 
     def create(self, validated_data):
         subject_codes = validated_data.pop('subject_codes')
-        subjects = Subject.objects.filter(subject_code__in=subject_codes)
+        subjects = Subject.objects.filter(subject_code__in=subject_codes,college_id=validated_data['college'].id)
         semester = Semester.objects.create(**validated_data)
         semester.subjects.add(*subjects)
         return semester
