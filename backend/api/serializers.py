@@ -707,6 +707,8 @@ class Cloned_Departments_for_no_dueSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
+        if validated_data.get("status") == "approved" and not instance.approved_date:
+            instance.approved_date = date.today()
         instance.no_dues_list.save()
         return instance
 

@@ -69,7 +69,10 @@ class IsDepartmentOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
             return False
-        return request.user.role in ['department', 'super-admin']
+        is_same_college = IsCollegeMember().has_permission(request, view)
+        if not is_same_college:
+            return False
+        return is_same_college and (request.user.role in ['department', 'super-admin'])
 
 
 class IsOfficeOrAdmin(permissions.BasePermission):

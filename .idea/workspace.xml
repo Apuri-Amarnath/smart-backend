@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="hostell allotment">
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0011_alter_departments_for_no_dues_college.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/api/migrations/0012_alter_no_dues_list_college.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/emails.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/emails.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/permissions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -289,15 +289,7 @@
       <workItem from="1724155846813" duration="367000" />
       <workItem from="1724165832153" duration="13292000" />
       <workItem from="1724187371066" duration="1362000" />
-      <workItem from="1724451961201" duration="2083000" />
-    </task>
-    <task id="LOCAL-00211" summary="notifications-fix">
-      <option name="closed" value="true" />
-      <created>1723233560953</created>
-      <option name="number" value="00211" />
-      <option name="presentableId" value="LOCAL-00211" />
-      <option name="project" value="LOCAL" />
-      <updated>1723233560954</updated>
+      <workItem from="1724451961201" duration="6318000" />
     </task>
     <task id="LOCAL-00212" summary="added branch">
       <option name="closed" value="true" />
@@ -683,7 +675,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724188685331</updated>
     </task>
-    <option name="localTasksCounter" value="260" />
+    <task id="LOCAL-00260" summary="hostell allotment">
+      <option name="closed" value="true" />
+      <created>1724454217747</created>
+      <option name="number" value="00260" />
+      <option name="presentableId" value="LOCAL-00260" />
+      <option name="project" value="LOCAL" />
+      <updated>1724454217748</updated>
+    </task>
+    <option name="localTasksCounter" value="261" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
