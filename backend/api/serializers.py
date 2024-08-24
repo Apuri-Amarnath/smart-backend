@@ -352,6 +352,7 @@ class SemesterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = self.context['request'].user
         college = data.get('college')
+        print(college)
         subject_codes = data.get('subject_codes', [])
         if user.role == 'hod' and user.branch != data.get('branch'):
             raise serializers.ValidationError("You can only add semesters and subjects to your own branch.")
@@ -368,7 +369,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         subject_codes = validated_data.pop('subject_codes')
-        subjects = Subject.objects.filter(subject_code__in=subject_codes)
+        subjects = Subject.objects.filter(subject_code__in=subject_codes,college_id=validated_data['college'].id)
         semester = Semester.objects.create(**validated_data)
         semester.subjects.add(*subjects)
         return semester

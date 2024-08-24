@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fix email">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -291,15 +292,7 @@
       <workItem from="1724504392363" duration="146000" />
       <workItem from="1724507536999" duration="1177000" />
       <workItem from="1724527261284" duration="1637000" />
-      <workItem from="1724530690218" duration="316000" />
-    </task>
-    <task id="LOCAL-00224" summary="added college_name to the token">
-      <option name="closed" value="true" />
-      <created>1723583673113</created>
-      <option name="number" value="00224" />
-      <option name="presentableId" value="LOCAL-00224" />
-      <option name="project" value="LOCAL" />
-      <updated>1723583673113</updated>
+      <workItem from="1724530690218" duration="1790000" />
     </task>
     <task id="LOCAL-00225" summary="added college_name to the token">
       <option name="closed" value="true" />
@@ -685,7 +678,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724528178048</updated>
     </task>
-    <option name="localTasksCounter" value="273" />
+    <task id="LOCAL-00273" summary="fix email">
+      <option name="closed" value="true" />
+      <created>1724531412310</created>
+      <option name="number" value="00273" />
+      <option name="presentableId" value="LOCAL-00273" />
+      <option name="project" value="LOCAL" />
+      <updated>1724531412310</updated>
+    </task>
+    <option name="localTasksCounter" value="274" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
