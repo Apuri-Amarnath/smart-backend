@@ -1249,10 +1249,11 @@ class DepartmentIdCreationView(APIView):
                         serializer.save()
                         credentials.append((registration_number, default_password, department_number))
                         to_email = college.college_email
-                        send_department_login_credentials(to_email=to_email, credentials=credentials,
-                                                          college_name=college.college_name)
                     else:
                         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                if credentials:
+                    send_department_login_credentials(to_email=to_email, credentials=credentials,
+                                                      college_name=college.college_name)
                 return Response({'message': 'Departments Created Successfully'}, status=status.HTTP_201_CREATED)
 
         except College.DoesNotExist:
