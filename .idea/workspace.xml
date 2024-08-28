@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fix email">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/api/serializers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -292,15 +291,8 @@
       <workItem from="1724504392363" duration="146000" />
       <workItem from="1724507536999" duration="1177000" />
       <workItem from="1724527261284" duration="1637000" />
-      <workItem from="1724530690218" duration="1790000" />
-    </task>
-    <task id="LOCAL-00225" summary="added college_name to the token">
-      <option name="closed" value="true" />
-      <created>1723652503072</created>
-      <option name="number" value="00225" />
-      <option name="presentableId" value="LOCAL-00225" />
-      <option name="project" value="LOCAL" />
-      <updated>1723652503073</updated>
+      <workItem from="1724530690218" duration="1895000" />
+      <workItem from="1724820561536" duration="386000" />
     </task>
     <task id="LOCAL-00226" summary="added college_name to the token">
       <option name="closed" value="true" />
@@ -686,7 +678,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724531412310</updated>
     </task>
-    <option name="localTasksCounter" value="274" />
+    <task id="LOCAL-00274" summary="fix email">
+      <option name="closed" value="true" />
+      <created>1724532541931</created>
+      <option name="number" value="00274" />
+      <option name="presentableId" value="LOCAL-00274" />
+      <option name="project" value="LOCAL" />
+      <updated>1724532541931</updated>
+    </task>
+    <option name="localTasksCounter" value="275" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
