@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d9492d-1208-4010-8d85-a75bd53b833c" name="Changes" comment="fix email">
+      <change afterPath="$PROJECT_DIR$/backend/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,8 +104,8 @@
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\smart education\backend" />
-      <recent name="C:\smart education\backend\api\management\commands" />
       <recent name="C:\smart education" />
+      <recent name="C:\smart education\backend\api\management\commands" />
       <recent name="C:\smart education\education\src" />
     </key>
   </component>
@@ -292,7 +294,10 @@
       <workItem from="1724507536999" duration="1177000" />
       <workItem from="1724527261284" duration="1637000" />
       <workItem from="1724530690218" duration="1895000" />
-      <workItem from="1724820561536" duration="386000" />
+      <workItem from="1724820561536" duration="1017000" />
+      <workItem from="1724899894654" duration="367000" />
+      <workItem from="1724916455553" duration="317000" />
+      <workItem from="1726578839172" duration="1300000" />
     </task>
     <task id="LOCAL-00226" summary="added college_name to the token">
       <option name="closed" value="true" />
