@@ -3,11 +3,13 @@ import logging
 from django.core.mail import send_mail
 from django.conf import settings
 
+import backend.backend.settings
+
 logger = logging.getLogger(__name__)
 
 
 def send_login_credentials(registration_number, password, to_email, college_name):
-    url = f'http://127.0.0.1:8000/api/user/login/'
+    url = str(settings.FRONTEND_URL)
     subject = 'Your Login Credentials for Smartone'
     message = f"""
         Dear {college_name},
@@ -35,7 +37,7 @@ def send_login_credentials(registration_number, password, to_email, college_name
 
 
 def send_HOD_login_credentials(registration_number, password, to_email, college_name, branch):
-    url = f'http://127.0.0.1:8000/api/user/login/'
+    url = str(settings.FRONTEND_URL)
     subject = f'Your {branch} HOD Login Credentials for Smartone'
     message = f"""
         Dear {college_name},
@@ -63,7 +65,7 @@ def send_HOD_login_credentials(registration_number, password, to_email, college_
 
 
 def send_department_login_credentials(credentials, to_email, college_name):
-    url = f'http://127.0.0.1:8000/api/user/login/'
+    url = str(settings.FRONTEND_URL)
     subject = f'Your department Login Credentials for Smartone'
     message = f"""
         Dear {college_name},
